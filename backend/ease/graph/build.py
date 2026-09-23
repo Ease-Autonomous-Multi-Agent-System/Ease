@@ -181,9 +181,11 @@ def _agent_node(kind: str):
                 decision = ApprovalDecision(approval_id=appr["approval_id"], decision="approve",
                                             edited_fields=appr.get("edited_fields") or {})
                 inputs["_action_script"] = appr["action_script"]
+            prev = (results.get(key) or {}).get("error") if attempts else None
             call = ToolCall(task_id=tid, user_id=state["user_id"], step_key=key, agent_kind=step.agent_kind,
                             tool=step.tool, inputs=inputs, context={d: outputs.get(d) for d in step.depends_on},
-                            approval=decision, grounding=cfg.get("grounding", "hybrid"), hitl=cfg.get("hitl", True))
+                            approval=decision, grounding=cfg.get("grounding", "hybrid"), hitl=cfg.get("hitl", True),
+                            previous_error=f"{prev['label']}: {prev['message']}"[:500] if prev else None)
             try:
                 if kind == "api":
                     result = _run_api(ctx, call)

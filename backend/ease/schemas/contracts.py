@@ -150,6 +150,7 @@ class ToolCall(BaseModel):
     approval: ApprovalDecision | None = None  # set when re-running a step after human approval
     grounding: Literal["dom", "vision", "hybrid"] = "hybrid"
     hitl: bool = True  # False only in the "HITL off" ablation: irreversible actions then run unattended
+    previous_error: str | None = None  # why the last attempt of this step failed (informed retries)
 
     @field_validator("credentials_ref")
     @classmethod
