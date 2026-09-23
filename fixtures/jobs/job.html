@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>HireBoard — Job details</title>
+  <link rel="stylesheet" href="/common.css">
+</head>
+<body>
+  <header class="bar"><div class="wrap"><strong>HireBoard</strong><a href="/jobs/">All jobs</a></div></header>
+  <main class="wrap" id="main"></main>
+  <script src="/jobs/data.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get("id");
+    const j = window.JOBS.find(x => x.id === id);
+    const main = document.getElementById("main");
+    if (!j) { main.innerHTML = "<h1>Job not found</h1>"; }
+    else {
+      document.title = `${j.title} — HireBoard`;
+      main.innerHTML = `
+        <h1>${j.title}</h1>
+        <p class="muted">${j.company} · ${j.location} · ${j.type} · ${j.salary} · posted ${j.posted}</p>
+        <div class="card"><h2 style="font-size:16px">About the role</h2><p>${j.description}</p></div>
+        <a class="btn" href="/jobs/apply.html?id=${j.id}">Apply now</a>`;
+    }
+  </script>
+</body>
+</html>

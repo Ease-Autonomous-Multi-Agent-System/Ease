@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>HireBoard — Jobs</title>
+  <link rel="stylesheet" href="/common.css">
+</head>
+<body>
+  <header class="bar"><div class="wrap"><strong>HireBoard</strong><a href="/jobs/">All jobs</a></div></header>
+  <main class="wrap">
+    <h1>Open positions</h1>
+    <form id="filters" class="row" role="search" onsubmit="event.preventDefault(); applyFilters();">
+      <input id="q" name="q" type="search" placeholder="Search title or skills" aria-label="Search jobs">
+      <select id="type" name="type" aria-label="Job type">
+        <option value="">All types</option>
+        <option>Internship</option>
+        <option>Full-time</option>
+      </select>
+      <label style="margin:0;font-weight:400"><input id="remote" type="checkbox"> Remote only</label>
+      <button type="submit">Search</button>
+    </form>
+    <p id="count" class="muted"></p>
+    <section id="results" aria-live="polite"></section>
+    <nav class="pager" id="pager" aria-label="Pagination"></nav>
+  </main>
+
+  <div class="banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
+    <div class="wrap">
+      <span>We use cookies to remember your filters.</span>
+      <span class="row"><button class="secondary" id="cookie-reject">Reject non-essential</button><button id="cookie-accept">Accept all</button></span>
+    </div>
+  </div>
+
+  <script src="/jobs/data.js"></script>
+  <script>
+    const PER_PAGE = 5;
+    let page = 1, filtered = window.JOBS.slice();
+    function esc(s) { return s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+    function applyFilters() {
+      const q = document.getElementById("q").value.trim().toLowerCase();
+      const type = document.getElementById("type").value;
+      const remote = document.getElementById("remote").checked;
+      filtered = window.JOBS.filter(j =>
+        (!q || (j.title + " " + j.description + " " + j.team).toLowerCase().includes(q)) &&
+        (!type || j.type === type) && (!remote || j.remote));
+      page = 1; render();
+    }
+    function render() {
+      const start = (page - 1) * PER_PAGE, slice = filtered.slice(start, start + PER_PAGE);
+      document.getElementById("count").textContent = `${filtered.length} jobs found`;
+      document.getElementById("results").innerHTML = slice.map(j => `
+        <article class="card job" data-job="${j.id}">
+          <h2 style="margin:0;font-size:18px"><a href="/jobs/job.html?id=${j.id}">${esc(j.title)}</a></h2>
+          <div class="muted">${esc(j.company)} · ${esc(j.location)} · ${esc(j.salary)}</div>
+          <div><span class="tag">${j.type}</span>${j.remote ? '<span class="tag">Remote</span>' : ""}<span class="tag">${esc(j.team)}</span></div>
+        </article>`).join("") || "<p>No jobs match your filters.</p>";
+      const pages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+      document.getElementById("pager").innerHTML =
+        `<button class="secondary" ${page === 1 ? "disabled" : ""} onclick="go(${page - 1})">Previous</button>` +
+        Array.from({length: pages}, (_, i) => `<button ${i + 1 === page ? 'aria-current="page"' : 'class="secondary"'} onclick="go(${i + 1})">${i + 1}</button>`).join("") +
+        `<button class="secondary" ${page === pages ? "disabled" : ""} onclick="go(${page + 1})">Next</button>`;
+    }
+    function go(p) { page = p; render(); window.scrollTo(0, 0); }
+    for (const id of ["cookie-accept", "cookie-reject"])
+      document.getElementById(id).onclick = () => document.getElementById("cookie-banner").remove();
+    render();
+  </script>
+</body>
+</html>

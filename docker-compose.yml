@@ -11,6 +11,7 @@ x-backend-env: &backend-env
     UPLOADS_DIR: /data/uploads
     LLM_CACHE_PATH: /data/llm_cache.sqlite3
     FIXTURE_HOSTS: fixtures,localhost,127.0.0.1
+    FIXTURES_BASE_URL: ""
   volumes:
     - ./data:/data
     - ./private:/private:ro

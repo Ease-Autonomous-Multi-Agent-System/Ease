@@ -128,7 +128,8 @@ class LlmRouter:
         s = get_settings()
         self.budget = budget
         self.cache = cache or LlmCache(s.llm_cache_path, s.llm_cache_mode)
-        self.order = [p.strip() for p in s.llm_provider_order.split(",") if p.strip() in PROVIDERS]
+        self.vision_order = [p.strip() for p in s.llm_provider_order.split(",") if p.strip() in PROVIDERS]
+        self.text_order = [p.strip() for p in s.llm_text_provider_order.split(",") if p.strip() in PROVIDERS]
         self.http = httpx.Client(timeout=httpx.Timeout(45, connect=10), transport=transport)
 
     # ---- provider cooldowns (shared across workers through Redis) ----
@@ -146,7 +147,7 @@ class LlmRouter:
 
     def eligible(self, need_vision: bool) -> list[Provider]:
         out = []
-        for name in self.order:
+        for name in self.vision_order if need_vision else self.text_order:
             p = PROVIDERS[name]
             if _api_key(name) is None or (need_vision and not p.vision_models) or self._cooling(name):
                 continue
@@ -192,7 +193,16 @@ class LlmRouter:
                 else:
                     body["response_format"] = {"type": "json_object"}
             try:
-                res = self._post(p, body)
+                try:
+                    res = self._post(p, body)
+                except LlmError as exc:
+                    # Some schemas use JSON-Schema features a provider's structured mode rejects (HTTP 400).
+                    # Fall back to plain JSON mode on the same provider; Pydantic still validates the result.
+                    if isinstance(exc, _Retryable) or "HTTP 400" not in str(exc) or schema is None \
+                            or body.get("response_format", {}).get("type") != "json_schema":
+                        raise
+                    body["response_format"] = {"type": "json_object"}
+                    res = self._post(p, body)
             except _Retryable as exc:
                 self._cool(p.name, exc.retry_after)
                 errors.append(f"{p.name}: {exc}")

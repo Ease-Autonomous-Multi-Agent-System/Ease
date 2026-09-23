@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Member Portal</title>
+  <link rel="stylesheet" href="/common.css">
+</head>
+<body>
+  <header class="bar"><div class="wrap"><strong>Member Portal</strong><span id="who"></span></div></header>
+  <main class="wrap" id="main"></main>
+  <script>
+    // Login-gated fixture. The agent never types passwords: it gets in by having the user's session cookie
+    // injected from the vault (credential ref "portal:session"). Valid demo session value: demo-session-2026.
+    const session = document.cookie.split("; ").find(c => c.startsWith("portal_session="))?.split("=")[1];
+    const main = document.getElementById("main");
+    if (session === "demo-session-2026") {
+      document.getElementById("who").textContent = "Signed in as demo.student";
+      main.innerHTML = `
+        <h1>Your dashboard</h1>
+        <div class="card"><h2 style="font-size:16px">Upcoming deadlines</h2>
+          <ul id="deadlines">
+            <li>Major project review II — 2026-10-15</li>
+            <li>Internship report submission — 2026-10-22</li>
+            <li>Placement registration closes — 2026-10-30</li>
+          </ul></div>
+        <div class="card"><h2 style="font-size:16px">Attendance</h2><p id="attendance">87% overall</p></div>
+        <button class="secondary" onclick="document.cookie='portal_session=; Max-Age=0; path=/'; location.reload()">Sign out</button>`;
+    } else {
+      main.innerHTML = `
+        <h1>Sign in</h1>
+        <form class="card" onsubmit="event.preventDefault(); document.getElementById('err').textContent='Invalid username or password.'">
+          <div class="field"><label for="user">Username</label><input id="user" autocomplete="username"></div>
+          <div class="field"><label for="pass">Password</label><input id="pass" type="password" autocomplete="current-password"></div>
+          <p id="err" role="alert" style="color:#b42318"></p>
+          <button type="submit">Sign in</button>
+        </form>`;
+    }
+  </script>
+</body>
+</html>

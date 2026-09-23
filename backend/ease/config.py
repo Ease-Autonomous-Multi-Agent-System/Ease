@@ -39,7 +39,8 @@ class Settings(BaseSettings):
     openrouter_api_key: SecretStr | None = None
     github_models_token: SecretStr | None = None
     ollama_base_url: str | None = None
-    llm_provider_order: str = "gemini,groq,openrouter,github,ollama"
+    llm_provider_order: str = "gemini,openrouter,github,ollama"  # used when an image is attached
+    llm_text_provider_order: str = "groq,gemini,openrouter,github,ollama"  # text-only calls: fastest first
     llm_cache_mode: str = "readwrite"  # off | readwrite | replay
     llm_cache_path: Path = REPO_ROOT / "data" / "llm_cache.sqlite3"
 
@@ -70,6 +71,8 @@ class Settings(BaseSettings):
     browser_headless: bool = True
     browser_cdp_url: str | None = None  # connect to a real Chrome (host mode) instead of launching one
     respect_robots_txt: bool = True
+    # When running outside Docker, "http://fixtures:8080" is rewritten to this (e.g. http://127.0.0.1:8080).
+    fixtures_base_url: str | None = None
 
     # --- paths ---
     artifacts_dir: Path = REPO_ROOT / "artifacts"

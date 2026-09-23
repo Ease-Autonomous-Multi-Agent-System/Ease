@@ -24,6 +24,7 @@ def keys(monkeypatch, fake_redis):
     monkeypatch.setenv("GEMINI_API_KEY", "g-test-key")
     monkeypatch.setenv("GROQ_API_KEY", "q-test-key")
     monkeypatch.setenv("LLM_PROVIDER_ORDER", "gemini,groq")
+    monkeypatch.setenv("LLM_TEXT_PROVIDER_ORDER", "gemini,groq")
     monkeypatch.setattr(router_mod, "get_redis", lambda: fake_redis)
     return fake_redis
 

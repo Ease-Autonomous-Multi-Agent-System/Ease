@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>HireBoard — Apply</title>
+  <link rel="stylesheet" href="/common.css">
+</head>
+<body>
+  <header class="bar"><div class="wrap"><strong>HireBoard</strong><a href="/jobs/">All jobs</a></div></header>
+  <main class="wrap">
+    <h1 id="heading">Apply</h1>
+    <form id="apply" class="card" novalidate>
+      <div class="row">
+        <div class="field" style="flex:1"><label for="first_name">First name *</label><input id="first_name" name="first_name" required autocomplete="given-name"></div>
+        <div class="field" style="flex:1"><label for="last_name">Last name *</label><input id="last_name" name="last_name" required autocomplete="family-name"></div>
+      </div>
+      <div class="field"><label for="email">Email *</label><input id="email" name="email" type="email" required></div>
+      <div class="field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel"></div>
+      <div class="field"><label for="linkedin">LinkedIn profile URL</label><input id="linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/..."></div>
+      <div class="field"><label for="github">GitHub profile URL</label><input id="github" name="github" type="url" placeholder="https://github.com/..."></div>
+      <div class="field"><label for="college">College / University *</label><input id="college" name="college" required></div>
+      <div class="field">
+        <label for="grad_year">Graduation year *</label>
+        <select id="grad_year" name="grad_year" required>
+          <option value="">Select…</option><option>2025</option><option>2026</option><option>2027</option><option>2028</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="work_auth">Are you authorised to work in India? *</label>
+        <select id="work_auth" name="work_auth" required>
+          <option value="">Select…</option><option>Yes</option><option>No</option>
+        </select>
+      </div>
+      <div class="field"><label for="cover">Why are you a good fit? (max 500 characters)</label><textarea id="cover" name="cover" rows="5" maxlength="500"></textarea></div>
+      <label style="font-weight:400"><input type="checkbox" id="consent" name="consent" required> I confirm the information above is accurate. *</label>
+      <p id="error" role="alert" style="color:#b42318"></p>
+      <button type="submit" id="submit-application">Submit application</button>
+    </form>
+    <div id="done" class="card success" hidden>
+      <h2>Application received</h2>
+      <p>Thank you! Your reference number is <strong id="ref"></strong>.</p>
+      <p><a href="/jobs/">Back to all jobs</a></p>
+    </div>
+  </main>
+  <script src="/jobs/data.js"></script>
+  <script>
+    const id = new URLSearchParams(location.search).get("id");
+    const j = window.JOBS.find(x => x.id === id);
+    if (j) document.getElementById("heading").textContent = `Apply — ${j.title} at ${j.company}`;
+    document.getElementById("apply").addEventListener("submit", e => {
+      e.preventDefault();
+      const f = e.target, missing = [...f.querySelectorAll("[required]")].filter(el => el.type === "checkbox" ? !el.checked : !el.value.trim());
+      if (missing.length) {
+        document.getElementById("error").textContent = "Please complete: " + missing.map(m => f.querySelector(`label[for="${m.id}"]`)?.textContent.replace(" *", "") || m.name).join(", ");
+        return;
+      }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value)) { document.getElementById("error").textContent = "Please enter a valid email."; return; }
+      const ref = "HB-" + (id || "x").toUpperCase().slice(0, 6) + "-" + String(f.email.value.length * 7919 % 100000).padStart(5, "0");
+      f.hidden = true;
+      document.getElementById("ref").textContent = ref;
+      document.getElementById("done").hidden = false;
+      document.title = "Application received — HireBoard";
+    });
+  </script>
+</body>
+</html>

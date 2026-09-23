@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kart — Electronics</title>
+  <link rel="stylesheet" href="/common.css">
+</head>
+<body>
+  <header class="bar"><div class="wrap"><strong>Kart</strong><span id="cart-count" aria-label="Cart items">Cart: 0</span></div></header>
+  <main class="wrap">
+    <h1>Electronics</h1>
+    <div class="row" role="tablist" aria-label="Categories" id="cats"></div>
+    <div class="row" style="margin-top:10px">
+      <label for="sort" style="margin:0">Sort</label>
+      <select id="sort"><option value="">Featured</option><option value="asc">Price: low to high</option><option value="desc">Price: high to low</option></select>
+      <!-- icon-only buttons with no text or aria-label: DOM names are empty, vision disambiguates -->
+      <button class="icon-btn secondary" id="view-grid" title="">▦</button>
+      <button class="icon-btn secondary" id="view-list" title="">☰</button>
+    </div>
+    <section id="grid" class="grid" style="margin-top:14px"></section>
+  </main>
+  <script>
+    const P = [
+      { id: 1, name: "AeroBook 14 Laptop", cat: "Laptops", price: 54990, rating: 4.3 },
+      { id: 2, name: "ProBook X15 Laptop", cat: "Laptops", price: 78990, rating: 4.6 },
+      { id: 3, name: "StudyMate 11 Laptop", cat: "Laptops", price: 29990, rating: 3.9 },
+      { id: 4, name: "Creator 16 Laptop", cat: "Laptops", price: 124990, rating: 4.8 },
+      { id: 5, name: "Nova 5G Phone", cat: "Phones", price: 18999, rating: 4.1 },
+      { id: 6, name: "Pixelate Pro Phone", cat: "Phones", price: 64999, rating: 4.5 },
+      { id: 7, name: "Budget Buds Earphones", cat: "Audio", price: 1299, rating: 3.8 },
+      { id: 8, name: "StudioMax Headphones", cat: "Audio", price: 14999, rating: 4.7 },
+      { id: 9, name: "EcoBook 13 Laptop", cat: "Laptops", price: 45990, rating: 4.0 },
+      { id: 10, name: "Tab S Lite Tablet", cat: "Tablets", price: 21999, rating: 4.2 }
+    ];
+    let cat = "All", sort = "", view = "grid", cart = 0;
+    const cats = ["All", ...new Set(P.map(p => p.cat))];
+    function render() {
+      document.getElementById("cats").innerHTML = cats.map(c =>
+        `<button role="tab" aria-selected="${c === cat}" class="${c === cat ? "" : "secondary"}" onclick="setCat('${c}')">${c}</button>`).join("");
+      let items = P.filter(p => cat === "All" || p.cat === cat);
+      if (sort) items = items.slice().sort((a, b) => sort === "asc" ? a.price - b.price : b.price - a.price);
+      const grid = document.getElementById("grid");
+      grid.className = view === "grid" ? "grid" : "";
+      // Deliberate re-render: new DOM nodes every time, so stale element references break.
+      grid.innerHTML = items.map(p => `
+        <article class="card product" data-rev="${Math.random().toString(36).slice(2, 7)}">
+          <h2 style="font-size:16px;margin:0"><a href="/shop/item.html?id=${p.id}">${p.name}</a></h2>
+          <div class="price">₹${p.price.toLocaleString("en-IN")}</div>
+          <div class="muted">★ ${p.rating} · ${p.cat}</div>
+          <button class="secondary" onclick="add()">Add to cart</button>
+        </article>`).join("");
+    }
+    function setCat(c) { cat = c; render(); }
+    function add() { cart++; document.getElementById("cart-count").textContent = "Cart: " + cart; }
+    document.getElementById("sort").onchange = e => { sort = e.target.value; render(); };
+    document.getElementById("view-grid").onclick = () => { view = "grid"; render(); };
+    document.getElementById("view-list").onclick = () => { view = "list"; render(); };
+    render();
+  </script>
+</body>
+</html>

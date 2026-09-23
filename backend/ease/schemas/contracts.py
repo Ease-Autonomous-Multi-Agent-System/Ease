@@ -149,6 +149,7 @@ class ToolCall(BaseModel):
     credentials_ref: list[str] = Field(default_factory=list)  # references only, never values
     approval: ApprovalDecision | None = None  # set when re-running a step after human approval
     grounding: Literal["dom", "vision", "hybrid"] = "hybrid"
+    hitl: bool = True  # False only in the "HITL off" ablation: irreversible actions then run unattended
 
     @field_validator("credentials_ref")
     @classmethod
