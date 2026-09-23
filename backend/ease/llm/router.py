@@ -208,7 +208,12 @@ class LlmRouter:
                       max_tokens: int) -> LlmResult:
         """Structured-output modes, strictest first. Each fallback only happens on an HTTP 400 that the
         provider raised about the output format; Pydantic validates whatever comes back regardless."""
-        base = {"model": model, "max_tokens": max_tokens, "temperature": 0}
+        base: dict[str, Any] = {"model": model, "max_tokens": max_tokens, "temperature": 0}
+        if "gpt-oss" in model:
+            # Reasoning models spend max_tokens on hidden reasoning first; with a small cap the visible answer
+            # comes back empty. Keep reasoning short and leave room for the answer.
+            base["reasoning_effort"] = "low"
+            base["max_tokens"] = max(max_tokens, 3000)
         if schema is None:
             return self._post(p, {**base, "messages": messages})
         modes: list[dict[str, Any]] = []
@@ -265,6 +270,9 @@ class LlmRouter:
             text = data["choices"][0]["message"]["content"] or ""
         except (KeyError, IndexError, TypeError) as exc:
             raise LlmError("malformed response") from exc
+        if not text.strip():
+            # An empty answer (e.g. the whole budget went to reasoning) is a provider failure: try the next one.
+            raise LlmError(f"empty response (finish_reason={data['choices'][0].get('finish_reason')})")
         usage = data.get("usage") or {}
         log.debug("llm.latency", provider=p.name, ms=int((time.monotonic() - t0) * 1000))
         return LlmResult(text, p.name, body["model"], int(usage.get("total_tokens") or 0))

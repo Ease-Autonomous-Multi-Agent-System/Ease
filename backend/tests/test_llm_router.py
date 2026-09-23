@@ -124,3 +124,25 @@ def test_all_cooling_reports_cooldown_not_unconfigured(keys, tmp_path):
     keys.set("llm:cooldown:groq", "1", ex=3000)
     with pytest.raises(LlmUnavailable, match="cooling down"):
         _router(lambda req: _ok("{}"), tmp_path).complete([{"role": "user", "content": "x"}])
+
+
+def test_empty_answer_falls_through_to_next_provider(keys, tmp_path):
+    def handler(req):
+        if "googleapis" in req.url.host:
+            return _ok("")  # e.g. reasoning used the whole budget
+        return _ok('{"ok": true, "n": 2}')
+
+    res = _router(handler, tmp_path).complete([{"role": "user", "content": "x"}], schema=Answer)
+    assert res.provider == "groq" and res.parsed.n == 2
+
+
+def test_reasoning_models_get_low_effort_and_room_to_answer(keys, tmp_path, monkeypatch):
+    monkeypatch.setenv("LLM_TEXT_PROVIDER_ORDER", "groq")
+    bodies = []
+
+    def handler(req):
+        bodies.append(json.loads(req.content))
+        return _ok('{"ok": true, "n": 1}')
+
+    _router(handler, tmp_path).complete([{"role": "user", "content": "x"}], schema=Answer, max_tokens=600)
+    assert bodies[0]["reasoning_effort"] == "low" and bodies[0]["max_tokens"] >= 3000

@@ -26,7 +26,10 @@ REF = re.compile(r"^\$steps\.([a-z][a-z0-9_]{0,31})((?:\.[A-Za-z0-9_]+)*)$")
 class BrowserExtract(BaseModel):
     start_url: str = Field(description="page to open")
     goal: str = Field(max_length=500, description="what to find / which filters to apply before extracting")
-    fields: list[str] = Field(default_factory=lambda: ["title", "url"], max_length=12)
+    fields: list[str] = Field(
+        default_factory=lambda: ["title", "url"], max_length=12,
+        description="EVERY attribute the user's answer needs, e.g. ['title', 'date'] for deadlines, "
+                    "['name', 'price'] for products - not just the default")
     max_items: int = Field(default=10, ge=1, le=50)
     max_pages: int = Field(default=2, ge=1, le=5)
 
