@@ -30,7 +30,8 @@ def keys(monkeypatch, fake_redis):
 
 
 def _router(handler, tmp_path, mode="off", budget=None):
-    return LlmRouter(budget=budget, cache=LlmCache(tmp_path / "c.sqlite3", mode), transport=httpx.MockTransport(handler))
+    cache = LlmCache(tmp_path / "c.sqlite3", mode)
+    return LlmRouter(budget=budget, cache=cache, transport=httpx.MockTransport(handler))
 
 
 def test_falls_back_on_429_and_cools_provider(keys, tmp_path):

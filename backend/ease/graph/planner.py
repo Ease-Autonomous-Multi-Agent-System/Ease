@@ -131,8 +131,15 @@ def synthesize_plan(
     user_id: str | None = None,
     mode: Literal["hierarchical", "single"] = "hierarchical",
 ) -> PlanOutcome:
+    system = system_prompt(tools)
+    max_steps = get_settings().max_plan_steps
+    if mode == "single":
+        # Ablation (c) baseline: a monolithic agent - one step, one context, no decomposition.
+        system += ("\n\nIMPORTANT: produce exactly ONE step - the single tool that can best accomplish the whole "
+                   "goal on its own. Do not decompose the goal.")
+        max_steps = 1
     messages = [
-        {"role": "system", "content": system_prompt(tools)},
+        {"role": "system", "content": system},
         {"role": "user", "content": prompt},
     ]
     last_problem = ""
@@ -145,7 +152,7 @@ def synthesize_plan(
             calls += 0 if res.cached else 1
             tokens += res.tokens
             raw = res.text
-            plan = validate_against_manifest(res.parsed, tools, get_settings().max_plan_steps)
+            plan = validate_against_manifest(res.parsed, tools, max_steps)
             return PlanOutcome(plan, attempt, calls, tokens)
         except LlmParseError as exc:
             calls += 1

@@ -74,9 +74,9 @@ class StepState(enum.StrEnum):
 
 class CredentialKind(enum.StrEnum):
     API_KEY = "api_key"
-    OAUTH_TOKEN = "oauth_token"
+    OAUTH_TOKEN = "oauth_token"  # noqa: S105 - enum label, not a secret
     COOKIES = "cookies"
-    PASSWORD = "password"
+    PASSWORD = "password"  # noqa: S105 - enum label, not a secret
 
 
 class ParseStatus(enum.StrEnum):

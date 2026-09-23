@@ -39,7 +39,8 @@ class BrowserAct(BaseModel):
 class BrowserFillForm(BaseModel):
     url: str = Field(description="URL of the form page (e.g. a job application page)")
     goal: str = Field(default="Fill in the form using the user's profile", max_length=500)
-    data: dict[str, Any] = Field(default_factory=dict, description="extra values; the user profile is added automatically")
+    data: dict[str, Any] = Field(default_factory=dict,
+                                 description="extra values; the user profile is added automatically")
 
 
 class ExtractMatch(BaseModel):

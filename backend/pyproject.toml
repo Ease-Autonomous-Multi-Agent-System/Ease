@@ -31,6 +31,7 @@ dependencies = [
 [project.optional-dependencies]
 browser = ["playwright>=1.63"]
 ml = ["fastembed>=0.8"]
+eval = ["matplotlib>=3.9"]
 dev = [
     "pytest>=9.1",
     "pytest-asyncio>=1.4",
@@ -56,7 +57,7 @@ markers = [
 addopts = "-m 'not integration and not live'"
 
 [tool.ruff]
-line-length = 110
+line-length = 120
 target-version = "py312"
 
 [tool.ruff.lint]
@@ -65,3 +66,6 @@ ignore = ["S101", "B008"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S", "B"]
+"ease/agents/browser/dom.py" = ["E501"]  # embedded JavaScript
+"ease/agents/browser/som.py" = ["E501"]
+"scripts/*" = ["S603", "S607"]  # developer scripts call docker by name

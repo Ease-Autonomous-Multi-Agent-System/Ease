@@ -1,0 +1,20 @@
+title = "ease gitleaks config"
+
+[extend]
+useDefault = true
+
+# Keys used by providers this project talks to, in case the default rules miss a format.
+[[rules]]
+id = "google-ai-studio-key"
+description = "Google AI Studio API key (new format)"
+regex = '''AQ\.[0-9A-Za-z_\-]{40,}'''
+
+[[rules]]
+id = "groq-api-key"
+description = "Groq API key"
+regex = '''gsk_[0-9A-Za-z]{40,}'''
+
+[allowlist]
+description = "CI-only dummy values and test fixtures"
+paths = ['''\.env\.example$''', '''backend/tests/.*''']
+regexes = ['''ci-only-[a-z-]+''']

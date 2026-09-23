@@ -74,7 +74,12 @@ def chunk_text(text: str, target: int = 700, overlap: int = 120) -> list[str]:
 def _model():
     from fastembed import TextEmbedding
 
-    return TextEmbedding(EMBED_MODEL)
+    from ease.config import get_settings
+
+    # Cached in the shared data volume: downloaded once, survives container restarts and image rebuilds.
+    cache = get_settings().artifacts_dir.parent / "models"
+    cache.mkdir(parents=True, exist_ok=True)
+    return TextEmbedding(EMBED_MODEL, cache_dir=str(cache))
 
 
 def embed(texts: list[str]) -> list[list[float]]:

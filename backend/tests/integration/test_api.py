@@ -58,7 +58,8 @@ def test_security_headers_and_health(client):
 
 
 def test_register_login_refresh_rotation(client):
-    r = client.post("/auth/register", json={"email": f"w-{uuid.uuid4().hex[:6]}@example.com", "password": "weakpassword"})
+    weak = {"email": f"w-{uuid.uuid4().hex[:6]}@example.com", "password": "weakpassword"}
+    r = client.post("/auth/register", json=weak)
     assert r.status_code == 422  # letters only
     email, headers, tokens = _register(client)
     assert client.post("/auth/register", json={"email": email, "password": PW}).status_code == 409
