@@ -123,3 +123,8 @@ Out of scope: payments, CAPTCHA/2FA bypass, account creation, mass crawling. The
 
 Varun Narayan Singh · Uddesh Pratap Singh · Utkarsh Dubey — guided by Dr. Anshika Agarwal. See
 [docs/team-tasks.md](docs/team-tasks.md).
+
+## Literature
+
+The papers this work builds on (WebVoyager, CowPilot, Agentic Lybic, ColorBrowserAgent, WebUncertainty, Autonoma,
+AsyncFlow, the 2025 AI Agent Index) are summarised in [docs/literature.md](docs/literature.md).
