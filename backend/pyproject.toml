@@ -1,0 +1,66 @@
+[project]
+name = "ease"
+version = "0.1.0"
+description = "Ease - supervised-autonomy multi-agent system for web navigation and task automation"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141,<1",
+    "uvicorn[standard]>=0.53",
+    "pydantic>=2.13,<3",
+    "pydantic-settings>=2.15",
+    "email-validator>=2.2",
+    "sqlalchemy>=2.0.54,<2.1",
+    "alembic>=1.20",
+    "psycopg[binary,pool]>=3.3",
+    "pgvector>=0.5",
+    "redis>=5.2",
+    "celery[redis]>=5.6",
+    "langgraph>=1.2,<2",
+    "langgraph-checkpoint-postgres>=3.1",
+    "httpx>=0.28",
+    "pyjwt>=2.14",
+    "bcrypt>=5.0",
+    "cryptography>=50",
+    "structlog>=26.1",
+    "python-multipart>=0.0.32",
+    "pypdf>=6.19",
+    "pillow>=11",
+]
+
+[project.optional-dependencies]
+browser = ["playwright>=1.63"]
+ml = ["fastembed>=0.8"]
+dev = [
+    "pytest>=9.1",
+    "pytest-asyncio>=1.4",
+    "ruff>=0.16",
+    "fakeredis>=2.30",
+]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["ease*"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "browser: needs Playwright Chromium installed",
+    "integration: needs running Postgres + Redis",
+    "live: calls real LLM / external APIs",
+]
+addopts = "-m 'not integration and not live'"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "ASYNC"]
+ignore = ["S101", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B"]

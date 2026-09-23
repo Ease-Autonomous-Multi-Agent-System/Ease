@@ -11,3 +11,5 @@ artifacts/
 uploads/
 .pytest_cache/
 private/
+data/
+*.egg-info/

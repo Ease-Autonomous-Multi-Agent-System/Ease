@@ -1,0 +1,114 @@
+# Ease - development / demo topology (Figure 9 of the design doc).
+# All host ports bind to 127.0.0.1 only: nothing is reachable from your LAN or Wi-Fi.
+name: ease
+
+x-backend-env: &backend-env
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    REDIS_URL: redis://redis:6379
+    ARTIFACTS_DIR: /data/artifacts
+    UPLOADS_DIR: /data/uploads
+    LLM_CACHE_PATH: /data/llm_cache.sqlite3
+    FIXTURE_HOSTS: fixtures,localhost,127.0.0.1
+  volumes:
+    - ./data:/data
+    - ./private:/private:ro
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports: ["127.0.0.1:5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redisdata:/data
+    ports: ["127.0.0.1:6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+
+  # Local fixture sites: deterministic pages the browser agent is developed and benchmarked against.
+  fixtures:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./fixtures:/usr/share/nginx/html:ro
+      - ./fixtures/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports: ["127.0.0.1:8080:8080"]
+
+  migrate:
+    build: { context: ./backend, target: api }
+    <<: *backend-env
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  api:
+    build: { context: ./backend, target: api }
+    <<: *backend-env
+    command: ["uvicorn", "ease.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers",
+              "--forwarded-allow-ips", "127.0.0.1"]
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      retries: 10
+
+  # Runs the LangGraph orchestrator + browser agent. Memory-bound: keep concurrency low.
+  worker-agent:
+    build: { context: ./backend, target: agent }
+    <<: *backend-env
+    command: ["celery", "-A", "ease.worker.celery_app", "worker", "-Q", "agent", "-n", "agent@%h",
+              "--concurrency", "2", "--max-tasks-per-child", "10", "--loglevel", "INFO"]
+    shm_size: 1gb
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  # Lightweight I/O work: document parsing + embeddings, scheduled templates.
+  worker-io:
+    build: { context: ./backend, target: agent }
+    <<: *backend-env
+    command: ["celery", "-A", "ease.worker.celery_app", "worker", "-Q", "io", "-n", "io@%h",
+              "--concurrency", "4", "--loglevel", "INFO"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+
+  beat:
+    build: { context: ./backend, target: api }
+    <<: *backend-env
+    command: ["celery", "-A", "ease.worker.celery_app", "beat", "--loglevel", "INFO",
+              "--schedule", "/data/celerybeat-schedule"]
+    depends_on:
+      redis: { condition: service_healthy }
+
+  flower:
+    build: { context: ./backend, target: api }
+    <<: *backend-env
+    command: ["celery", "-A", "ease.worker.celery_app", "flower", "--port=5555"]
+    ports: ["127.0.0.1:5555:5555"]
+    profiles: ["ops"]
+    depends_on:
+      redis: { condition: service_healthy }
+
+volumes:
+  pgdata:
+  redisdata:
