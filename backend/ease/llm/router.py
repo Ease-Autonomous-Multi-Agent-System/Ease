@@ -180,29 +180,17 @@ class LlmRouter:
             self.budget.consume(user_id=user_id, task_id=task_id)  # raises BudgetExceeded
 
         errors: list[str] = []
-        for p in self.eligible(need_vision):
+        providers = self.eligible(need_vision)
+        if not providers and self._wait_for_cooldown(need_vision):
+            providers = self.eligible(need_vision)
+        if not providers:
+            configured = [n for n in (self.vision_order if need_vision else self.text_order) if _api_key(n)]
+            raise LlmUnavailable("all LLM providers are cooling down after errors/rate limits" if configured
+                                 else "no LLM provider is configured" + (" for images" if need_vision else ""))
+        for p in providers:
             model = _model_override(p.name, tier, need_vision) or (p.vision_models if need_vision else p.models)[tier]
-            body: dict[str, Any] = {"model": model, "messages": messages, "max_tokens": max_tokens,
-                                    "temperature": 0}
-            if schema is not None:
-                if p.json_schema_ok:
-                    body["response_format"] = {
-                        "type": "json_schema",
-                        "json_schema": {"name": schema.__name__, "schema": _strictish(schema.model_json_schema())},
-                    }
-                else:
-                    body["response_format"] = {"type": "json_object"}
             try:
-                try:
-                    res = self._post(p, body)
-                except LlmError as exc:
-                    # Some schemas use JSON-Schema features a provider's structured mode rejects (HTTP 400).
-                    # Fall back to plain JSON mode on the same provider; Pydantic still validates the result.
-                    if isinstance(exc, _Retryable) or "HTTP 400" not in str(exc) or schema is None \
-                            or body.get("response_format", {}).get("type") != "json_schema":
-                        raise
-                    body["response_format"] = {"type": "json_object"}
-                    res = self._post(p, body)
+                res = self._try_provider(p, model, messages, schema, max_tokens)
             except _Retryable as exc:
                 self._cool(p.name, exc.retry_after)
                 errors.append(f"{p.name}: {exc}")
@@ -214,7 +202,48 @@ class LlmRouter:
             self.cache.put(cache_key, {"text": res.text, "provider": res.provider, "model": res.model,
                                        "tokens": res.tokens})
             return self._parse(res, schema)
-        raise LlmUnavailable("no LLM provider succeeded: " + "; ".join(errors or ["none configured"]))
+        raise LlmUnavailable("no LLM provider succeeded: " + "; ".join(errors))
+
+    def _try_provider(self, p: Provider, model: str, messages: list[dict[str, Any]], schema: type[T] | None,
+                      max_tokens: int) -> LlmResult:
+        """Structured-output modes, strictest first. Each fallback only happens on an HTTP 400 that the
+        provider raised about the output format; Pydantic validates whatever comes back regardless."""
+        base = {"model": model, "max_tokens": max_tokens, "temperature": 0}
+        if schema is None:
+            return self._post(p, {**base, "messages": messages})
+        modes: list[dict[str, Any]] = []
+        if p.json_schema_ok:
+            modes.append({**base, "messages": messages, "response_format": {
+                "type": "json_schema",
+                "json_schema": {"name": schema.__name__, "schema": _strictish(schema.model_json_schema())}}})
+        hinted = _with_json_hint(messages, schema)
+        modes.append({**base, "messages": hinted, "response_format": {"type": "json_object"}})
+        modes.append({**base, "messages": hinted})  # no server-side JSON check at all (Groq json_validate_failed)
+        last: LlmError | None = None
+        for body in modes:
+            try:
+                return self._post(p, body)
+            except _Retryable:
+                raise
+            except LlmError as exc:
+                if "HTTP 400" not in str(exc):
+                    raise
+                last = exc
+        raise last or LlmError("no structured-output mode worked")
+
+    def _wait_for_cooldown(self, need_vision: bool, max_wait: int = 30) -> bool:
+        """Every configured provider is cooling down: wait for the soonest one (bounded) instead of failing."""
+        try:
+            r = get_redis()
+            ttls = [r.ttl(f"llm:cooldown:{n}") for n in (self.vision_order if need_vision else self.text_order)
+                    if _api_key(n) and (not need_vision or PROVIDERS[n].vision_models)]
+        except Exception:
+            return False
+        ttls = [t for t in ttls if t and t > 0]
+        if not ttls or min(ttls) > max_wait:
+            return False
+        time.sleep(min(ttls) + 0.5)
+        return True
 
     def _post(self, p: Provider, body: dict[str, Any]) -> LlmResult:
         base = p.base_url or (get_settings().ollama_base_url or "").rstrip("/") + "/v1"
@@ -256,6 +285,14 @@ class _Retryable(LlmError):
     def __init__(self, message: str, retry_after: int):
         super().__init__(message)
         self.retry_after = retry_after
+
+
+def _with_json_hint(messages: list[dict[str, Any]], schema: type[BaseModel]) -> list[dict[str, Any]]:
+    """Plain JSON mode has no schema, and some providers (Groq) refuse it unless the prompt says 'JSON'.
+    Append the expected shape as a final system instruction."""
+    shape = json.dumps(_strictish(schema.model_json_schema()), separators=(",", ":"))[:3000]
+    return [*messages, {"role": "system",
+                        "content": f"Respond with one JSON object only, matching this JSON schema: {shape}"}]
 
 
 def _strip_fences(text: str) -> str:

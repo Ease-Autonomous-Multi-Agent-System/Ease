@@ -422,7 +422,9 @@ class BrowserAgent:
         last: dict[str, ScriptedAction] = {}
         for act in run.script:
             last[act.locator or ""] = act
-        script = ActionScript(start_url=start, actions=list(last.values()),
+        # Replay starts from the page the form is on - the agent may have navigated there from the step's start
+        # URL (job page -> "Apply now" -> form).
+        script = ActionScript(start_url=s.page.url, actions=list(last.values()),
                               commit=ScriptedAction(op="click", locator=commit_el.locator,
                                                     field_label=commit_el.name))
         fields = [FieldPreview(locator=act.locator or "", label=act.field_label or act.locator or "",

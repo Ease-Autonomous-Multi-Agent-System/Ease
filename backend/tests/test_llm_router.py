@@ -101,3 +101,25 @@ def test_no_keys_means_unavailable(monkeypatch, tmp_path, fake_redis):
     r = _router(lambda req: _ok("{}"), tmp_path)
     with pytest.raises(LlmUnavailable):
         r.complete([{"role": "user", "content": "x"}])
+
+
+def test_json_validate_failure_falls_back_to_unstructured(keys, tmp_path, monkeypatch):
+    monkeypatch.setenv("LLM_TEXT_PROVIDER_ORDER", "groq")
+    seen = []
+
+    def handler(req):
+        body = json.loads(req.content)
+        seen.append(body.get("response_format", {}).get("type"))
+        if body.get("response_format"):
+            return httpx.Response(400, json={"error": {"message": "Failed to validate JSON"}})
+        return _ok('{"ok": true, "n": 5}')
+
+    res = _router(handler, tmp_path).complete([{"role": "user", "content": "x"}], schema=Answer)
+    assert res.parsed.n == 5 and seen == ["json_object", None]
+
+
+def test_all_cooling_reports_cooldown_not_unconfigured(keys, tmp_path):
+    keys.set("llm:cooldown:gemini", "1", ex=3000)
+    keys.set("llm:cooldown:groq", "1", ex=3000)
+    with pytest.raises(LlmUnavailable, match="cooling down"):
+        _router(lambda req: _ok("{}"), tmp_path).complete([{"role": "user", "content": "x"}])
