@@ -75,8 +75,8 @@ class Settings(BaseSettings):
     fixtures_base_url: str | None = None
 
     # --- paths ---
-    artifacts_dir: Path = REPO_ROOT / "artifacts"
-    uploads_dir: Path = REPO_ROOT / "uploads"
+    artifacts_dir: Path = REPO_ROOT / "data" / "artifacts"
+    uploads_dir: Path = REPO_ROOT / "data" / "uploads"
 
     # --- web ---
     cors_origins: str = "http://localhost:3000"

@@ -29,7 +29,8 @@ class ArtifactWriter:
         self.root = root
         self.rel = Path(task_id) / step_key
         (root / self.rel).mkdir(parents=True, exist_ok=True)
-        self.n = 0
+        # continue numbering: a resumed step (possibly another worker) must never overwrite earlier evidence
+        self.n = len(list((root / self.rel).iterdir()))
 
     def write(self, name: str, data: bytes, kind: str = "screenshot") -> ArtifactRef:
         self.n += 1
