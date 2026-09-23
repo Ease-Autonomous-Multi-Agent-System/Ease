@@ -25,6 +25,7 @@ dependencies = [
     "python-multipart>=0.0.32",
     "pypdf>=6.19",
     "pillow>=11",
+    "defusedxml>=0.7",
 ]
 
 [project.optional-dependencies]
