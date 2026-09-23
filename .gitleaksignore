@@ -1,0 +1,2 @@
+# Confirmed false positives (dummy CI-only value, removed in a later commit). One fingerprint per line.
+fc253cd170bac0e5aea208aedcf7c2220470adc9:.github/workflows/ci.yml:generic-api-key:43

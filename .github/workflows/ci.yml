@@ -39,8 +39,6 @@ jobs:
     env:
       DATABASE_URL: postgresql+psycopg://ease:ci-only-password@127.0.0.1:5432/ease
       REDIS_URL: redis://127.0.0.1:6379
-      JWT_SECRET: ci-only-jwt-secret-not-used-anywhere-else-000000
-      VAULT_MASTER_KEY: Y2ktb25seS12YXVsdC1rZXktMzItYnl0ZXMtbG9uZyE=
       LLM_CACHE_MODE: "off"
     defaults:
       run:
@@ -53,6 +51,10 @@ jobs:
           cache: pip
           cache-dependency-path: backend/pyproject.toml
       - run: pip install -e ".[dev]"
+      - name: generate throwaway secrets for this run (never stored in the repo)
+        run: |
+          echo "JWT_SECRET=$(python -c 'import secrets; print(secrets.token_urlsafe(48))')" >> "$GITHUB_ENV"
+          echo "VAULT_MASTER_KEY=$(python -c 'import os, base64; print(base64.b64encode(os.urandom(32)).decode())')" >> "$GITHUB_ENV"
       - name: lint
         run: ruff check ease tests
       - name: migrations (up, down, up)

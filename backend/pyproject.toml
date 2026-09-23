@@ -36,7 +36,7 @@ dev = [
     "pytest>=9.1",
     "pytest-asyncio>=1.4",
     "ruff>=0.16",
-    "fakeredis>=2.30",
+    "fakeredis[lua]>=2.30",
 ]
 
 [build-system]
