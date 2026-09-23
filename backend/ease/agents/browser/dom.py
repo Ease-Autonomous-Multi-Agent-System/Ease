@@ -60,13 +60,18 @@ INDEX_JS = r"""
     const r = el.getBoundingClientRect(), tag = el.tagName.toLowerCase();
     el.setAttribute('data-ease-id', String(i));
     const form = el.form || el.closest('form');
+    // A <button> reports type "submit" even outside any form, so only count it as a form submit when it
+    // actually belongs to a form and its declared type is submit (missing type attribute = submit).
+    const btype = (el.getAttribute('type') || 'submit').toLowerCase();
+    const submits = !!form && ((tag === 'button' && btype === 'submit') ||
+                               (tag === 'input' && (el.type === 'submit' || el.type === 'image')));
     out.push({
       id: i++, tag, role: el.getAttribute('role') || '', type: (el.getAttribute('type') || '').toLowerCase(),
       name: nameOf(el).slice(0, 120), value: ['input', 'textarea', 'select'].includes(tag) && el.type !== 'password' ? String(el.value || '').slice(0, 80) : '',
       checked: el.type === 'checkbox' || el.type === 'radio' ? !!el.checked : null,
       required: !!el.required, href: tag === 'a' ? el.getAttribute('href') : null,
       options: tag === 'select' ? [...el.options].map(o => clean(o.text)).slice(0, 25) : null,
-      in_form: !!form, form_submit: (tag === 'button' && (el.type === 'submit' || (!el.getAttribute('type') && !!form))) || (tag === 'input' && el.type === 'submit'),
+      in_form: !!form, form_submit: submits,
       in_viewport: r.bottom > 0 && r.top < innerHeight, box: [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)],
       locator: locator(el), sensitive: el.type === 'password' || /card|cvv|iban|otp|ssn|aadhaar|pan/i.test(el.name + ' ' + el.id + ' ' + el.autocomplete),
     });
@@ -144,12 +149,11 @@ class Observation:
         return next((e for e in self.elements if e.id == eid), None)
 
     def ambiguous(self) -> bool:
-        """When the text index alone is a poor guide: icon-only controls or many identically-named ones.
-        In hybrid mode this is what triggers attaching a Set-of-Marks screenshot."""
-        unnamed = sum(1 for e in self.elements if not e.name and e.tag in ("button", "a") and e.in_viewport)
-        names = [e.name.lower() for e in self.elements if e.name and e.in_viewport]
-        dupes = len(names) - len(set(names))
-        return unnamed >= 1 or dupes >= 4
+        """When the text index alone is a poor guide (icon-only controls). In hybrid mode this, a click with no
+        visible effect, or the model asking to "look" is what triggers attaching a Set-of-Marks screenshot."""
+        # Repeated labels ("Add to cart" on every card) are normal and each carries its own id, so they don't
+        # trigger vision on their own; unlabelled controls do.
+        return any(not e.name and e.tag in ("button", "a") and e.in_viewport for e in self.elements)
 
     def signature(self) -> str:
         return f"{self.url}|{len(self.elements)}|{hash(self.text[:2000])}"
