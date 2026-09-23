@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+secrets/
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.next/
+artifacts/
+uploads/
+.pytest_cache/
+private/
