@@ -51,7 +51,8 @@ services:
     ports: ["127.0.0.1:8080:8080"]
 
   migrate:
-    build: { context: ./backend, target: api }
+    image: ease/backend-api:dev
+    pull_policy: never
     <<: *backend-env
     command: ["alembic", "upgrade", "head"]
     depends_on:
@@ -60,6 +61,7 @@ services:
 
   api:
     build: { context: ./backend, target: api }
+    image: ease/backend-api:dev
     <<: *backend-env
     command: ["uvicorn", "ease.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers",
               "--forwarded-allow-ips", "127.0.0.1"]
@@ -75,6 +77,7 @@ services:
   # Runs the LangGraph orchestrator + browser agent. Memory-bound: keep concurrency low.
   worker-agent:
     build: { context: ./backend, target: agent }
+    image: ease/backend-agent:dev
     <<: *backend-env
     command: ["celery", "-A", "ease.worker.celery_app", "worker", "-Q", "agent", "-n", "agent@%h",
               "--concurrency", "2", "--max-tasks-per-child", "10", "--loglevel", "INFO"]
@@ -85,7 +88,8 @@ services:
 
   # Lightweight I/O work: document parsing + embeddings, scheduled templates.
   worker-io:
-    build: { context: ./backend, target: agent }
+    image: ease/backend-agent:dev
+    pull_policy: never
     <<: *backend-env
     command: ["celery", "-A", "ease.worker.celery_app", "worker", "-Q", "io", "-n", "io@%h",
               "--concurrency", "4", "--loglevel", "INFO"]
@@ -94,7 +98,8 @@ services:
       redis: { condition: service_healthy }
 
   beat:
-    build: { context: ./backend, target: api }
+    image: ease/backend-api:dev
+    pull_policy: never
     <<: *backend-env
     command: ["celery", "-A", "ease.worker.celery_app", "beat", "--loglevel", "INFO",
               "--schedule", "/data/celerybeat-schedule"]
@@ -102,7 +107,8 @@ services:
       redis: { condition: service_healthy }
 
   flower:
-    build: { context: ./backend, target: api }
+    image: ease/backend-api:dev
+    pull_policy: never
     <<: *backend-env
     command: ["celery", "-A", "ease.worker.celery_app", "flower", "--port=5555"]
     ports: ["127.0.0.1:5555:5555"]
