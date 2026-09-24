@@ -13,3 +13,4 @@ uploads/
 private/
 data/
 *.egg-info/
+.claude/
