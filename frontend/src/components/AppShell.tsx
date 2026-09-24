@@ -11,7 +11,7 @@ import { ThemeToggle } from "./ThemeToggle";
 const NAV = [
   { href: "/", label: "New task", icon: IconSparkles },
   { href: "/runs", label: "History", icon: IconHistory },
-  { href: "/settings", label: "Connections", icon: IconPlugConnected },
+  { href: "/settings", label: "Profile & apps", icon: IconPlugConnected },
 ];
 
 /** Signed-in layout: top bar + page. Redirects to /login when there is no session. */

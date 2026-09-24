@@ -217,3 +217,30 @@ def test_escalation_is_capped(fake_env):
         res = resume(build_graph(saver), ctx, thread_id="th10",
                      decision=ApprovalDecision(approval_id=intr["approval_id"], decision="approve"))
     assert asked == 2 and res["final"]["jobs"] == "FAILED" and res["outcome"] == "FAILED"
+
+
+def test_missing_resume_pauses_for_upload_then_continues(fake_env, monkeypatch):
+    from ease.agents.extraction import ExtractionAgent
+
+    have_resume = {"yes": False}
+
+    def sim(user_id, doc_type, vec):
+        return 0.8 if have_resume["yes"] else None
+
+    class Router:
+        def complete(self, *a, **k):
+            from types import SimpleNamespace
+
+            from ease.agents.extraction import Rationales
+            return SimpleNamespace(parsed=Rationales(items=[]), cached=True, tokens=0)
+
+    saver, ctx = InMemorySaver(), _ctx()
+    ctx.extraction = ExtractionAgent(Router(), sim)
+    monkeypatch.setattr("ease.agents.extraction.embed", lambda texts: [[0.1] * 3 for _ in texts])
+    res = start(build_graph(saver), ctx, task_id="t11", user_id="u", prompt="p", thread_id="th11")
+    intr = pending_interrupt(res)
+    assert intr["step_key"] == "match" and intr["kind"] == "escalation"
+    have_resume["yes"] = True  # user uploads the resume, then clicks "Try again"
+    res = resume(build_graph(saver), ctx, thread_id="th11",
+                 decision=ApprovalDecision(approval_id=intr["approval_id"], decision="approve"))
+    assert res["final"]["match"] == "DONE"

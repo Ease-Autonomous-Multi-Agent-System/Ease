@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import math
 import time
+import uuid
 from collections.abc import Callable
 from typing import Any
 
@@ -17,7 +18,7 @@ from pydantic import BaseModel, Field
 
 from ease.agents.documents import embed
 from ease.llm.router import LlmRouter
-from ease.schemas.contracts import ErrorInfo, FailureLabel, StepResult, ToolCall
+from ease.schemas.contracts import ApprovalRequest, ErrorInfo, FailureLabel, StepResult, ToolCall
 
 # (user_id, doc_type, query_vector) -> similarity in [0, 1] of the best-matching chunks of that document
 SimilarityFn = Callable[[str, str, list[float]], float | None]
@@ -80,8 +81,13 @@ class ExtractionAgent:
             else:
                 raise ValueError(f"unknown tool {call.tool}")
         except _NoDocument as exc:
-            return StepResult(step_key=call.step_key, status="FATAL", summary=str(exc),
-                              error=ErrorInfo(label=FailureLabel.PLAN_INVALID, message=str(exc)),
+            # Missing input the human can supply: pause and ask instead of failing the whole run.
+            reason = (f"This step needs your {exc.doc_type}. Upload it under Profile & apps, then choose "
+                      "Try again - or skip this step.")
+            return StepResult(step_key=call.step_key, status="NEEDS_HUMAN", summary=reason,
+                              error=ErrorInfo(label=FailureLabel.ESCALATED, message=str(exc)),
+                              approval=ApprovalRequest(approval_id=str(uuid.uuid4()), step_key=call.step_key,
+                                                       reason=reason, destructive=False),
                               latency_ms=int((time.monotonic() - t0) * 1000))
         except Exception as exc:
             if "Budget" in type(exc).__name__:
@@ -104,7 +110,7 @@ class ExtractionAgent:
         for item, vec in zip(items, vectors, strict=True):
             s = self.similarity(call.user_id, doc_type, vec)
             if s is None:
-                raise _NoDocument(f"no '{doc_type}' document uploaded - upload one to use matching")
+                raise _NoDocument(doc_type)
             scored.append((s, item))
         scored.sort(key=lambda x: x[0], reverse=True)
         top = [dict(item, score=round(s, 4)) if isinstance(item, dict) else {"value": item, "score": round(s, 4)}
@@ -141,4 +147,6 @@ class ExtractionAgent:
 
 
 class _NoDocument(Exception):
-    pass
+    def __init__(self, doc_type: str):
+        super().__init__(f"no '{doc_type}' document uploaded")
+        self.doc_type = doc_type

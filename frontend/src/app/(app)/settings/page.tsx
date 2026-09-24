@@ -53,7 +53,7 @@ export default function SettingsPage() {
 
   return (
     <div className="stack" style={{ gap: 32 }}>
-      <h1>Connections</h1>
+      <h1>Profile &amp; apps</h1>
       <Documents docs={docs} onChange={load} />
       <Profile key={JSON.stringify(me?.profile ?? {})} initial={(me?.profile ?? {}) as Record<string, unknown>} />
       <section className="stack" style={{ gap: 14 }}>
@@ -102,7 +102,7 @@ function Documents({ docs, onChange }: { docs: DocumentOut[]; onChange: () => Pr
       <div className="row">
         <div>
           <h2>Resume</h2>
-          <p className="small muted" style={{ marginTop: 4 }}>Used to rank jobs against your experience and to fill application forms. PDF or text, up to 5 MB.</p>
+          <p className="small muted" style={{ marginTop: 4 }}>Optional. Lets Ease fill forms with your details and rank things (like jobs or courses) against your experience. PDF or text, up to 5 MB.</p>
         </div>
         <span className="spacer" />
         <input ref={input} type="file" accept=".pdf,.txt,.md" hidden onChange={(e) => e.target.files?.[0] && void upload(e.target.files[0])} />

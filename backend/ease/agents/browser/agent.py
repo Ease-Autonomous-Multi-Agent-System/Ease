@@ -195,6 +195,10 @@ class BrowserAgent:
         if tool == "browser.fill_form" and call.approval is not None:
             return self._commit(call, writer, cookies)
         run = _Run(call)
+        if tool == "browser.fill_form" and not self.profile_lookup(call.user_id) and not call.inputs.get("data"):
+            return self._escalate(call, run, FailureLabel.ESCALATED,
+                                  "Filling this form needs your details. Upload your resume (or fill in your "
+                                  "profile) under Profile & apps, then choose Try again - or skip this step.")
         try:
             with BrowserSession(writer, start_url=start, cookies=cookies) as s:
                 try:
