@@ -1,5 +1,7 @@
 # Team tasks
 
+> **Step-by-step instructions (setup, exact files, commands, starter code): [TEAM-GUIDE.md](TEAM-GUIDE.md)**
+
 Small, self-contained pieces of Ease that each team member owns end to end. Each has a clear spec, a working
 example to follow, and acceptance tests that already exist — you're done when they pass.
 
@@ -68,13 +70,13 @@ Then add benchmark cases to `backend/ease/eval/benchmark.json` (copy the format 
 
 - `F12-popup-articles`: "On http://fixtures:8080/popup/ list the titles of all articles by <an author you chose>" — check `titles_include`
 - `F13-popup-latest`: "What is the newest article on http://fixtures:8080/popup/ ?" — check `text_contains`
-- `F14-list-page4`: "On http://fixtures:8080/list/ list every course taught by <instructor> (check all pages)" — pick an instructor whose courses are spread across pages 1, 3 and 5
+- `F14-list-instructor`: "On http://fixtures:8080/list/ list every course taught by <instructor> (check all pages)" — pick an instructor whose courses are spread across pages 1, 3 and 5
 - `F15-list-credits`: "How many 4-credit courses are on http://fixtures:8080/list/ ?" — check `text_contains`
 
 **Done when:** both pages work in a browser at `http://127.0.0.1:8080/popup/` and `/list/`, and
 
 ```
-python -m ease.eval.harness --cases F12-popup-articles,F13-popup-latest,F14-list-page4,F15-list-credits
+python -m ease.eval.harness --cases F12-popup-articles,F13-popup-latest,F14-list-instructor,F15-list-credits
 ```
 
 runs all four (they don't all have to pass — record what happens; failures are results too).

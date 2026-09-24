@@ -122,7 +122,7 @@ Out of scope: payments, CAPTCHA/2FA bypass, account creation, mass crawling. The
 ## Team
 
 Varun Narayan Singh · Uddesh Pratap Singh · Utkarsh Dubey — guided by Dr. Anshika Agarwal. See
-[docs/team-tasks.md](docs/team-tasks.md).
+[docs/team-tasks.md](docs/team-tasks.md) and the step-by-step [docs/TEAM-GUIDE.md](docs/TEAM-GUIDE.md).
 
 ## Literature
 
