@@ -149,6 +149,15 @@ def irreversible(el) -> bool:
     return el.form_submit or (el.tag != "a" and RISKY.search(name) is not None)
 
 
+def _explain_block(url: str, reason: str) -> str:
+    """Plain-language version of a network-policy refusal, for the UI."""
+    host = urlsplit(url).hostname or url
+    if "robots" in reason:
+        return (f"{host} asks automated agents not to open this page (its robots.txt), so Ease didn't. "
+                "Name a specific shop or site to use instead.")
+    return f"Ease won't open {host}: {reason}"
+
+
 def normalize_fixture_url(url: str) -> str:
     base = get_settings().fixtures_base_url
     parts = urlsplit(url)
@@ -204,7 +213,7 @@ class BrowserAgent:
                 try:
                     s.goto(start)
                 except BlockedURL as exc:
-                    return self._fail(call, FailureLabel.BLOCKED_BY_POLICY, str(exc), run)
+                    return self._fail(call, FailureLabel.BLOCKED_BY_POLICY, _explain_block(start, str(exc)), run)
                 result = self._loop(s, run, start)
                 log_blocked(s)
                 return result
