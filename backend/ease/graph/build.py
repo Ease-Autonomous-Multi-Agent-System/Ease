@@ -190,7 +190,13 @@ def _agent_node(kind: str):
                 if kind == "api":
                     result = _run_api(ctx, call)
                 elif kind == "browser":
-                    result = ctx.browser.run(call)
+                    # live "agent's view" for the UI: every look/action becomes a step.progress event
+                    ctx.browser.progress = lambda c, msg, uri: ctx.emitter.emit(
+                        tid, "step.progress", {"step_key": c.step_key, "message": msg, "screenshot_uri": uri})
+                    try:
+                        result = ctx.browser.run(call)
+                    finally:
+                        ctx.browser.progress = None
                 else:
                     result = ctx.extraction.run(call)
             except BudgetExceeded as exc:

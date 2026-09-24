@@ -164,6 +164,25 @@ class BrowserAgent:
         self.artifacts_root = artifacts_root
         self.cookie_lookup = cookie_lookup or (lambda user_id, host: [])
         self.profile_lookup = profile_lookup or (lambda user_id: {})
+        # Live view for the UI: called with (call, message, screenshot_uri | None) as the agent works.
+        self.progress = None
+
+    def _report(self, call: ToolCall, message: str, uri: str | None = None) -> None:
+        if self.progress is not None:
+            try:
+                self.progress(call, message, uri)
+            except Exception:  # the live view must never break a run
+                log.warning("browser.progress_failed")
+
+    def _live_view(self, s: BrowserSession, call: ToolCall, obs: Observation) -> None:
+        """Save what the agent is looking at (with the numbered marks it grounds on) and report it."""
+        if self.progress is None:
+            return
+        try:
+            ref = s.artifacts.write("view", som_screenshot(s.page))
+        except Exception:
+            return
+        self._report(call, f"looking at: {obs.title[:80] or obs.url[:80]}", ref.uri)
 
     # ------------------------------------------------------------------ public
     def run(self, call: ToolCall) -> StepResult:
@@ -209,6 +228,7 @@ class BrowserAgent:
                                       "vault (or sign in), then approve to retry, or reject to skip.")
             if INJECTION.search(obs.text):
                 run.injection = True
+            self._live_view(s, call, obs)
             action = self._decide(s, run, obs)
             if action is None:
                 return self._fail(call, FailureLabel.TOOL_ERROR, "LLM gave no usable action", run, retryable=True)
@@ -224,6 +244,8 @@ class BrowserAgent:
                      outcome=outcome.summary if isinstance(outcome, StepResult) else str(outcome)[:120])
             if isinstance(outcome, StepResult):
                 return outcome
+            target = obs.element(action.id).name if action.id is not None and obs.element(action.id) else ""
+            self._report(call, f"{action.action} {target or action.text or ''}".strip()[:120] + f" — {outcome}"[:80])
             run.history.append(f"{action.action}({action.id if action.id is not None else action.text or ''})"
                                f" -> {outcome}")
         run.artifacts.append(s.screenshot("budget"))
