@@ -20,6 +20,7 @@ _SECRET_PATTERNS = [
     re.compile(r"AIza[0-9A-Za-z_\-]{30,}"),  # Google API key
     re.compile(r"AQ\.[0-9A-Za-z_\-]{30,}"),  # Google AI Studio key (new format)
     re.compile(r"gsk_[0-9A-Za-z]{30,}"),  # Groq
+    re.compile(r"tvly-[0-9A-Za-z_\-]{20,}"),  # Tavily
     re.compile(r"sk-(?:or-|ant-)?[0-9A-Za-z_\-]{20,}"),  # OpenRouter / OpenAI-style keys
     re.compile(r"github_pat_[0-9A-Za-z_]{30,}"),
     re.compile(r"gh[pousr]_[0-9A-Za-z]{30,}"),

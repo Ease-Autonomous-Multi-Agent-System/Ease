@@ -118,6 +118,8 @@ class DbStore:
             "notion:default": st.notion_token,
             "telegram:default": st.telegram_bot_token,
             "slack:default": st.slack_webhook_url,
+            "tavily:default": st.tavily_api_key,
+            "serper:default": st.serper_api_key,
         }.get(ref)
         if fallback is not None and fallback.get_secret_value():
             return fallback.get_secret_value()

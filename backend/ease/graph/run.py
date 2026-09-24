@@ -101,6 +101,11 @@ class PrintingEmitter(NullEmitter):
 
 def local_context(profile: dict[str, Any], resume_vectors: list[list[float]]) -> EaseContext:
     store = MemoryStore()
+    s = get_settings()
+    for ref, val in (("tavily:default", s.tavily_api_key), ("serper:default", s.serper_api_key),
+                     ("notion:default", s.notion_token)):
+        if val and val.get_secret_value():
+            store.secrets[ref] = val.get_secret_value()
     router = LlmRouter()
     seen: set[str] = set()
 

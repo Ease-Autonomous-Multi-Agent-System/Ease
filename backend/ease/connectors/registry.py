@@ -11,6 +11,7 @@ from ease.connectors.base import Connector
 from ease.connectors.jobs import GreenhouseConnector, LeverConnector
 from ease.connectors.productivity import NotionConnector, SheetsConnector
 from ease.connectors.research import ArxivConnector, OpenAlexConnector
+from ease.connectors.search import ShoppingConnector, WebSearchConnector
 
 CONNECTOR_CLASSES: list[type[Connector]] = [
     ArxivConnector,
@@ -19,6 +20,8 @@ CONNECTOR_CLASSES: list[type[Connector]] = [
     LeverConnector,
     NotionConnector,
     SheetsConnector,
+    WebSearchConnector,
+    ShoppingConnector,
     # TelegramConnector and SlackConnector: see GitHub issues (team tasks)
 ]
 

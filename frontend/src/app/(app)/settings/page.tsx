@@ -1,12 +1,21 @@
 "use client";
 
-import { IconBrandNotion, IconBrandSlack, IconBrandTelegram, IconCheck, IconFileText, IconLock, IconTable, IconTrash, IconUpload } from "@tabler/icons-react";
+import {
+  IconBrandNotion, IconBrandSlack, IconBrandTelegram, IconCheck, IconFileText, IconLock, IconTable, IconTag, IconTrash,
+  IconUpload, IconWorldSearch,
+} from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import type { Credential, DocumentOut } from "@/lib/types";
 
 type Field = { name: string; label: string; secret?: boolean; placeholder?: string; multiline?: boolean };
 const SERVICES: { service: string; title: string; about: string; icon: typeof IconBrandNotion; fields: Field[] }[] = [
+  { service: "tavily", title: "Web search", icon: IconWorldSearch,
+    about: "Lets Ease search the web when you don't name a site. Free key at tavily.com (1,000 searches/month).",
+    fields: [{ name: "default", label: "Tavily API key", secret: true, placeholder: "tvly-…" }] },
+  { service: "serper", title: "Price comparison", icon: IconTag,
+    about: "Compares prices across online stores for 'where is it cheapest'. Free key at serper.dev (2,500 searches).",
+    fields: [{ name: "default", label: "Serper API key", secret: true }] },
   { service: "notion", title: "Notion", icon: IconBrandNotion, about: "Log results as rows in one of your databases.",
     fields: [{ name: "default", label: "Integration token", secret: true, placeholder: "ntn_…" },
       { name: "database_id", label: "Database ID", placeholder: "32-character id from the database URL" }] },

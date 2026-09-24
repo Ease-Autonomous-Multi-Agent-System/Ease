@@ -57,6 +57,8 @@ class Settings(BaseSettings):
     login_attempts_per_minute: int = 5
 
     # --- connectors ---
+    tavily_api_key: SecretStr | None = None
+    serper_api_key: SecretStr | None = None
     notion_token: SecretStr | None = None
     notion_database_id: str | None = None
     telegram_bot_token: SecretStr | None = None

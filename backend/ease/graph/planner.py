@@ -92,6 +92,26 @@ EXAMPLES = [
         },
     ),
     (
+        "Where can I buy a Casio MTP-E740 cheapest? Only from genuine sellers.",
+        {
+            "goal": "Find the cheapest genuine listing of the Casio MTP-E740",
+            "steps": [
+                {"key": "prices", "description": "Compare prices for the watch across stores", "agent_kind": "api",
+                 "tool": "api.shopping.search", "inputs": {"query": "Casio MTP-E740", "country": "in",
+                                                           "max_results": 20},
+                 "depends_on": [], "risk_level": "LOW"},
+                {"key": "pick", "description": "Pick the cheapest listing from a trustworthy seller",
+                 "agent_kind": "extract", "tool": "extract.summarize",
+                 "inputs": {"items": "$steps.prices.items",
+                            "instruction": "Recommend the cheapest listing from a trustworthy seller (official brand "
+                                           "store or a well-known retailer, good rating with many reviews). Flag "
+                                           "prices far below the others as possible fakes. Give store, price, link."},
+                 "depends_on": ["prices"], "risk_level": "LOW"},
+            ],
+            "requires_connectors": ["shopping"],
+        },
+    ),
+    (
         "On http://fixtures:8080/shop/ list all laptops under 60000 rupees with their prices.",
         {
             "goal": "List laptops under Rs 60000 from the shop",
