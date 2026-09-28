@@ -136,7 +136,13 @@ class ExtractionAgent:
     def _summarize(self, call: ToolCall):
         items = call.inputs.get("items")
         payload = json.dumps(items, ensure_ascii=False, default=str)[:12000]
-        msg = (f"{call.inputs.get('instruction', 'Summarise the key points')}\n"
+        rules = ""
+        if isinstance(items, list) and any(isinstance(i, dict) and "exact_match" in i for i in items):
+            # Enforced here, not left to the planner's wording: never pass off a different product as the one asked.
+            rules = ("\nRULE: items with exact_match=false are DIFFERENT models from the one requested. Never "
+                     "recommend or price them as the requested product. If no item has exact_match=true, say clearly "
+                     "that no exact listing was found, then list the closest ones as alternative models.")
+        msg = (f"{call.inputs.get('instruction', 'Summarise the key points')}{rules}\n"
                'Return {"summary": "..."} using short markdown bullet points where helpful.\n\n'
                f"<data>\n{payload}\n</data>")
         res = self.router.complete([{"role": "user", "content": msg}], tier="fast", schema=Summary,

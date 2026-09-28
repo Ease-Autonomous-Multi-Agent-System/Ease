@@ -62,3 +62,41 @@ def test_not_configured_is_hidden_and_raises():
     assert "api.shopping.search" not in tools and "api.websearch.search" not in tools
     with pytest.raises(ConnectorError):
         ShoppingConnector().call("search", {"query": "x y"}, ctx({}))
+
+
+def test_exact_model_matches_rank_first_and_note_when_none():
+    from ease.connectors.search import model_tokens
+
+    assert model_tokens("Casio MTP-E740 watch") == ["mtpe740"]
+
+    def handler(req):
+        return httpx.Response(200, json={"shopping": [
+            {"title": "Casio Enticer MTP-E735GL", "source": "A", "price": "₹3,000", "link": "https://a.example"},
+            {"title": "Casio MTP E740 Men's Watch", "source": "B", "price": "₹4,500", "link": "https://b.example"},
+        ]})
+
+    out = ShoppingConnector(transport=httpx.MockTransport(handler)).call(
+        "search", {"query": "Casio MTP-E740"}, ctx({"serper:default": "k"}))
+    assert out["items"][0]["store"] == "B" and out["items"][0]["exact_match"] and out["exact_matches"] == 1
+    none = ShoppingConnector(transport=httpx.MockTransport(handler)).call(
+        "search", {"query": "Casio MTP-E999"}, ctx({"serper:default": "k"}))
+    assert none["exact_matches"] == 0 and "MTPE999" in none["note"]
+
+
+def test_summary_is_forced_to_respect_exact_match():
+    from types import SimpleNamespace
+
+    from ease.agents.extraction import ExtractionAgent, Summary
+    from ease.schemas.contracts import ToolCall
+
+    sent = []
+
+    class Router:
+        def complete(self, messages, **kw):
+            sent.append(messages[0]["content"])
+            return SimpleNamespace(parsed=Summary(summary="ok"), cached=True, tokens=0)
+
+    agent = ExtractionAgent(Router(), lambda *a: None)
+    agent.run(ToolCall(task_id="t", user_id="u", step_key="s", agent_kind="extract", tool="extract.summarize",
+                       inputs={"items": [{"title": "Other model", "exact_match": False}], "instruction": "cheapest?"}))
+    assert "DIFFERENT models" in sent[0]

@@ -103,9 +103,11 @@ EXAMPLES = [
                 {"key": "pick", "description": "Pick the cheapest listing from a trustworthy seller",
                  "agent_kind": "extract", "tool": "extract.summarize",
                  "inputs": {"items": "$steps.prices.items",
-                            "instruction": "Recommend the cheapest listing from a trustworthy seller (official brand "
-                                           "store or a well-known retailer, good rating with many reviews). Flag "
-                                           "prices far below the others as possible fakes. Give store, price, link."},
+                            "instruction": "Only consider listings with exact_match=true. Recommend the cheapest "
+                                           "one from a trustworthy seller (official brand store or a well-known "
+                                           "retailer, good rating with many reviews). Flag prices far below the "
+                                           "others as possible fakes. Give store, price, link. If none match "
+                                           "exactly, say so and list the closest alternatives as different models."},
                  "depends_on": ["prices"], "risk_level": "LOW"},
             ],
             "requires_connectors": ["shopping"],

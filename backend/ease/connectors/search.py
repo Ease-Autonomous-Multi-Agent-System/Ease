@@ -103,9 +103,12 @@ class ShoppingConnector(Connector):
             raise ConnectorError("price comparison is not connected - add a Serper key", auth=True)
         body = {"q": q.query, "gl": q.country, "num": q.max_results}
         data = self.request("POST", f"{self.base_url}/shopping", json=body, headers={"X-API-KEY": key}).json()
+        model_codes = model_tokens(q.query)
         items = []
         for r in data.get("shopping", [])[: q.max_results]:
             items.append({
+                # Google Shopping often returns similar-but-different products; flag the ones that really match
+                "exact_match": all(code in _squash(r.get("title", "")) for code in model_codes),
                 "title": r.get("title", ""),
                 "store": r.get("source", ""),
                 "price": r.get("price", ""),
@@ -115,5 +118,18 @@ class ShoppingConnector(Connector):
                 "delivery": r.get("delivery"),
                 "url": r.get("link", ""),
             })
-        items.sort(key=lambda i: (i["price_value"] is None, i["price_value"] or 0))
-        return {"items": items, "count": len(items), "country": q.country}
+        # exact matches first, then cheapest first
+        items.sort(key=lambda i: (not i["exact_match"], i["price_value"] is None, i["price_value"] or 0))
+        exact = sum(1 for i in items if i["exact_match"])
+        return {"items": items, "count": len(items), "exact_matches": exact, "country": q.country,
+                "note": None if exact or not model_codes else
+                f"No listing matched the exact model {' '.join(model_codes).upper()}; these are similar products."}
+
+
+def _squash(text: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", text.lower())
+
+
+def model_tokens(query: str) -> list[str]:
+    """Model codes in a product query - words containing a digit, e.g. 'MTP-E740', 'A2420' ('Casio' is not)."""
+    return [_squash(w) for w in re.split(r"\s+", query) if re.search(r"\d", w) and len(_squash(w)) >= 3]
