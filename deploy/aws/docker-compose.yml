@@ -1,0 +1,33 @@
+# Ease as a public website on one AWS EC2 server (see docs/DEPLOY-AWS.md).
+#   ease   the single-container build (same image as the Hugging Face Space), data kept in a volume
+#   caddy  HTTPS with an automatic Let's Encrypt certificate for EASE_DOMAIN, the only public entry point
+name: ease
+
+services:
+  ease:
+    build: { context: ../hf, dockerfile: Dockerfile }
+    image: ease/public:latest
+    env_file: .env  # JWT_SECRET and VAULT_MASTER_KEY: generated once at setup, must never change
+    environment:
+      USER_KEYS_ONLY: "true"  # every visitor runs on their own AI and service keys
+    volumes:
+      - easedata:/home/user/data  # accounts, runs, encrypted keys: survive restarts and reboots
+    shm_size: 1gb  # Chromium
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.10-alpine
+    ports: ["80:80", "443:443"]
+    environment:
+      EASE_DOMAIN: ${EASE_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+      - caddyconfig:/config
+    depends_on: [ease]
+    restart: unless-stopped
+
+volumes:
+  easedata:
+  caddydata:
+  caddyconfig:

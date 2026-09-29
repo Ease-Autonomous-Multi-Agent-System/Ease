@@ -65,7 +65,9 @@ COPY --from=src /fixtures /app/fixtures
 COPY --from=src /deploy/hf/start.sh /deploy/hf/supervisord.conf /deploy/hf/nginx.conf /app/deploy/
 
 # Hugging Face runs the container as uid 1000; Postgres refuses to run as root anyway.
-RUN useradd -m -u 1000 user && chmod +x /app/deploy/start.sh
+# The data directory exists (owned by that user) so a mounted volume starts out writable (AWS / docker compose).
+RUN useradd -m -u 1000 user && chmod +x /app/deploy/start.sh \
+    && mkdir -p /home/user/data && chown user:user /home/user/data
 USER user
 # USER_KEYS_ONLY: a public website where every visitor uses their own AI and service keys (see docs/DEPLOY.md).
 ENV HOME=/home/user DATA_DIR=/home/user/data ENV=prod USER_KEYS_ONLY=true \

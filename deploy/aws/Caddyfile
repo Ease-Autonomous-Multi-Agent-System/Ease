@@ -1,0 +1,12 @@
+# HTTPS front door. Caddy obtains and renews the certificate for EASE_DOMAIN by itself, proxies WebSockets,
+# and appends the visitor's IP to X-Forwarded-For (Ease's gateway reads the last entry for rate limits).
+{$EASE_DOMAIN} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+	reverse_proxy ease:7860 {
+		flush_interval -1
+	}
+}
