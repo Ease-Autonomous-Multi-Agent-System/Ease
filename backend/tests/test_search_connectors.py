@@ -100,3 +100,56 @@ def test_summary_is_forced_to_respect_exact_match():
     agent.run(ToolCall(task_id="t", user_id="u", step_key="s", agent_kind="extract", tool="extract.summarize",
                        inputs={"items": [{"title": "Other model", "exact_match": False}], "instruction": "cheapest?"}))
     assert "DIFFERENT models" in sent[0]
+
+
+@pytest.mark.parametrize("store,url,price,expected", [
+    ("Amazon.in", "https://www.google.com/search?ibp=oshop&q=x", 1500.0, "trusted"),
+    ("Flipkart - RetailNet", "https://www.flipkart.com/p/1", 1500.0, "trusted"),
+    ("Casio India", "https://www.casio.com/in/", 1600.0, "trusted"),
+    ("somewatchshop.com", "https://somewatchshop.com/p", 1500.0, "unverified"),
+    ("Casio Outlet Sale", "https://casio-outlet-sale.com/p", 1400.0, "suspicious"),
+    ("bestdeals.xyz", "https://bestdeals.xyz/p", 1450.0, "suspicious"),
+    ("casiowatches.in", "https://casiowatches.in/p", 1500.0, "suspicious"),
+    ("Amazon.in", "https://www.amazon.in/p", 400.0, "suspicious"),
+])
+def test_trust_rating(store, url, price, expected):
+    from ease.connectors.trust import rate
+
+    item = {"store": store, "url": url, "price_value": price, "exact_match": True}
+    out = rate(item, brand="Casio", median_price=1500.0)
+    assert out["trust"] == expected, out["trust_reasons"]
+    assert out["trust_reasons"]
+
+
+def test_shopping_puts_trusted_exact_matches_first():
+    def handler(req):
+        return httpx.Response(200, json={"shopping": [
+            {"title": "Casio F-91W", "source": "cheapwatches.shop", "price": "₹500", "link": "https://a.example"},
+            {"title": "Casio F-91W", "source": "Amazon.in", "price": "₹1,295", "link": "https://b.example"},
+            {"title": "Casio F-91W", "source": "Flipkart", "price": "₹1,199", "link": "https://c.example"},
+            {"title": "Casio F-91W", "source": "Myntra", "price": "₹1,395", "link": "https://d.example"},
+        ]})
+
+    out = ShoppingConnector(transport=httpx.MockTransport(handler)).call(
+        "search", {"query": "Casio F-91W"}, ctx({"serper:default": "k"}))
+    assert [i["store"] for i in out["items"]] == ["Flipkart", "Amazon.in", "Myntra", "cheapwatches.shop"]
+    assert out["items"][-1]["trust"] == "suspicious" and out["trusted"] == 3
+
+
+def test_summary_is_told_to_only_recommend_trusted():
+    from types import SimpleNamespace
+
+    from ease.agents.extraction import ExtractionAgent, Summary
+    from ease.schemas.contracts import ToolCall
+
+    sent = []
+
+    class Router:
+        def complete(self, messages, **kw):
+            sent.append(messages[0]["content"])
+            return SimpleNamespace(parsed=Summary(summary="ok"), cached=True, tokens=0)
+
+    ExtractionAgent(Router(), lambda *a: None).run(ToolCall(
+        task_id="t", user_id="u", step_key="s", agent_kind="extract", tool="extract.summarize",
+        inputs={"items": [{"title": "x", "trust": "suspicious"}]}))
+    assert 'Only recommend items with trust="trusted"' in sent[0]

@@ -13,6 +13,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 from ease.connectors.base import Connector, ConnectorContext, ConnectorError, Operation
+from ease.connectors.trust import TRUST_ORDER, rate_all
 
 _NUM = re.compile(r"\d[\d.,]*")  # must start with a digit: "Rs. 3,999" -> "3,999", not "."
 
@@ -54,9 +55,9 @@ class WebSearchConnector(Connector):
         "search": Operation(
             "search",
             "Search the web (Tavily). Use for finding pages, facts, official sites or news when the user names no "
-            "website. Returns items with title, url, snippet.",
+            "website. Returns items with title, url, snippet and a trust rating (trusted/unverified/suspicious).",
             WebSearch,
-            output_hint="{items: [{title, url, snippet, published}], answer}",
+            output_hint="{items: [{title, url, snippet, published, trust, trust_reasons}], answer}",
         )
     }
 
@@ -72,6 +73,9 @@ class WebSearchConnector(Connector):
                             headers={"Authorization": f"Bearer {key}"}).json()
         items = [{"title": r.get("title", ""), "url": r.get("url", ""), "snippet": (r.get("content") or "")[:600],
                   "published": r.get("published_date")} for r in data.get("results", [])]
+        items = rate_all(items, exact_only_for_median=False)
+        # a stable sort keeps the search engine's relevance order within each trust level
+        items.sort(key=lambda i: TRUST_ORDER[i["trust"]])
         return {"items": items, "count": len(items), "answer": data.get("answer")}
 
 
@@ -90,10 +94,12 @@ class ShoppingConnector(Connector):
         "search": Operation(
             "search",
             "Compare prices for a product across online stores (Google Shopping via Serper). Returns items with "
-            "title, store, price, price_value, rating, reviews, delivery, url - sorted cheapest first. Use for "
-            "'where is X cheapest' / 'price of X' instead of opening shops in the browser.",
+            "title, store, price, price_value, rating, reviews, delivery, url, exact_match and a seller trust rating "
+            "(trusted/unverified/suspicious) - exact trusted matches first, cheapest first. Use for 'where is X "
+            "cheapest' / 'price of X' instead of opening shops in the browser.",
             ShoppingSearch,
-            output_hint="{items: [{title, store, price, price_value, rating, reviews, delivery, url}]}",
+            output_hint="{items: [{title, store, price, price_value, rating, reviews, url, exact_match, trust, "
+                        "trust_reasons}], exact_matches, trusted, note}",
         )
     }
 
@@ -118,10 +124,13 @@ class ShoppingConnector(Connector):
                 "delivery": r.get("delivery"),
                 "url": r.get("link", ""),
             })
-        # exact matches first, then cheapest first
-        items.sort(key=lambda i: (not i["exact_match"], i["price_value"] is None, i["price_value"] or 0))
+        items = rate_all(items, brand=brand_of(q.query))
+        # exact matches first, then trusted sellers, then cheapest
+        items.sort(key=lambda i: (not i["exact_match"], TRUST_ORDER[i["trust"]], i["price_value"] is None,
+                                  i["price_value"] or 0))
         exact = sum(1 for i in items if i["exact_match"])
-        return {"items": items, "count": len(items), "exact_matches": exact, "country": q.country,
+        trusted = sum(1 for i in items if i["exact_match"] and i["trust"] == "trusted")
+        return {"items": items, "count": len(items), "exact_matches": exact, "trusted": trusted, "country": q.country,
                 "note": None if exact or not model_codes else
                 f"No listing matched the exact model {' '.join(model_codes).upper()}; these are similar products."}
 
@@ -131,5 +140,15 @@ def _squash(text: str) -> str:
 
 
 def model_tokens(query: str) -> list[str]:
-    """Model codes in a product query - words containing a digit, e.g. 'MTP-E740', 'A2420' ('Casio' is not)."""
-    return [_squash(w) for w in re.split(r"\s+", query) if re.search(r"\d", w) and len(_squash(w)) >= 3]
+    """Model codes in a product query - words with a letter and a digit, e.g. 'MTP-E740', 'A2420' (not 'Casio',
+    not a budget like '50000')."""
+    return [_squash(w) for w in re.split(r"\s+", query)
+            if re.search(r"\d", w) and re.search(r"[a-zA-Z]", w) and len(_squash(w)) >= 3]
+
+
+def brand_of(query: str) -> str | None:
+    """'Casio F-91W' -> 'Casio': the leading word of a model query, used to spot shops impersonating the brand."""
+    words = query.split()
+    if len(words) >= 2 and model_tokens(query) and words[0].isalpha() and len(words[0]) >= 3:
+        return words[0]
+    return None

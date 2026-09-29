@@ -135,6 +135,8 @@ class ExtractionAgent:
 
     def _summarize(self, call: ToolCall):
         items = call.inputs.get("items")
+        if isinstance(items, list):  # keep the prompt small: only the main reason a seller isn't trusted
+            items = [_brief_trust(i) if isinstance(i, dict) else i for i in items]
         payload = json.dumps(items, ensure_ascii=False, default=str)[:12000]
         rules = ""
         if isinstance(items, list) and any(isinstance(i, dict) and "exact_match" in i for i in items):
@@ -142,14 +144,34 @@ class ExtractionAgent:
             rules = ("\nRULE: items with exact_match=false are DIFFERENT models from the one requested. Never "
                      "recommend or price them as the requested product. If no item has exact_match=true, say clearly "
                      "that no exact listing was found, then list the closest ones as alternative models.")
+        if isinstance(items, list) and any(isinstance(i, dict) and "trust" in i for i in items):
+            # The trust rating comes from code (connectors/trust.py); the model may only repeat it, never upgrade it.
+            rules += ("\nRULE: every item has a trust rating decided by Ease. Only recommend items with "
+                      "trust=\"trusted\". Never recommend an item with trust=\"suspicious\" - if one is cheaper, "
+                      "mention it as \"not trusted\" with its reason. Items with trust=\"unverified\" may be "
+                      "mentioned only as \"unverified seller\". If no trusted item exists, say so plainly.")
+        if rules:
+            rules += ("\nWrite for a non-technical reader: never show field names or values like exact_match, "
+                      "trust= or price_value - say \"exact model\", \"different model\", \"trusted seller\".")
         msg = (f"{call.inputs.get('instruction', 'Summarise the key points')}{rules}\n"
-               'Return {"summary": "..."} using short markdown bullet points where helpful.\n\n'
+               'Return {"summary": "..."} using short markdown bullet points where helpful. Refer to listings '
+               "and pages by name - do not paste URLs, the links are shown to the user separately.\n\n"
                f"<data>\n{payload}\n</data>")
         res = self.router.complete([{"role": "user", "content": msg}], tier="fast", schema=Summary,
                                    task_id=call.task_id, user_id=call.user_id, max_tokens=2000,
                                    purpose=f"summarize:{call.step_key}")
         s = res.parsed.summary
         return {"summary": s}, s[:200], 0 if res.cached else 1, res.tokens
+
+
+def _brief_trust(item: dict[str, Any]) -> dict[str, Any]:
+    reasons = item.get("trust_reasons")
+    if not isinstance(reasons, list):
+        return item
+    out = {k: v for k, v in item.items() if k != "trust_reasons"}
+    if item.get("trust") != "trusted" and reasons:
+        out["trust_reason"] = reasons[0]
+    return out
 
 
 class _NoDocument(Exception):
