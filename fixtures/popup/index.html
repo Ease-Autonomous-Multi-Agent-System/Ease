@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>The Daily Byte — Articles</title>
+  <link rel="stylesheet" href="/common.css">
+  <style>
+    .overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.65); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .modal { background: #fff; border-radius: 10px; padding: 28px 24px 22px; width: min(420px, 92vw); position: relative; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
+    .modal h2 { margin: 0 0 6px; }
+    .modal .x { position: absolute; top: 6px; right: 8px; border: 0; background: none; color: #98a2b3; font-size: 22px; line-height: 1; padding: 6px; cursor: pointer; }
+    .modal form { display: flex; gap: 8px; margin-top: 14px; }
+    .modal input { flex: 1; }
+    .spacer-bottom { height: 600px; }
+  </style>
+</head>
+<body>
+  <header class="bar"><div class="wrap"><strong>The Daily Byte</strong><a href="/popup/">Latest</a></div></header>
+  <main class="wrap">
+    <h1>Latest articles</h1>
+    <section id="articles"></section>
+    <div class="spacer-bottom"></div>
+    <p class="muted">© 2026 The Daily Byte</p>
+  </main>
+
+  <script>
+    const ARTICLES = [
+      { title: "Why Small Language Models Are Winning on the Edge", author: "Ananya Kapoor", date: "2026-09-02" },
+      { title: "A Practical Guide to Vector Databases", author: "Rohan Verma", date: "2026-09-05" },
+      { title: "The Hidden Cost of Cloud GPUs", author: "Meera Nair", date: "2026-09-07" },
+      { title: "Prompt Injection Explained for Beginners", author: "Ananya Kapoor", date: "2026-09-10" },
+      { title: "Rust vs Go for Backend Services in 2026", author: "Rohan Verma", date: "2026-09-12" },
+      { title: "How Browser Agents See a Web Page", author: "Meera Nair", date: "2026-09-15" },
+      { title: "Five Datasets Every ML Student Should Know", author: "Rohan Verma", date: "2026-09-18" },
+      { title: "Designing Human-in-the-Loop Approval Flows", author: "Meera Nair", date: "2026-09-21" },
+      { title: "What Open-Source AI Means for Indian Startups", author: "Ananya Kapoor", date: "2026-09-24" },
+    ];
+    function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+    document.getElementById("articles").innerHTML = ARTICLES.map((a, i) => `
+      <article class="card article">
+        <h2 style="margin:0;font-size:18px"><a href="#a${i + 1}" id="a${i + 1}">${esc(a.title)}</a></h2>
+        <div class="muted">By ${esc(a.author)} · ${a.date}</div>
+      </article>`).join("");
+
+    // Newsletter modal: opens after 1 second and blocks the page. Its only close control is an unlabelled "×"
+    // (no text, aria-label or title) on purpose - the case the agent's screenshot fallback has to handle.
+    let shownAgain = false;
+    function openModal() {
+      if (document.getElementById("newsletter")) return;
+      const layer = document.createElement("div");
+      layer.className = "overlay";
+      layer.id = "newsletter";
+      layer.innerHTML = `
+        <div class="modal">
+          <button class="x" type="button">×</button>
+          <h2>Never miss a byte</h2>
+          <p class="muted">Get the week's best tech stories in your inbox.</p>
+          <form onsubmit="event.preventDefault()">
+            <input type="email" placeholder="you@example.com">
+            <button type="submit">Subscribe</button>
+          </form>
+        </div>`;
+      layer.querySelector(".x").onclick = () => layer.remove();
+      document.body.appendChild(layer);
+    }
+    setTimeout(openModal, 1000);
+    // comes back once when the reader reaches the bottom of the page
+    window.addEventListener("scroll", () => {
+      const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 40;
+      if (atBottom && !shownAgain && !document.getElementById("newsletter")) {
+        shownAgain = true;
+        openModal();
+      }
+    });
+  </script>
+</body>
+</html>
