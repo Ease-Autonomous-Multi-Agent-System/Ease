@@ -24,7 +24,9 @@ router = APIRouter(tags=["resources"])
 
 # service -> allowed credential names. "cookies" names are hostnames (session cookies for the browser agent).
 _SERVICES = {"notion": {"default", "database_id"}, "telegram": {"default", "chat_id"}, "slack": {"default"},
-             "google": {"service_account"}, "tavily": {"default"}, "serper": {"default"}}
+             "google": {"service_account"}, "tavily": {"default"}, "serper": {"default"},
+             # the user's own AI model keys (bring your own key)
+             "groq": {"default"}, "gemini": {"default"}, "openrouter": {"default"}}
 _HOST = re.compile(r"^[a-z0-9.\-]{1,100}$")
 
 

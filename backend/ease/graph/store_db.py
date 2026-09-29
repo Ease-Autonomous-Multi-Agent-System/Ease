@@ -114,6 +114,8 @@ class DbStore:
         if value:
             return value
         st = get_settings()
+        if st.user_keys_only:  # public website: never spend the operator's keys on a visitor's run
+            return None
         if ref == "telegram:chat_id":  # a plain setting, not a secret
             return st.telegram_chat_id or None
         fallback = {

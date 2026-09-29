@@ -1,15 +1,30 @@
 "use client";
 
 import {
-  IconBrandNotion, IconBrandSlack, IconBrandTelegram, IconCheck, IconFileText, IconLock, IconTable, IconTag, IconTrash,
-  IconUpload, IconWorldSearch,
+  IconBolt, IconBrandNotion, IconBrandSlack, IconBrandTelegram, IconCheck, IconFileText, IconLock, IconRoute,
+  IconSparkles, IconTable, IconTag, IconTrash, IconUpload, IconWorldSearch,
 } from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import type { Credential, DocumentOut } from "@/lib/types";
 
 type Field = { name: string; label: string; secret?: boolean; placeholder?: string; multiline?: boolean };
-const SERVICES: { service: string; title: string; about: string; icon: typeof IconBrandNotion; fields: Field[] }[] = [
+type Spec = { service: string; title: string; about: string; icon: typeof IconBrandNotion; fields: Field[] };
+
+// The AI models that plan and act. Every run uses the key of the person who started it.
+const AI_SERVICES: Spec[] = [
+  { service: "groq", title: "Groq", icon: IconBolt,
+    about: "Fast text model for planning and browsing. Free key at console.groq.com → API Keys (starts with gsk_).",
+    fields: [{ name: "default", label: "Groq API key", secret: true, placeholder: "gsk_…" }] },
+  { service: "gemini", title: "Google Gemini", icon: IconSparkles,
+    about: "Needed for screenshots (vision) and a fallback for text. Free key at aistudio.google.com → Get API key (starts with AIza).",
+    fields: [{ name: "default", label: "Gemini API key", secret: true, placeholder: "AIza…" }] },
+  { service: "openrouter", title: "OpenRouter (optional)", icon: IconRoute,
+    about: "Extra fallback with free models. Key at openrouter.ai/keys (starts with sk-or-).",
+    fields: [{ name: "default", label: "OpenRouter API key", secret: true, placeholder: "sk-or-…" }] },
+];
+
+const SERVICES: Spec[] = [
   { service: "tavily", title: "Web search", icon: IconWorldSearch,
     about: "Lets Ease search the web when you don't name a site. Free key at tavily.com (1,000 searches/month).",
     fields: [{ name: "default", label: "Tavily API key", secret: true, placeholder: "tvly-…" }] },
@@ -63,6 +78,19 @@ export default function SettingsPage() {
   return (
     <div className="stack" style={{ gap: 32 }}>
       <h1>Profile &amp; apps</h1>
+      <section id="ai-keys" className="stack" style={{ gap: 14 }}>
+        <div>
+          <h2>AI model keys {me?.ai?.user_keys_only ? <span className="pill pill-wait" style={{ marginLeft: 6 }}>required</span> : null}</h2>
+          <p className="small muted" style={{ marginTop: 4 }}>
+            {me?.ai?.user_keys_only
+              ? "Ease runs on your own free AI keys: add a Groq key (fast text) and a Gemini key (needed for screenshots). Both are free and need no card."
+              : "Optional: add your own keys and your runs use them instead of the server's."}
+          </p>
+        </div>
+        <div className="grid-3">
+          {AI_SERVICES.map((s) => <ServiceCard key={s.service} spec={s} creds={creds} onChange={async () => { await load(); await reloadMe(); }} />)}
+        </div>
+      </section>
       <Documents docs={docs} onChange={load} />
       <Profile key={JSON.stringify(me?.profile ?? {})} initial={(me?.profile ?? {}) as Record<string, unknown>} />
       <section className="stack" style={{ gap: 14 }}>

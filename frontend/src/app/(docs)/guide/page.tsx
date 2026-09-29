@@ -26,6 +26,8 @@ const EXAMPLES = [
 ];
 
 const TROUBLE: [string, string][] = [
+  ["\"Add your own Groq or Gemini API key…\"", "Tasks run on your own keys. Add one under Profile & apps → AI model keys (step 2 above)."],
+  ["\"…images need a Gemini key\"", "The agent wanted a screenshot to find a button. Add a Gemini key, or set Options → Page structure only on the New task page."],
   ["\"Waiting for you\" and nothing moves", "The run is paused for your approval. Look at the panel on the right of the run page, approve or reject, and it continues."],
   ["\"This step needs your resume\"", "Upload it under Profile & apps, then choose Try again in the approval panel."],
   ["\"The site is showing a bot check / CAPTCHA\"", "Ease never solves CAPTCHAs. Open the site yourself, pass the check, then choose Try again, or skip the step."],
@@ -41,12 +43,13 @@ export default function GuidePage() {
         <span className="eyebrow">Getting started</span>
         <h1 style={{ fontSize: 36 }}>Set up your Ease account</h1>
         <p className="lead">
-          Five minutes from sign-up to your first run. Only step 1 is required; everything else unlocks more kinds of
-          tasks.
+          Five minutes from sign-up to your first run. Steps 1 and 2 are required; everything else unlocks more kinds
+          of tasks.
         </p>
         <nav className="toc" aria-label="On this page">
-          <a href="#account">1 · Account</a><a href="#profile">2 · Your details</a><a href="#apps">3 · Connect apps</a>
-          <a href="#first">4 · First task</a><a href="#approve">5 · Approvals</a><a href="#results">6 · Results</a>
+          <a href="#account">1 · Account</a><a href="#ai-keys">2 · AI keys</a><a href="#profile">3 · Your details</a>
+          <a href="#apps">4 · Connect apps</a><a href="#first">5 · First task</a><a href="#approve">6 · Approvals</a>
+          <a href="#results">7 · Results</a>
           <a href="#rules">What Ease won&apos;t do</a><a href="#help">Troubleshooting</a><a href="#self-host">Run it yourself</a>
         </nav>
       </section>
@@ -56,13 +59,31 @@ export default function GuidePage() {
         <ol className="steps">
           <li><div>Open the app and choose <b>Create an account</b> (<Link href="/register">sign up here</Link>).</div></li>
           <li><div>Enter your name, email and a password of at least 10 characters. Use a password you don&apos;t use anywhere else.</div></li>
-          <li><div>If the person running this Ease server gave you an <b>invite code</b>, enter it. Shared deployments require one, so strangers can&apos;t use up the AI quota.</div></li>
+          <li><div>Leave <b>Invite code</b> empty. It is only needed on private servers that share the owner&apos;s AI keys.</div></li>
           <li><div>You stay signed in on this browser. Your session renews itself securely and ends when you sign out.</div></li>
         </ol>
       </section>
 
+      <section id="ai-keys">
+        <h2>2 · Add your free AI keys</h2>
+        <p>
+          Ease plans and acts with AI models, and on this website it runs on <b>your own keys</b>. Nobody else&apos;s
+          quota is used, and your runs never slow down because of other visitors. Both keys are free and need no card.
+        </p>
+        <ol className="steps">
+          <li><div><b>Groq</b> (fast text model, recommended): go to <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">console.groq.com/keys</a>, sign in, choose <b>Create API Key</b>, and copy it (it starts with <code>gsk_</code>).</div></li>
+          <li><div><b>Gemini</b> (needed when the agent looks at screenshots): go to <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com/apikey</a>, choose <b>Create API key</b>, and copy it (it starts with <code>AIza</code>).</div></li>
+          <li><div>In Ease, open <b>Profile &amp; apps → AI model keys</b>, paste each key into its card, and choose <b>Connect</b>. The New task page stops asking for keys once one is connected.</div></li>
+        </ol>
+        <p className="small muted">
+          One key is enough to start: Groq alone handles most text tasks, and Gemini alone handles everything, just a
+          little slower. Free tiers allow a limited number of requests per minute and per day, so a long browsing task
+          can pause for a moment. That is normal.
+        </p>
+      </section>
+
       <section id="profile">
-        <h2>2 · Add your details (optional)</h2>
+        <h2>3 · Add your details (optional)</h2>
         <p>Open <b>Profile &amp; apps</b> from the top bar.</p>
         <ol className="steps">
           <li><div><b>Upload your resume</b> (PDF or text, up to 5 MB). Ease reads it on the server, fills in your profile, and uses it to rank jobs or courses against your experience. It shows <i>Ready</i> when it is done.</div></li>
@@ -72,7 +93,7 @@ export default function GuidePage() {
       </section>
 
       <section id="apps">
-        <h2>3 · Connect apps (optional)</h2>
+        <h2>4 · Connect apps (optional)</h2>
         <p>
           In <b>Profile &amp; apps → Services</b>, paste a key into a card and choose <b>Connect</b>. Every service
           below has a free tier and needs no credit card. Ease only offers the AI a tool once its key is connected.
@@ -95,7 +116,7 @@ export default function GuidePage() {
       </section>
 
       <section id="first">
-        <h2>4 · Run your first task</h2>
+        <h2>5 · Run your first task</h2>
         <ol className="steps">
           <li><div>Go to <b>New task</b>, type what you want in plain English, and choose <b>Start</b>. The example buttons under the box fill in ready-made tasks.</div></li>
           <li><div>
@@ -114,7 +135,7 @@ export default function GuidePage() {
       </section>
 
       <section id="approve">
-        <h2>5 · Approve or reject actions</h2>
+        <h2>6 · Approve or reject actions</h2>
         <p>When a step would do something you can&apos;t undo, like submitting a form or sending a message, the run pauses and shows <b>Waiting for you</b>. A panel opens on the right:</p>
         <ol className="steps">
           <li><div>Look at the <b>screenshot of the filled form</b> and the list of fields the agent filled.</div></li>
@@ -125,7 +146,7 @@ export default function GuidePage() {
       </section>
 
       <section id="results">
-        <h2>6 · Read results and ask follow-ups</h2>
+        <h2>7 · Read results and ask follow-ups</h2>
         <ul>
           <li>The <b>Done</b> card shows a short answer and a table of everything found. Titles link to the source.</li>
           <li>In price comparisons, each seller has a badge: <b>Trusted</b> (well-known retailer or official brand store), <b>Unverified</b> (unknown store: check reviews before paying) or <b>Not trusted</b> (red flags; never recommended). Hover a badge to see why.</li>

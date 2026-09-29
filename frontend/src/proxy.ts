@@ -13,6 +13,9 @@ export function proxy(request: NextRequest) {
   // a same-origin API ("/backend") is already covered by 'self' (CSP3 'self' includes ws/wss to the same host)
   const api = rawApi.startsWith("/") ? "" : rawApi;
   const ws = rawApi.startsWith("/") ? "" : (process.env.NEXT_PUBLIC_WS_URL || api.replace(/^http/, "ws")).replace(/\/$/, "");
+  // Who may embed the app in a frame: nobody, unless the host page is listed (e.g. the Hugging Face Space page).
+  const frameAncestors = (process.env.FRAME_ANCESTORS || "").match(/^(https:\/\/[a-z0-9.-]+\s*)+$/i)
+    ? process.env.FRAME_ANCESTORS : "'none'";
   const https = rawApi.startsWith("https") || request.headers.get("x-forwarded-proto") === "https";
   const csp = `
     default-src 'self';
@@ -24,7 +27,7 @@ export function proxy(request: NextRequest) {
     object-src 'none';
     base-uri 'self';
     form-action 'self';
-    frame-ancestors 'none';
+    frame-ancestors ${frameAncestors};
     ${https ? "upgrade-insecure-requests;" : ""}
   `.replace(/\s{2,}/g, " ").trim();
 

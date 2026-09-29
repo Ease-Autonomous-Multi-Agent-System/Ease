@@ -56,6 +56,7 @@ class MeOut(BaseModel):
     profile: dict[str, Any]
     usage: dict[str, int]
     limits: dict[str, int]
+    ai: dict[str, bool] = {}  # own_ai_key, own_vision_key, ai_ready, user_keys_only
 
 
 class RunConfig(BaseModel):

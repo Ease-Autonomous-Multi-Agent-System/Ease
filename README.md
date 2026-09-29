@@ -76,6 +76,8 @@ cd backend
 ../.venv/Scripts/python -m ease.graph.run --prompt "Get the 5 most recent cs.AI papers from arXiv"
 ```
 
+**Public deployment (free):** one container on Hugging Face Spaces. See [docs/DEPLOY.md](docs/DEPLOY.md).
+
 For frontend work, leave out `--profile web` and run `npm --prefix frontend run dev` instead (hot reload, same port).
 
 Put your resume at `private/resume.pdf` (git-ignored) to use matching and form filling.

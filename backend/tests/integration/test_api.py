@@ -33,6 +33,18 @@ def reset_rate_limits():
 
 
 @pytest.fixture(autouse=True)
+def server_ai_key(monkeypatch):
+    """Tasks need an AI key to be accepted; give the server a (never used) one."""
+    from ease.config import get_settings
+
+    monkeypatch.setenv("GROQ_API_KEY", "gsk_test_not_used")
+    monkeypatch.setenv("USER_KEYS_ONLY", "false")
+    get_settings.cache_clear()
+    yield
+    get_settings.cache_clear()
+
+
+@pytest.fixture(autouse=True)
 def no_celery(monkeypatch):
     sent = []
     from ease.worker import tasks as wt
@@ -218,3 +230,43 @@ def test_follow_up_carries_previous_result_and_is_owner_only(client, no_celery):
     assert cfg["follow_up_of"] == tid and cfg["previous"]["items"][0]["store"] == "Flipkart"
     # the stored context is not echoed back to the browser
     assert "previous" not in client.get(f"/tasks/{r.json()['task_id']}", headers=alice).json()["config"]
+
+
+def test_public_site_runs_only_on_the_users_own_ai_key(client, no_celery, monkeypatch):
+    from ease.config import get_settings
+
+    monkeypatch.setenv("USER_KEYS_ONLY", "true")  # the server's GROQ_API_KEY must now be ignored
+    get_settings.cache_clear()
+    _, h, _ = _register(client)
+    me = client.get("/me", headers=h).json()
+    assert me["ai"] == {"own_ai_key": False, "own_vision_key": False, "ai_ready": False, "user_keys_only": True}
+    r = client.post("/tasks", json={"prompt": "Get the 5 newest cs.AI papers"}, headers=h)
+    assert r.status_code == 409 and "API key" in r.json()["detail"]
+
+    assert client.put("/credentials/groq/default", json={"secret": "gsk_user_own_key_123", "kind": "api_key"},
+                      headers=h).status_code in (200, 201)
+    assert client.get("/me", headers=h).json()["ai"]["ai_ready"] is True
+    assert client.post("/tasks", json={"prompt": "Get the 5 newest cs.AI papers"}, headers=h).status_code == 202
+
+
+def test_router_uses_the_run_owners_key_and_never_the_servers(monkeypatch):
+    import httpx
+
+    from ease.config import get_settings
+    from ease.llm.router import LlmRouter, LlmUnavailable
+
+    monkeypatch.setenv("USER_KEYS_ONLY", "true")
+    get_settings.cache_clear()
+    seen = []
+
+    def handler(req):
+        seen.append(req.headers["authorization"])
+        return httpx.Response(200, json={"choices": [{"message": {"content": "hi"}}], "usage": {}})
+
+    keys = {("alice", "groq"): "gsk_alice"}
+    r = LlmRouter(transport=httpx.MockTransport(handler), key_lookup=lambda u, p: keys.get((u, p)))
+    r.cache.mode = "off"
+    r.complete([{"role": "user", "content": "x"}], user_id="alice")
+    assert seen == ["Bearer gsk_alice"]
+    with pytest.raises(LlmUnavailable, match="add your own"):
+        r.complete([{"role": "user", "content": "y"}], user_id="bob")

@@ -162,3 +162,23 @@ def test_websocket_origin_rules():
     assert origin_allowed("https://demo.trycloudflare.com", "demo.trycloudflare.com")  # same origin via gateway
     assert not origin_allowed("https://evil.example", "demo.trycloudflare.com")
     assert not origin_allowed("javascript://demo.trycloudflare.com", "demo.trycloudflare.com")
+
+
+def test_fixture_hosts_can_be_limited_to_fixture_ports(monkeypatch):
+    from ease.config import get_settings
+    from ease.security.netguard import BlockedURL, check_url
+
+    monkeypatch.setenv("FIXTURE_HOSTS", "127.0.0.1")
+    monkeypatch.setenv("FIXTURE_PORTS", "8080")
+    get_settings.cache_clear()
+    try:
+        assert check_url("http://127.0.0.1:8080/jobs/")
+        for internal in ("http://127.0.0.1:8000/auth/me", "http://127.0.0.1:6379/", "http://127.0.0.1/"):
+            with pytest.raises(BlockedURL):
+                check_url(internal)
+        with pytest.raises(BlockedURL):
+            check_url("http://localhost:8080/")  # not in the host list any more
+    finally:
+        monkeypatch.delenv("FIXTURE_HOSTS")
+        monkeypatch.delenv("FIXTURE_PORTS")
+        get_settings.cache_clear()

@@ -33,6 +33,12 @@ class Settings(BaseSettings):
     # --- vault ---
     vault_master_key: SecretStr = SecretStr("")
 
+    # --- whose API keys pay for a run ---
+    # False (own server): a user's own key is used when they saved one, otherwise the keys in this .env.
+    # True (public website): only the signed-in user's own keys (AI models and every connector); keys in the
+    # server's environment are never used, so visitors cannot spend the operator's quota.
+    user_keys_only: bool = False
+
     # --- LLM providers (all optional; router skips providers without a key) ---
     gemini_api_key: SecretStr | None = None
     groq_api_key: SecretStr | None = None
@@ -71,6 +77,9 @@ class Settings(BaseSettings):
     # --- browser / network safety ---
     # Hosts the browser + API agents may reach even though they resolve to private IPs (local fixture sites).
     fixture_hosts: str = "fixtures,localhost,127.0.0.1"
+    # Ports allowed on those hosts ("" = any: local development). A public server sets e.g. "8080" so a user
+    # cannot point the agent at internal services (API, database, Redis) that listen on the same machine.
+    fixture_ports: str = ""
     browser_headless: bool = True
     browser_cdp_url: str | None = None  # connect to a real Chrome (host mode) instead of launching one
     respect_robots_txt: bool = True
@@ -95,6 +104,10 @@ class Settings(BaseSettings):
     @property
     def fixture_host_set(self) -> set[str]:
         return {h.strip().lower() for h in self.fixture_hosts.split(",") if h.strip()}
+
+    @property
+    def fixture_port_set(self) -> set[int]:
+        return {int(p) for p in self.fixture_ports.split(",") if p.strip()}
 
     @property
     def cors_origin_list(self) -> list[str]:

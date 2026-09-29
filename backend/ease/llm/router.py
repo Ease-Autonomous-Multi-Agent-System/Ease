@@ -12,9 +12,12 @@ For each call the router:
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 import os
 import time
+import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, Literal, TypeVar
 
@@ -116,6 +119,46 @@ def _api_key(name: str) -> str | None:
     return secret.get_secret_value().strip() if secret and secret.get_secret_value().strip() else None
 
 
+def _vault_key(user_id: str | None, provider: str) -> str | None:
+    """The user's own key for a provider ("groq:default", "gemini:default", ...) from their encrypted vault."""
+    try:
+        uid = uuid.UUID(str(user_id))
+    except ValueError:
+        return None  # local CLI / benchmark runs have no account
+    from ease.db.session import session_scope
+    from ease.security.vault import Vault
+
+    try:
+        with session_scope() as s:
+            return (Vault(s).get(uid, f"{provider}:default") or "").strip() or None
+    except Exception:
+        log.warning("llm.user_key_lookup_failed", provider=provider)
+        return None
+
+
+@dataclass(frozen=True)
+class _Key:
+    value: str
+    scope: str  # cooldown scope: the provider for the server's key, provider + key fingerprint for a user's key
+
+
+AI_KEY_SERVICES = ("groq", "gemini", "openrouter")
+
+
+def ai_key_status(session, user_id) -> dict[str, bool]:
+    """Can this user run tasks, and on whose keys? Used by /me and before a task is queued."""
+    from sqlalchemy import select
+
+    from ease.db.models import Credential
+
+    s = get_settings()
+    own = set(session.scalars(select(Credential.service).where(
+        Credential.user_id == user_id, Credential.service.in_(AI_KEY_SERVICES), Credential.name == "default")))
+    server = not s.user_keys_only and any(_api_key(n) for n in PROVIDERS)
+    return {"own_ai_key": bool(own), "ai_ready": bool(own) or server, "user_keys_only": s.user_keys_only,
+            "own_vision_key": bool(own & {"gemini", "openrouter"})}
+
+
 def _model_override(provider: str, tier: str, vision: bool) -> str | None:
     # e.g. LLM_MODEL_GEMINI_FAST=gemini-3.1-flash-lite  /  LLM_MODEL_GEMINI_VISION_FAST=...
     key = f"LLM_MODEL_{provider.upper()}_{'VISION_' if vision else ''}{tier.upper()}"
@@ -124,32 +167,47 @@ def _model_override(provider: str, tier: str, vision: bool) -> str | None:
 
 class LlmRouter:
     def __init__(self, budget: LlmBudget | None = None, cache: LlmCache | None = None,
-                 transport: httpx.BaseTransport | None = None):
+                 transport: httpx.BaseTransport | None = None,
+                 key_lookup: Callable[[str | None, str], str | None] | None = None):
         s = get_settings()
         self.budget = budget
+        self.key_lookup = key_lookup or _vault_key
         self.cache = cache or LlmCache(s.llm_cache_path, s.llm_cache_mode)
         self.vision_order = [p.strip() for p in s.llm_provider_order.split(",") if p.strip() in PROVIDERS]
         self.text_order = [p.strip() for p in s.llm_text_provider_order.split(",") if p.strip() in PROVIDERS]
         self.http = httpx.Client(timeout=httpx.Timeout(45, connect=10), transport=transport)
 
-    # ---- provider cooldowns (shared across workers through Redis) ----
-    def _cooling(self, provider: str) -> bool:
+    # ---- whose key: the user's own key first; the server's key unless USER_KEYS_ONLY ----
+    def keys_for(self, user_id: str | None) -> dict[str, _Key]:
+        user_keys_only = get_settings().user_keys_only
+        out: dict[str, _Key] = {}
+        for name in dict.fromkeys(self.text_order + self.vision_order):
+            own = self.key_lookup(user_id, name) if user_id and name != "ollama" else None
+            if own:
+                out[name] = _Key(own, f"{name}:{hashlib.sha256(own.encode()).hexdigest()[:12]}")
+            elif not user_keys_only and (server := _api_key(name)):
+                out[name] = _Key(server, name)
+        return out
+
+    # ---- cooldowns per key (shared across workers through Redis): one user's rate limit never blocks another ----
+    def _cooling(self, scope: str) -> bool:
         try:
-            return bool(get_redis().exists(f"llm:cooldown:{provider}"))
+            return bool(get_redis().exists(f"llm:cooldown:{scope}"))
         except Exception:  # Redis down shouldn't stop the local CLI runner
             return False
 
-    def _cool(self, provider: str, seconds: int) -> None:
+    def _cool(self, scope: str, seconds: int) -> None:
         try:
-            get_redis().set(f"llm:cooldown:{provider}", "1", ex=max(5, min(seconds, 3600)))
+            get_redis().set(f"llm:cooldown:{scope}", "1", ex=max(5, min(seconds, 3600)))
         except Exception:  # noqa: S110
             pass
 
-    def eligible(self, need_vision: bool) -> list[Provider]:
+    def eligible(self, need_vision: bool, keys: dict[str, _Key] | None = None) -> list[Provider]:
+        keys = self.keys_for(None) if keys is None else keys
         out = []
         for name in self.vision_order if need_vision else self.text_order:
             p = PROVIDERS[name]
-            if _api_key(name) is None or (need_vision and not p.vision_models) or self._cooling(name):
+            if name not in keys or (need_vision and not p.vision_models) or self._cooling(keys[name].scope):
                 continue
             out.append(p)
         return out
@@ -180,19 +238,24 @@ class LlmRouter:
             self.budget.consume(user_id=user_id, task_id=task_id)  # raises BudgetExceeded
 
         errors: list[str] = []
-        providers = self.eligible(need_vision)
-        if not providers and self._wait_for_cooldown(need_vision):
-            providers = self.eligible(need_vision)
+        keys = self.keys_for(user_id)
+        providers = self.eligible(need_vision, keys)
+        if not providers and self._wait_for_cooldown(need_vision, keys):
+            providers = self.eligible(need_vision, keys)
         if not providers:
-            configured = [n for n in (self.vision_order if need_vision else self.text_order) if _api_key(n)]
-            raise LlmUnavailable("all LLM providers are cooling down after errors/rate limits" if configured
-                                 else "no LLM provider is configured" + (" for images" if need_vision else ""))
+            configured = [n for n in (self.vision_order if need_vision else self.text_order) if n in keys]
+            if configured:
+                raise LlmUnavailable("all LLM providers are cooling down after errors/rate limits")
+            if get_settings().user_keys_only:
+                raise LlmUnavailable("no AI key: add your own Groq or Gemini API key under Profile & apps"
+                                     + (" (images need a Gemini key)" if need_vision else ""))
+            raise LlmUnavailable("no LLM provider is configured" + (" for images" if need_vision else ""))
         for p in providers:
             model = _model_override(p.name, tier, need_vision) or (p.vision_models if need_vision else p.models)[tier]
             try:
-                res = self._try_provider(p, model, messages, schema, max_tokens)
+                res = self._try_provider(p, model, messages, schema, max_tokens, keys[p.name].value)
             except _Retryable as exc:
-                self._cool(p.name, exc.retry_after)
+                self._cool(keys[p.name].scope, exc.retry_after)
                 errors.append(f"{p.name}: {exc}")
                 continue
             except LlmError as exc:
@@ -205,7 +268,7 @@ class LlmRouter:
         raise LlmUnavailable("no LLM provider succeeded: " + "; ".join(errors))
 
     def _try_provider(self, p: Provider, model: str, messages: list[dict[str, Any]], schema: type[T] | None,
-                      max_tokens: int) -> LlmResult:
+                      max_tokens: int, key: str) -> LlmResult:
         """Structured-output modes, strictest first. Each fallback only happens on an HTTP 400 that the
         provider raised about the output format; Pydantic validates whatever comes back regardless."""
         base: dict[str, Any] = {"model": model, "max_tokens": max_tokens, "temperature": 0}
@@ -215,7 +278,7 @@ class LlmRouter:
             base["reasoning_effort"] = "low"
             base["max_tokens"] = max(max_tokens, 3000)
         if schema is None:
-            return self._post(p, {**base, "messages": messages})
+            return self._post(p, {**base, "messages": messages}, key)
         modes: list[dict[str, Any]] = []
         if p.json_schema_ok:
             modes.append({**base, "messages": messages, "response_format": {
@@ -227,7 +290,7 @@ class LlmRouter:
         last: LlmError | None = None
         for body in modes:
             try:
-                return self._post(p, body)
+                return self._post(p, body, key)
             except _Retryable:
                 raise
             except LlmError as exc:
@@ -236,13 +299,14 @@ class LlmRouter:
                 last = exc
         raise last or LlmError("no structured-output mode worked")
 
-    def _wait_for_cooldown(self, need_vision: bool, max_wait: int | None = None) -> bool:
+    def _wait_for_cooldown(self, need_vision: bool, keys: dict[str, _Key], max_wait: int | None = None) -> bool:
         """Every configured provider is cooling down: wait for the soonest one (bounded) instead of failing."""
         max_wait = get_settings().llm_max_cooldown_wait_s if max_wait is None else max_wait
         try:
             r = get_redis()
-            ttls = [r.ttl(f"llm:cooldown:{n}") for n in (self.vision_order if need_vision else self.text_order)
-                    if _api_key(n) and (not need_vision or PROVIDERS[n].vision_models)]
+            ttls = [r.ttl(f"llm:cooldown:{keys[n].scope}")
+                    for n in (self.vision_order if need_vision else self.text_order)
+                    if n in keys and (not need_vision or PROVIDERS[n].vision_models)]
         except Exception:
             return False
         ttls = [t for t in ttls if t and t > 0]
@@ -251,9 +315,9 @@ class LlmRouter:
         time.sleep(min(ttls) + 0.5)
         return True
 
-    def _post(self, p: Provider, body: dict[str, Any]) -> LlmResult:
+    def _post(self, p: Provider, body: dict[str, Any], key: str) -> LlmResult:
         base = p.base_url or (get_settings().ollama_base_url or "").rstrip("/") + "/v1"
-        headers = {"Authorization": f"Bearer {_api_key(p.name)}", "User-Agent": "ease/0.1"}
+        headers = {"Authorization": f"Bearer {key}", "User-Agent": "ease/0.1"}
         if p.name == "openrouter":
             headers["X-Title"] = "Ease"
         t0 = time.monotonic()

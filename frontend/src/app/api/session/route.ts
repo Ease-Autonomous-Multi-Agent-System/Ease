@@ -27,10 +27,20 @@ function sameOrigin(req: NextRequest): boolean {
   }
 }
 
-async function backend(path: string, payload: unknown) {
+/**
+ * The visitor's IP for the API's per-IP limits. This route calls the API from the server, so without it every
+ * sign-in would look like it came from the web server itself. The value is the one the gateway set (it
+ * overwrites whatever the client sent); the API only trusts it from inside the deployment (--forwarded-allow-ips).
+ */
+function clientIp(req: NextRequest): string | null {
+  const ip = (req.headers.get("x-forwarded-for") || "").split(",").pop()?.trim() || "";
+  return /^[0-9a-f.:]{3,45}$/i.test(ip) ? ip : null;
+}
+
+async function backend(path: string, payload: unknown, ip: string | null) {
   const res = await fetch(`${BACKEND}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...(ip ? { "X-Forwarded-For": ip } : {}) },
     body: JSON.stringify(payload),
     cache: "no-store",
   });
@@ -61,17 +71,18 @@ export async function POST(req: NextRequest) {
   }
   const body = (await req.json().catch(() => ({}))) as Body;
   const jar = await cookies();
+  const ip = clientIp(req);
 
   switch (body.action) {
     case "login": {
-      const r = await backend("/auth/login", { email: body.email, password: body.password });
+      const r = await backend("/auth/login", { email: body.email, password: body.password }, ip);
       return r.ok ? setSession(req, r.data) : fail(r.status, r.data);
     }
     case "register": {
       const r = await backend("/auth/register", {
         email: body.email, password: body.password, full_name: body.full_name ?? "",
         invite_code: body.invite_code || undefined,
-      });
+      }, ip);
       if (!r.ok && r.status === 422 && Array.isArray(r.data?.detail)) {
         return NextResponse.json({ detail: "Use a valid email and a password of at least 10 characters with letters and digits." }, { status: 422 });
       }
@@ -80,7 +91,7 @@ export async function POST(req: NextRequest) {
     case "refresh": {
       const rt = jar.get(COOKIE)?.value;
       if (!rt) return NextResponse.json({ detail: "signed out" }, { status: 401 });
-      const r = await backend("/auth/refresh", { refresh_token: rt });
+      const r = await backend("/auth/refresh", { refresh_token: rt }, ip);
       if (!r.ok) {
         jar.delete({ name: COOKIE, path: "/api/session" });
         return fail(401, r.data);
@@ -89,7 +100,7 @@ export async function POST(req: NextRequest) {
     }
     case "logout": {
       const rt = jar.get(COOKIE)?.value;
-      if (rt) await backend("/auth/logout", { refresh_token: rt }).catch(() => null);
+      if (rt) await backend("/auth/logout", { refresh_token: rt }, ip).catch(() => null);
       jar.delete({ name: COOKIE, path: "/api/session" });
       return NextResponse.json({ ok: true });
     }

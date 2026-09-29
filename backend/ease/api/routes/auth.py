@@ -96,9 +96,12 @@ def logout(body: RefreshIn) -> None:
 
 
 @router.get("/me", response_model=MeOut)
-def me(user: User = Depends(current_user)) -> MeOut:
+def me(user: User = Depends(current_user), db: Session = Depends(get_db)) -> MeOut:
+    from ease.llm.router import ai_key_status
+
     s = get_settings()
     return MeOut(
+        ai=ai_key_status(db, user.id),
         id=user.id, email=user.email, full_name=user.full_name, profile=user.profile_json or {},
         usage=LlmBudget().usage(str(user.id)),
         limits={"llm_calls_per_day": s.user_llm_calls_per_day, "tasks_per_hour": s.user_tasks_per_hour,
@@ -113,4 +116,4 @@ def update_me(body: ProfileIn, user: User = Depends(current_user), db: Session =
     if body.profile is not None:
         user.profile_json = {k: v for k, v in body.profile.items() if isinstance(k, str) and len(k) <= 60}
     db.add(user)
-    return me(user)
+    return me(user, db)

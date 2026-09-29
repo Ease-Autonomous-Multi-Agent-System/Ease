@@ -2,7 +2,7 @@
 
 import {
   IconAdjustmentsHorizontal, IconArrowRight, IconBook2, IconBooks, IconBriefcase, IconFileUpload, IconForms,
-  IconSearch, IconShoppingBag,
+  IconKey, IconSearch, IconShoppingBag,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -70,10 +70,24 @@ export default function ComposerPage() {
         <p>Describe a goal. Ease plans it, uses APIs where it can and a real browser where it must, and stops for your approval before anything irreversible.</p>
       </div>
 
+      {me?.ai && !me.ai.ai_ready ? (
+        <div className="card row" style={{ gap: 16, borderColor: "var(--wait-border)" }}>
+          <IconKey size={28} color="var(--wait)" aria-hidden="true" />
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <h3>First, add your free AI key</h3>
+            <p className="small muted" style={{ marginTop: 2 }}>
+              Ease runs on your own AI keys. Add a Groq key (fast text) and a Gemini key (screenshots). Both take a
+              minute to get, are free and need no card.
+            </p>
+          </div>
+          <Link href="/settings#ai-keys" className="btn btn-primary">Add keys</Link>
+        </div>
+      ) : null}
+
       <form className="card composer" onSubmit={start}>
         <label htmlFor="goal" className="sr-only">Your goal</label>
         <textarea id="goal" className="textarea" value={prompt} maxLength={2000} autoFocus
-          placeholder="Find remote ML internships, rank them against my resume, and apply to the best one"
+          placeholder="e.g. Find the 5 newest papers on AI agents and summarise each · Where is a Casio F-91W cheapest? · Fill this form with my details"
           onChange={(e) => { setPrompt(e.target.value); setError(null); }}
           onKeyDown={(e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) void start(); }} />
         <div className="composer-foot">

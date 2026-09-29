@@ -51,6 +51,9 @@ def check_url(url: str) -> str:
     if parts.username or parts.password:
         raise BlockedURL("credentials in URLs are not allowed")
     if host in get_settings().fixture_host_set:
+        ports = get_settings().fixture_port_set
+        if ports and (parts.port or (443 if parts.scheme == "https" else 80)) not in ports:
+            raise BlockedURL(f"port {parts.port} is not allowed on {host!r}")
         return url
     if host in _BLOCKED_HOSTNAMES or host.endswith(".internal") or host.endswith(".local"):
         raise BlockedURL(f"host {host!r} is internal")

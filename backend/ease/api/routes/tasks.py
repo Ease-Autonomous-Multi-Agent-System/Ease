@@ -87,6 +87,11 @@ def create_task(body: TaskIn, user: User = Depends(current_user), db: Session = 
     if (active or 0) >= s.user_concurrent_tasks:
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS,
                             f"you already have {active} running task(s); wait for one to finish")
+    from ease.llm.router import ai_key_status
+
+    if not ai_key_status(db, user.id)["ai_ready"]:
+        raise HTTPException(status.HTTP_409_CONFLICT,
+                            "Add your own Groq or Gemini API key under Profile & apps before running a task.")
     if body.template_id and not db.scalar(select(WorkflowTemplate.id).where(
             WorkflowTemplate.id == body.template_id, WorkflowTemplate.user_id == user.id)):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "template not found")
