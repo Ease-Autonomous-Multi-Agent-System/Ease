@@ -73,7 +73,7 @@ class RunRecord:
     infra_retries: int = 0  # times this case was re-run because it died of rate limits only
 
 
-RATE_LIMIT_MARKERS = ("no llm provider succeeded", "http 429", "http 503")
+RATE_LIMIT_MARKERS = ("no llm provider succeeded", "providers are cooling down", "http 429", "http 503")
 
 
 def _rate_limited(state: dict[str, Any]) -> bool:
@@ -204,6 +204,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--suite", choices=["fixture", "live", "all"], default="fixture")
     ap.add_argument("--conditions", choices=list(CONDITIONS), default="default")
     ap.add_argument("--repeats", type=int, default=1)
+    ap.add_argument("--repeat-start", type=int, default=0, help="first repeat index (to resume an interrupted run)")
     ap.add_argument("--cases", default="", help="comma-separated case ids")
     ap.add_argument("--run-id", default=time.strftime("%Y%m%d-%H%M%S"))
     ap.add_argument("--pause", type=float, default=10, help="seconds between cases (free-tier rate limits)")
@@ -223,7 +224,7 @@ def main(argv: list[str] | None = None) -> int:
     total = len(cases) * len(CONDITIONS[args.conditions]) * args.repeats
     n = 0
     for cond in CONDITIONS[args.conditions]:
-        for rep in range(args.repeats):
+        for rep in range(args.repeat_start, args.repeat_start + args.repeats):
             for case in cases:
                 n += 1
                 print(f"[{n}/{total}] {case['id']} | {cond['name']} | repeat {rep + 1}", flush=True)
