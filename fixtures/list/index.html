@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CourseHub — Course catalogue</title>
+  <link rel="stylesheet" href="/common.css">
+</head>
+<body>
+  <header class="bar"><div class="wrap"><strong>CourseHub</strong><a href="/list/">Catalogue</a></div></header>
+  <main class="wrap">
+    <h1>Course catalogue 2026–27</h1>
+    <p id="count" class="muted"></p>
+    <section id="results" aria-live="polite"></section>
+    <nav class="pager" id="pager" aria-label="Pagination"></nav>
+  </main>
+
+  <script>
+    // 45 fixed courses, shown 10 per page (the answers for the benchmark are listed in the PR, not here).
+    const COURSES = [
+      { code: "CS101", title: "Introduction to Programming", credits: 3, instructor: "Dr. Mehta" },
+      { code: "CS102", title: "Discrete Mathematics", credits: 4, instructor: "Prof. Iyer" },
+      { code: "CS103", title: "Data Structures", credits: 3, instructor: "Dr. Rao" },
+      { code: "CS104", title: "Digital Logic Design", credits: 2, instructor: "Prof. Sharma" },
+      { code: "CS105", title: "Computer Organization", credits: 4, instructor: "Dr. Mehta" },
+      { code: "CS106", title: "Object-Oriented Programming", credits: 3, instructor: "Prof. Iyer" },
+      { code: "CS107", title: "Probability and Statistics", credits: 3, instructor: "Dr. Khan" },
+      { code: "CS108", title: "Design and Analysis of Algorithms", credits: 4, instructor: "Prof. Sharma" },
+      { code: "CS109", title: "Operating Systems", credits: 2, instructor: "Dr. Mehta" },
+      { code: "CS110", title: "Database Management Systems", credits: 3, instructor: "Prof. Iyer" },
+      { code: "CS111", title: "Computer Networks", credits: 3, instructor: "Dr. Khan" },
+      { code: "CS112", title: "Theory of Computation", credits: 4, instructor: "Prof. Sharma" },
+      { code: "CS113", title: "Software Engineering", credits: 3, instructor: "Dr. Mehta" },
+      { code: "CS114", title: "Compiler Design", credits: 2, instructor: "Prof. Iyer" },
+      { code: "CS115", title: "Web Technologies", credits: 4, instructor: "Dr. Khan" },
+      { code: "CS116", title: "Artificial Intelligence", credits: 3, instructor: "Prof. Sharma" },
+      { code: "CS117", title: "Machine Learning", credits: 3, instructor: "Dr. Mehta" },
+      { code: "CS118", title: "Deep Learning", credits: 4, instructor: "Prof. Iyer" },
+      { code: "CS119", title: "Natural Language Processing", credits: 2, instructor: "Dr. Khan" },
+      { code: "CS120", title: "Computer Vision", credits: 3, instructor: "Prof. Sharma" },
+      { code: "CS121", title: "Cloud Computing", credits: 3, instructor: "Dr. Mehta" },
+      { code: "CS122", title: "Distributed Systems", credits: 4, instructor: "Prof. Iyer" },
+      { code: "CS123", title: "Information Security", credits: 3, instructor: "Dr. Khan" },
+      { code: "CS124", title: "Cryptography", credits: 2, instructor: "Prof. Sharma" },
+      { code: "CS125", title: "Data Mining", credits: 4, instructor: "Dr. Rao" },
+      { code: "CS126", title: "Big Data Analytics", credits: 3, instructor: "Prof. Iyer" },
+      { code: "CS127", title: "Internet of Things", credits: 3, instructor: "Dr. Khan" },
+      { code: "CS128", title: "Embedded Systems", credits: 4, instructor: "Prof. Sharma" },
+      { code: "CS129", title: "Human-Computer Interaction", credits: 2, instructor: "Dr. Mehta" },
+      { code: "CS130", title: "Computer Graphics", credits: 3, instructor: "Prof. Iyer" },
+      { code: "CS131", title: "Mobile Application Development", credits: 3, instructor: "Dr. Khan" },
+      { code: "CS132", title: "Blockchain Fundamentals", credits: 4, instructor: "Prof. Sharma" },
+      { code: "CS133", title: "Reinforcement Learning", credits: 3, instructor: "Dr. Mehta" },
+      { code: "CS134", title: "Parallel Computing", credits: 2, instructor: "Prof. Iyer" },
+      { code: "CS135", title: "Linear Algebra for AI", credits: 4, instructor: "Dr. Khan" },
+      { code: "CS136", title: "Optimization Techniques", credits: 3, instructor: "Prof. Sharma" },
+      { code: "CS137", title: "Software Testing", credits: 3, instructor: "Dr. Mehta" },
+      { code: "CS138", title: "DevOps Practices", credits: 4, instructor: "Prof. Iyer" },
+      { code: "CS139", title: "Quantum Computing Basics", credits: 2, instructor: "Dr. Khan" },
+      { code: "CS140", title: "Robotics", credits: 3, instructor: "Prof. Sharma" },
+      { code: "CS141", title: "Technical Writing", credits: 3, instructor: "Dr. Mehta" },
+      { code: "CS142", title: "Engineering Economics", credits: 4, instructor: "Dr. Rao" },
+      { code: "CS143", title: "Ethics in Computing", credits: 3, instructor: "Dr. Khan" },
+      { code: "CS144", title: "Research Methodology", credits: 2, instructor: "Prof. Sharma" },
+      { code: "CS145", title: "Capstone Project Seminar", credits: 4, instructor: "Dr. Mehta" }
+    ];
+    const PER_PAGE = 10;
+    let page = 1;
+    function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+    function render() {
+      const pages = Math.ceil(COURSES.length / PER_PAGE);
+      const start = (page - 1) * PER_PAGE, slice = COURSES.slice(start, start + PER_PAGE);
+      document.getElementById("count").textContent =
+        `Showing ${start + 1}–${start + slice.length} of ${COURSES.length} courses (page ${page} of ${pages})`;
+      document.getElementById("results").innerHTML = slice.map(c => `
+        <article class="card course" data-code="${c.code}">
+          <h2 style="margin:0;font-size:18px">${esc(c.code)} · ${esc(c.title)}</h2>
+          <div class="muted">${esc(c.instructor)} · ${c.credits} credits</div>
+        </article>`).join("");
+      document.getElementById("pager").innerHTML =
+        `<button class="secondary" ${page === 1 ? "disabled" : ""} onclick="go(${page - 1})">Previous</button>` +
+        Array.from({length: pages}, (_, i) =>
+          `<button ${i + 1 === page ? 'aria-current="page"' : 'class="secondary"'} onclick="go(${i + 1})">${i + 1}</button>`).join("") +
+        `<button class="secondary" ${page === pages ? "disabled" : ""} onclick="go(${page + 1})">Next</button>`;
+    }
+    function go(p) { page = p; render(); window.scrollTo(0, 0); }
+    render();
+  </script>
+</body>
+</html>
