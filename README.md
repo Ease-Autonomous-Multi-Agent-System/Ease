@@ -7,6 +7,8 @@ You type a goal in plain English. A planner LLM turns it into a typed plan (a DA
 the cheapest reliable route — a REST API when one exists, otherwise a real browser. Anything irreversible pauses for
 your approval, and that pause survives worker crashes and restarts.
 
+**To run it on your own computer, see [Run it on your computer](#run-it-on-your-computer)** (Docker, about 20 minutes).
+
 ```
 "Find remote ML internships, rank them against my resume, and apply to the best one"
         │
@@ -51,36 +53,125 @@ fixtures/         deterministic local test sites (job board, shop, member portal
 docs/             team tasks, design notes
 ```
 
-## Quick start
+## Run it on your computer
 
-Requirements: Docker Desktop (8 GB memory), Python 3.12, and free API keys for Gemini
-([aistudio.google.com](https://aistudio.google.com)) and Groq ([console.groq.com](https://console.groq.com)).
+Everything runs in Docker on your own machine: the website, API, workers, database and the demo test sites. It is
+all free. Only the AI calls go to the internet, using free Groq / Gemini keys.
+
+### What you need
+
+| | |
+|---|---|
+| **Docker Desktop** | https://www.docker.com/products/docker-desktop (Windows: keep the default WSL 2 option). Give it at least **6 GB of memory** (Settings → Resources) and 15 GB of free disk. |
+| **Git** | https://git-scm.com/downloads |
+| **Python 3.10+** | https://www.python.org/downloads (only used once, to create the settings file) |
+| **Free AI keys** | **Groq**: https://console.groq.com/keys (fast text model), and **Gemini**: https://aistudio.google.com/apikey (needed for screenshots). No card needed. |
+
+### 1. Get the code
 
 ```bash
-cp .env.example .env          # then paste your keys; generate secrets as described in the file
-docker compose --profile web up -d --build   # web :3000, api :8000, fixtures :8080 (all on 127.0.0.1)
+git clone https://github.com/Ease-Autonomous-Multi-Agent-System/Ease.git
+cd Ease
 ```
 
-- The app: http://localhost:3000 (create an account on the sign-up page)
-- API docs: http://127.0.0.1:8000/docs
-- Fixture sites: http://127.0.0.1:8080
-- Queue dashboard: `docker compose --profile ops up -d flower` → http://127.0.0.1:5555
-
-### Local development (no web stack)
+### 2. Create your settings file
 
 ```bash
-python -m venv .venv && .venv/Scripts/python -m pip install -e "backend[browser,ml,dev,eval]"
+python scripts/setup_env.py
+```
+
+This creates `.env` with fresh random secrets (the database password and the keys that encrypt saved API keys).
+`.env` is git-ignored and never committed.
+
+Then **add your AI keys**, either way:
+
+- open `.env` in any editor and fill in `GROQ_API_KEY=` and `GEMINI_API_KEY=`, **or**
+- skip this for now, and after signing in add them in the app under **Profile & apps → AI model keys**.
+
+### 3. Start Ease
+
+Make sure Docker Desktop is running, then:
+
+```bash
+docker compose --profile web up -d --build
+```
+
+The **first start takes 10–20 minutes**: it downloads images, builds the website and installs Chromium. Later starts
+take about 30 seconds. Check that everything is up with:
+
+```bash
+docker compose --profile web ps
+```
+
+Every service listed should say `Up` (and `healthy` where shown).
+
+### 4. Open it
+
+Go to **http://localhost:3000**:
+
+1. Choose **Create an account**. It's local to your machine; leave the invite code empty.
+2. If you didn't put keys in `.env`, go to **Profile & apps → AI model keys** and add them.
+3. Optionally, upload your resume under **Profile & apps**. It's needed for form filling and job matching.
+4. Go to **New task** and click an example, e.g. **Research digest** or **Browse a catalogue**, then **Start**.
+   Watch the plan and the agent's browser live. When a step would submit something, approve it in the side panel.
+
+The in-app **Guide** (top bar) and the **About** page explain every feature.
+
+### Everyday commands
+
+| To… | Run |
+|---|---|
+| stop Ease (your data is kept) | `docker compose --profile web down` |
+| start it again | `docker compose --profile web up -d` |
+| update to the latest code | `git pull` then `docker compose --profile web up -d --build` |
+| see what it is doing | `docker compose logs -f api worker-agent` |
+| wipe everything and start fresh (deletes accounts and runs) | `docker compose --profile web down -v` |
+
+### Other local addresses
+
+- Demo test sites the agent practises on: http://127.0.0.1:8080
+- API docs: http://127.0.0.1:8000/docs
+- Queue dashboard: `docker compose --profile ops up -d flower`, then http://127.0.0.1:5555
+
+All ports are bound to `127.0.0.1`, so nothing is reachable from other devices on your Wi-Fi.
+
+### Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| `docker: command not found` / "cannot connect to the Docker daemon" | Start Docker Desktop and wait until it says *Engine running*. |
+| "port is already allocated" (3000, 8000, 5432, 6379 or 8080) | Another program uses that port. Stop it, or stop another copy of Ease with `docker compose --profile web down`. |
+| The build stops with a network or timeout error | Run the same `up -d --build` command again. It continues where it stopped. |
+| Tasks fail with "no AI key" or "add your own Groq or Gemini API key" | Add a key in `.env` (then run `docker compose --profile web up -d`), or in the app under Profile & apps. |
+| Tasks pause with a rate-limit message | The free AI tiers allow limited requests per minute and day. Wait a minute and run the task again. |
+| A red "Console Error … hydration" box in the browser | A browser extension (e.g. an antivirus toolbar) changed the page. Use a private window, or turn the extension off for localhost. |
+| Anything else | `docker compose logs --tail 100 api worker-agent` shows the error. |
+
+### For developers
+
+**Frontend with hot reload.** Run the backend in Docker without the web profile, then the website with npm:
+
+```bash
+docker compose up -d --build
+npm --prefix frontend ci
+npm --prefix frontend run dev          # http://localhost:3000
+```
+
+**Command-line runner (no website).** Useful for trying the agents directly:
+
+```bash
+python -m venv .venv
+.venv/Scripts/python -m pip install -e "backend[browser,ml,dev,eval]"   # macOS/Linux: .venv/bin/python
 .venv/Scripts/python -m playwright install chromium
 docker compose up -d postgres redis fixtures
 cd backend
 ../.venv/Scripts/python -m ease.graph.run --prompt "Get the 5 most recent cs.AI papers from arXiv"
 ```
 
-**Public deployment (free):** one container on Hugging Face Spaces. See [docs/DEPLOY.md](docs/DEPLOY.md).
+Put a resume at `private/resume.pdf` (git-ignored) to use matching and form filling from the command line.
 
-For frontend work, leave out `--profile web` and run `npm --prefix frontend run dev` instead (hot reload, same port).
-
-Put your resume at `private/resume.pdf` (git-ignored) to use matching and form filling.
+**Deploying publicly** is on hold for now. Tested setups are ready for an AWS EC2 server
+([docs/DEPLOY-AWS.md](docs/DEPLOY-AWS.md)) and a Hugging Face Space ([docs/DEPLOY.md](docs/DEPLOY.md)).
 
 ## Tests
 

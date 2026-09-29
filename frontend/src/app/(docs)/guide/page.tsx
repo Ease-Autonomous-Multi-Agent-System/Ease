@@ -177,25 +177,24 @@ export default function GuidePage() {
       </section>
 
       <section id="self-host">
-        <h2>Run your own Ease server</h2>
-        <p>Everything is free and open source. On a machine with Docker Desktop (8 GB of memory) and Git:</p>
+        <h2>Run Ease on your own computer</h2>
+        <p>Everything is free and open source. You need Docker Desktop (with 6 GB of memory for it), Git and Python 3.10+:</p>
         <ol className="steps">
           <li><div>
-            Get the code and your settings file:
+            Get the code and create your settings file (it fills in fresh secrets for you):
             <pre className="card mono small" style={{ margin: 0, overflowX: "auto" }}>{`git clone ${REPO_URL}.git
 cd Ease
-cp .env.example .env`}</pre>
+python scripts/setup_env.py`}</pre>
           </div></li>
           <li><div>
-            In <code>.env</code>, paste a free <b>GROQ_API_KEY</b> (console.groq.com) and <b>GEMINI_API_KEY</b>
-            (aistudio.google.com), and generate the two secrets as the file explains. Set <b>REGISTRATION_INVITE_CODE</b>{" "}
-            if other people will use your server.
+            Optionally, paste a free <b>GROQ_API_KEY</b> and <b>GEMINI_API_KEY</b> into <code>.env</code>, or add
+            them in the app later under Profile &amp; apps.
           </div></li>
           <li><div>
-            Start everything:
+            Start everything. The first start takes 10–20 minutes; later ones about 30 seconds:
             <pre className="card mono small" style={{ margin: 0, overflowX: "auto" }}>docker compose --profile web up -d --build</pre>
           </div></li>
-          <li><div>Open <b>http://localhost:3000</b> and create your account. The first start takes a few minutes while images build. The full developer guide is in the <a href={REPO_URL} target="_blank" rel="noopener noreferrer">README</a>.</div></li>
+          <li><div>Open <b>http://localhost:3000</b> and create your account. Troubleshooting and everyday commands are in the <a href={`${REPO_URL}#run-it-on-your-computer`} target="_blank" rel="noopener noreferrer">README</a>.</div></li>
         </ol>
       </section>
     </>
