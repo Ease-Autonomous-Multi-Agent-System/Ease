@@ -103,9 +103,12 @@ def local_context(profile: dict[str, Any], resume_vectors: list[list[float]]) ->
     store = MemoryStore()
     s = get_settings()
     for ref, val in (("tavily:default", s.tavily_api_key), ("serper:default", s.serper_api_key),
-                     ("notion:default", s.notion_token)):
+                     ("notion:default", s.notion_token), ("telegram:default", s.telegram_bot_token),
+                     ("slack:default", s.slack_webhook_url)):
         if val and val.get_secret_value():
             store.secrets[ref] = val.get_secret_value()
+    if s.telegram_chat_id:  # a plain setting, not a secret
+        store.secrets["telegram:chat_id"] = s.telegram_chat_id
     router = LlmRouter()
     seen: set[str] = set()
 
