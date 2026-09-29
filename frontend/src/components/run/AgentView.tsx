@@ -1,18 +1,22 @@
 /* eslint-disable @next/next/no-img-element -- screenshots come from the API with short-lived signed URLs */
-import { IconEye, IconHandStop, IconPhotoOff } from "@tabler/icons-react";
+import { IconApi, IconEye, IconHandStop, IconPhotoOff } from "@tabler/icons-react";
 import { fileUrl } from "@/lib/config";
 import type { LiveView } from "@/lib/useTaskStream";
 
 /** What the agent sees: its latest screenshot, with the numbered marks it grounds its clicks on. */
-export function AgentView({ view, heldLabel, stepLabel, running }: {
+export function AgentView({ view, heldLabel, stepLabel, running, paused = false, noBrowser = null }: {
   view: LiveView | null;
   heldLabel?: string | null;
   stepLabel?: string | null;
   running: boolean;
+  paused?: boolean;
+  /** the plan has no browser steps: why, shown instead of an empty screen */
+  noBrowser?: string | null;
 }) {
   const src = fileUrl(view?.screenshot);
+  const caption = running || paused ? view?.message : view?.screenshot ? "Last screen the agent saw" : "";
   return (
-    <section className="viewer" aria-label="Agent's view">
+    <section className={`viewer ${noBrowser && !src ? "viewer-compact" : ""}`} aria-label="Agent's view">
       <div className="viewer-bar">
         {running ? <span className="live-dot" aria-hidden="true" /> : <IconEye size={16} aria-hidden="true" />}
         <span className="viewer-url">{stepLabel ? `Step: ${stepLabel}` : "Agent's view"}</span>
@@ -22,6 +26,14 @@ export function AgentView({ view, heldLabel, stepLabel, running }: {
       <div className="viewer-stage">
         {src ? (
           <img src={src} alt="Latest screenshot from the agent's browser, with numbered marks on the elements it can act on" />
+        ) : noBrowser ? (
+          <div className="viewer-empty">
+            <IconApi size={30} aria-hidden="true" />
+            <span className="small" style={{ maxWidth: 460 }}>
+              No browser needed for this one — {noBrowser}. The live browser view appears here for tasks that open
+              websites, like filling a form or browsing a catalogue.
+            </span>
+          </div>
         ) : (
           <div className="viewer-empty">
             <IconPhotoOff size={34} aria-hidden="true" />
@@ -37,7 +49,7 @@ export function AgentView({ view, heldLabel, stepLabel, running }: {
           </div>
         ) : null}
       </div>
-      <div className="viewer-caption" aria-live="polite">{view?.message || " "}</div>
+      {noBrowser && !src ? null : <div className="viewer-caption" aria-live="polite">{caption || " "}</div>}
     </section>
   );
 }

@@ -55,8 +55,8 @@ def worker_context(user_id: str, emitter: EventEmitter | None = None) -> EaseCon
 
 
 def start(graph, ctx: EaseContext, *, task_id: str, user_id: str, prompt: str, thread_id: str,
-          config: dict[str, Any] | None = None) -> dict[str, Any]:
-    state = {"task_id": task_id, "user_id": user_id, "prompt": prompt, "config": config or {}}
+          config: dict[str, Any] | None = None, previous: dict[str, Any] | None = None) -> dict[str, Any]:
+    state = {"task_id": task_id, "user_id": user_id, "prompt": prompt, "config": config or {}, "previous": previous}
     return graph.invoke(state, run_config(thread_id), context=ctx)
 
 

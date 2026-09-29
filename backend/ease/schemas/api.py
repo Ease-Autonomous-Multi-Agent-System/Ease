@@ -68,6 +68,7 @@ class RunConfig(BaseModel):
 class TaskIn(BaseModel):
     prompt: str = Field(min_length=3, max_length=2000)
     template_id: uuid.UUID | None = None
+    follow_up_of: uuid.UUID | None = None  # ask a follow-up question about one of your earlier runs
     config: RunConfig = Field(default_factory=RunConfig)
 
     @field_validator("prompt")

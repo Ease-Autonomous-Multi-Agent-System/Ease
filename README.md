@@ -22,6 +22,8 @@ your approval, and that pause survives worker crashes and restarts.
 | **Hybrid grounding** | The browser agent acts on a numbered DOM / accessibility-tree index; a Set-of-Marks screenshot is added only when the index is ambiguous. |
 | **Durable human-in-the-loop** | `interrupt()` + Postgres checkpoints. The worker is released while you decide; any worker resumes later. The approved form is replayed in a fresh browser from a recorded action script, with your edits applied, then submitted. |
 | **Safety decided by code, not by the model** | Irreversible clicks are intercepted, risk levels have a code-enforced floor, navigation is pinned to the task's site, secrets never reach prompts, logs or checkpoints. |
+| **Seller trust ratings** | Search and price results are rated *trusted / unverified / not trusted* by rules in code (known retailers and official brand stores, throw-away or look-alike domains, brand impersonation, prices far below the rest). The answer only recommends trusted sellers. |
+| **Follow-up questions** | Ask about a finished run; the planner reuses its results (`$previous.items`) and only searches again when it needs new information. |
 | **Runs on free tiers** | An LLM router falls back across Groq → Gemini → OpenRouter → GitHub Models → Ollama, with response caching and hard budgets. Embeddings run locally. |
 
 ## Architecture
@@ -109,7 +111,7 @@ Every failed run is labelled (`BOT_WALL`, `GROUNDING_MISS`, `PLAN_INVALID`, `PLA
   per task / user / day / deployment, checked before every model call.
 - **Agent safety:** SSRF guard on every browser and connector request; navigation pinned to the task's site;
   robots.txt respected; no typing into password/payment/OTP fields; irreversible actions need approval;
-  page text treated as untrusted data.
+  page text treated as untrusted data; seller trust decided by code, which web content cannot raise.
 - **API:** strict CORS, security headers, body-size limit, 404 for other users' resources, single-use WebSocket
   tickets with origin checks, short-lived signed artifact URLs, upload type detection by content.
 - **Repo:** `.env` and `private/` are git-ignored; gitleaks runs in pre-commit and CI.

@@ -244,3 +244,18 @@ def test_missing_resume_pauses_for_upload_then_continues(fake_env, monkeypatch):
     res = resume(build_graph(saver), ctx, thread_id="th11",
                  decision=ApprovalDecision(approval_id=intr["approval_id"], decision="approve"))
     assert res["final"]["match"] == "DONE"
+
+
+def test_previous_references_resolve_and_validate():
+    from ease.graph.manifest import PREVIOUS, available_tools, resolve_refs, validate_against_manifest
+    from ease.schemas.contracts import WorkflowPlan
+
+    plan = WorkflowPlan.model_validate({"goal": "g", "steps": [
+        {"key": "answer", "description": "d", "agent_kind": "extract", "tool": "extract.summarize",
+         "inputs": {"items": "$previous.items", "instruction": "which is best rated?"}}]})
+    validate_against_manifest(plan, available_tools(lambda ref: None), 8)  # no depends_on needed
+    prev = {"items": [{"title": "a"}], "summary": "s"}
+    assert resolve_refs({"x": "$previous.items.0.title"}, {PREVIOUS: prev}) == {"x": "a"}
+    import pytest
+    with pytest.raises(KeyError):
+        resolve_refs("$previous.items", {})

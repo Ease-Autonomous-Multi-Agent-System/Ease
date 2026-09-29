@@ -25,7 +25,7 @@ from pydantic import ValidationError
 
 from ease.connectors.base import ConnectorContext, ConnectorError
 from ease.connectors.registry import get_connector
-from ease.graph.manifest import PlanRejected, resolve_refs, validate_against_manifest
+from ease.graph.manifest import PREVIOUS, PlanRejected, resolve_refs, validate_against_manifest
 from ease.graph.planner import PlanInvalid, synthesize_plan
 from ease.graph.runtime import EaseContext
 from ease.llm.router import LlmError, LlmUnavailable
@@ -56,6 +56,7 @@ class GraphState(TypedDict, total=False):
     user_id: str
     prompt: str
     config: dict[str, Any]  # grounding / hitl / planner - the evaluation ablation switches
+    previous: dict[str, Any] | None  # follow-up runs: the earlier run's goal, summary and items
     plan: dict[str, Any] | None
     results: Annotated[dict[str, dict[str, Any]], _merge]  # step -> StepResult
     final: Annotated[dict[str, str], _merge]  # step -> DONE | FAILED | SKIPPED | REJECTED
@@ -100,6 +101,7 @@ def supervisor(state: GraphState, runtime: Ctx) -> dict[str, Any]:
     ctx.emitter.emit(tid, "task.status", {"status": "PLANNING"})
     try:
         out = synthesize_plan(state["prompt"], ctx.tools, ctx.router, task_id=tid, user_id=state["user_id"],
+                              previous=state.get("previous"),
                               mode=(state.get("config") or {}).get("planner", "hierarchical"))
     except PlanInvalid as exc:
         return {"outcome": "FAILED", "error": {"label": FailureLabel.PLAN_INVALID, "message": str(exc)}}
@@ -168,6 +170,8 @@ def _agent_node(kind: str):
         step = _plan(state).step(key)
         results, final = state.get("results") or {}, state.get("final") or {}
         outputs = {k: r.get("output", {}) for k, r in results.items() if final.get(k) == "DONE"}
+        if state.get("previous"):
+            outputs[PREVIOUS] = state["previous"]
         attempts = (state.get("attempts") or {}).get(key, 0)
         cfg = state.get("config") or {}
         appr = (state.get("approvals") or {}).get(key) or {}

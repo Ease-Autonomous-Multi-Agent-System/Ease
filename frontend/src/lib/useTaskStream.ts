@@ -62,11 +62,13 @@ export function useTaskStream(taskId: string) {
         setLive((m) => ({ ...m, [step]: d.message as string }));
       }
       const shot = typeof d.screenshot_url === "string" ? (d.screenshot_url as string) : null;
-      if (shot || e.event === "step.started") {
+      // only browser steps have something to show in the agent's view
+      const browserStart = e.event === "step.started" && d.agent_kind === "browser";
+      if (shot || browserStart) {
         setView((v) => ({
           stepKey: step ?? v?.stepKey ?? null,
           screenshot: shot ?? v?.screenshot ?? null,
-          message: typeof d.message === "string" ? d.message : e.event === "step.started" ? "starting…" : v?.message ?? "",
+          message: typeof d.message === "string" ? d.message : browserStart ? "opening the browser…" : v?.message ?? "",
           at: e.ts,
         }));
       }

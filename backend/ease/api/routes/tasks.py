@@ -18,6 +18,7 @@ from ease.db.models import (
     Artifact,
     AuditLog,
     Decision,
+    StepState,
     Task,
     TaskEvent,
     TaskStatus,
@@ -43,7 +44,22 @@ def _task_out(t: Task) -> dict[str, Any]:
     return {"id": t.id, "prompt": t.prompt, "status": t.status.value, "summary": t.summary or "",
             "error_label": t.error_label, "error_message": t.error_message, "llm_calls": t.llm_calls,
             "tokens_used": t.tokens_used, "created_at": t.created_at, "started_at": t.started_at,
-            "ended_at": t.ended_at, "config": t.config_json or {}}
+            "ended_at": t.ended_at,
+            "config": {k: v for k, v in (t.config_json or {}).items() if k != "previous"}}
+
+
+def previous_result(db: Session, parent: Task) -> dict[str, Any]:
+    """What a follow-up run may build on: the earlier request, its final answer and its richest item list."""
+    steps = list(db.scalars(select(TaskStep).where(TaskStep.task_id == parent.id, TaskStep.status == StepState.DONE)
+                            .order_by(TaskStep.created_at)))
+    outputs = [s.output_json or {} for s in steps]
+    summary = next((o["summary"] for o in reversed(outputs) if isinstance(o.get("summary"), str)), parent.summary)
+    items = next((o["items"] for o in reversed(outputs) if isinstance(o.get("items"), list) and o["items"]), [])
+    # keep the context small: at most 40 items, long text fields trimmed
+    trimmed = [{k: (v[:400] if isinstance(v, str) else v) for k, v in i.items() if not k.endswith("_uri")}
+               if isinstance(i, dict) else i for i in items[:40]]
+    return {"task_id": str(parent.id), "prompt": parent.prompt, "goal": (parent.plan_json or {}).get("goal"),
+            "summary": (summary or "")[:4000], "items": trimmed}
 
 
 def _sign_fields(data: Any) -> Any:
@@ -74,8 +90,14 @@ def create_task(body: TaskIn, user: User = Depends(current_user), db: Session = 
     if body.template_id and not db.scalar(select(WorkflowTemplate.id).where(
             WorkflowTemplate.id == body.template_id, WorkflowTemplate.user_id == user.id)):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "template not found")
+    config = body.config.model_dump()
+    if body.follow_up_of:
+        parent = owned_task(db, user, body.follow_up_of)
+        if parent.status not in TERMINAL_STATUSES:
+            raise HTTPException(status.HTTP_409_CONFLICT, "wait for that run to finish before asking a follow-up")
+        config |= {"follow_up_of": str(parent.id), "previous": previous_result(db, parent)}
     task = Task(user_id=user.id, prompt=body.prompt, thread_id=uuid.uuid4().hex, template_id=body.template_id,
-                config_json=body.config.model_dump(), status=TaskStatus.QUEUED)
+                config_json=config, status=TaskStatus.QUEUED)
     db.add(task)
     db.add(AuditLog(user_id=user.id, task_id=task.id, action="task.create"))
     db.commit()

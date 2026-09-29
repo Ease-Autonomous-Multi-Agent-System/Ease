@@ -1,8 +1,8 @@
 "use client";
 
-import { IconArrowLeft, IconListDetails, IconPlayerStop, IconWifiOff } from "@tabler/icons-react";
+import { IconArrowBackUp, IconArrowLeft, IconListDetails, IconPlayerStop, IconSend, IconWifiOff } from "@tabler/icons-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { ApprovalDrawer } from "@/components/run/ApprovalDrawer";
 import { AgentView } from "@/components/run/AgentView";
@@ -30,6 +30,11 @@ export default function RunPage() {
   }
 
   const plan = detail.plan?.steps ?? [];
+  const noBrowser = !plan.length || plan.some((p) => p.agent_kind === "browser") ? null
+    : plan.some((p) => p.agent_kind === "api")
+      ? "Ease got the answer straight from an API, which is faster and isn't blocked by websites"
+      : "Ease answered from results it already had";
+  const parentId = typeof detail.config.follow_up_of === "string" ? detail.config.follow_up_of : null;
   const finished = TERMINAL.includes(detail.status);
   const pending = detail.pending_approval;
   const running = !finished && detail.status !== "AWAITING_APPROVAL";
@@ -73,6 +78,11 @@ export default function RunPage() {
         <div style={{ flex: 1, minWidth: 0 }}>
           <h1 style={{ fontSize: 24 }}>{detail.plan?.goal || detail.prompt}</h1>
           <p className="small muted" style={{ marginTop: 4 }}>{detail.prompt}</p>
+          {parentId ? (
+            <Link href={`/runs/${parentId}`} className="small row" style={{ gap: 4, marginTop: 6, display: "inline-flex" }}>
+              <IconArrowBackUp size={15} aria-hidden="true" /> Follow-up to an earlier run
+            </Link>
+          ) : null}
         </div>
         <div className="row">
           {connection === "reconnecting" ? (
@@ -90,7 +100,8 @@ export default function RunPage() {
       {actionError ? <div className="notice notice-danger" role="alert">{actionError}</div> : null}
 
       <div className={`run-grid ${pending ? "with-drawer" : ""}`}>
-        <AgentView view={pending ? pendingView : view} running={running} heldLabel={heldLabel} stepLabel={stepLabel} />
+        <AgentView view={pending ? pendingView : view} running={running} paused={!!pending} noBrowser={noBrowser}
+          heldLabel={heldLabel} stepLabel={stepLabel} />
 
         <section className="card timeline-card" aria-label="Plan">
           <div className="card-head">
@@ -112,6 +123,7 @@ export default function RunPage() {
       </div>
 
       {finished ? <ResultPanel task={detail} /> : null}
+      {finished ? <FollowUp taskId={id} /> : null}
 
       <section className="card card-flush">
         <button className="btn btn-quiet" style={{ border: 0, width: "100%", justifyContent: "flex-start", borderRadius: 0, padding: "14px 18px" }}
@@ -121,5 +133,48 @@ export default function RunPage() {
         {showLog ? <EventLog events={events} /> : null}
       </section>
     </div>
+  );
+}
+
+/** Ask a follow-up about this run: a new run that can reuse this one's answer and items. */
+function FollowUp({ taskId }: { taskId: string }) {
+  const { api } = useAuth();
+  const router = useRouter();
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function ask(e: React.FormEvent) {
+    e.preventDefault();
+    if (text.trim().length < 3) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      const res = await api<{ task_id: string }>("/tasks", {
+        method: "POST",
+        body: JSON.stringify({ prompt: text.trim(), follow_up_of: taskId }),
+      });
+      router.push(`/runs/${res.task_id}`);
+    } catch (e) {
+      setErr((e as Error).message);
+      setBusy(false);
+    }
+  }
+
+  return (
+    <form className="card stack" style={{ gap: 10 }} onSubmit={ask} aria-label="Ask a follow-up">
+      <h3>Ask a follow-up</h3>
+      <div className="follow-up">
+        <textarea className="textarea" aria-label="Follow-up question" value={text} maxLength={2000} rows={2}
+          placeholder="e.g. Which of these has the best rating? · Only show sellers that deliver in 2 days · Check the same for the F-94W"
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); e.currentTarget.form?.requestSubmit(); } }} />
+        <button className="btn btn-primary" type="submit" disabled={busy || text.trim().length < 3}>
+          <IconSend size={17} aria-hidden="true" /> {busy ? "Asking…" : "Ask"}
+        </button>
+      </div>
+      {err ? <p className="error-text" role="alert">{err}</p> : null}
+      <p className="tiny faint">Ease reuses this run&apos;s results when it can, and only searches again if it needs new information.</p>
+    </form>
   );
 }

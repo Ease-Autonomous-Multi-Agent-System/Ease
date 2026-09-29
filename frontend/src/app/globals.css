@@ -312,3 +312,16 @@ table.data tr:last-child td { border-bottom: 0; }
 .notice-wait { background: var(--wait-bg); color: var(--wait); }
 .skeleton { background: linear-gradient(90deg, var(--surface-2), var(--border), var(--surface-2)); background-size: 200% 100%; animation: sk 1.4s linear infinite; border-radius: 8px; }
 @keyframes sk { to { background-position: -200% 0; } }
+
+/* answers written by the model: long links/words must wrap inside the card */
+.result, .prose, .tl-msg, .notice { overflow-wrap: anywhere; min-width: 0; }
+.prose { display: flex; flex-direction: column; gap: 10px; line-height: 1.6; }
+.prose p, .prose ul, .prose ol, .prose h3 { margin: 0; }
+.prose ul, .prose ol { padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+.prose strong { font-weight: 600; }
+.prose code { font-size: 0.9em; background: var(--surface-2); padding: 1px 6px; border-radius: 6px; }
+.prose a { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; }
+tr.row-flagged td { background: var(--danger-bg); }
+.viewer-compact .viewer-stage { aspect-ratio: auto; min-height: 150px; }
+.follow-up { display: flex; gap: 10px; align-items: flex-end; }
+.follow-up .textarea { min-height: 52px; flex: 1; }

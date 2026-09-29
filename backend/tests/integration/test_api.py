@@ -195,3 +195,26 @@ def test_websocket_ticket_backlog_and_origin(client):
     with pytest.raises(Exception):
         with client.websocket_connect(f"/ws/tasks/{tid}?ticket={t2}", headers={"origin": "https://evil.example"}) as s:
             s.receive_json()
+
+
+def test_follow_up_carries_previous_result_and_is_owner_only(client, no_celery):
+    from ease.db.models import StepState, Task, TaskStatus, TaskStep
+    from ease.db.session import session_scope
+
+    _, alice, _ = _register(client)
+    _, mallory, _ = _register(client)
+    tid = client.post("/tasks", json={"prompt": "price of casio f-91w"}, headers=alice).json()["task_id"]
+    body = {"prompt": "which one has the best rating?", "follow_up_of": tid}
+    assert client.post("/tasks", json=body, headers=alice).status_code == 409  # still running
+    with session_scope() as s:
+        s.get(Task, uuid.UUID(tid)).status = TaskStatus.COMPLETED
+        s.add(TaskStep(task_id=uuid.UUID(tid), step_key="prices", agent_kind="api", tool="api.shopping.search",
+                       status=StepState.DONE, output_json={"items": [{"store": "Flipkart", "trust": "trusted"}]}))
+    assert client.post("/tasks", json=body, headers=mallory).status_code == 404
+    r = client.post("/tasks", json=body, headers=alice)
+    assert r.status_code == 202
+    with session_scope() as s:
+        cfg = s.get(Task, uuid.UUID(r.json()["task_id"])).config_json
+    assert cfg["follow_up_of"] == tid and cfg["previous"]["items"][0]["store"] == "Flipkart"
+    # the stored context is not echoed back to the browser
+    assert "previous" not in client.get(f"/tasks/{r.json()['task_id']}", headers=alice).json()["config"]

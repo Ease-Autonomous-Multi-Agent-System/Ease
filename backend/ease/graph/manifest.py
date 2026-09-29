@@ -20,6 +20,13 @@ from ease.connectors.registry import registry
 from ease.schemas.contracts import PlanStep, WorkflowPlan
 
 REF = re.compile(r"^\$steps\.([a-z][a-z0-9_]{0,31})((?:\.[A-Za-z0-9_]+)*)$")
+# Follow-up runs: "$previous.items" / "$previous.summary" point at the earlier run's result (no depends_on needed).
+PREV_REF = re.compile(r"^\$previous((?:\.[A-Za-z0-9_]+)*)$")
+PREVIOUS = "$previous"
+
+
+def _is_ref(v: str) -> bool:
+    return v.startswith("$steps.") or v == PREVIOUS or v.startswith(PREVIOUS + ".")
 
 
 # ---------- browser / extract tool input models ----------
@@ -136,7 +143,7 @@ class PlanRejected(Exception):
 
 def _contains_ref(v: Any) -> bool:
     if isinstance(v, str):
-        return v.startswith("$steps.")
+        return _is_ref(v)
     if isinstance(v, dict):
         return any(_contains_ref(x) for x in v.values())
     if isinstance(v, list):
@@ -173,6 +180,10 @@ def validate_against_manifest(plan: WorkflowPlan, tools: dict[str, Tool], max_st
             except ValidationError as exc:
                 problems.append(f"step '{s.key}': bad input '{name}': {exc.errors()[0]['msg']}")
         for ref in _refs(s.inputs):
+            if ref.startswith(PREVIOUS):
+                if not PREV_REF.match(ref):
+                    problems.append(f"step '{s.key}': malformed reference {ref!r}")
+                continue
             m = REF.match(ref)
             if not m:
                 problems.append(f"step '{s.key}': malformed reference {ref!r}")
@@ -185,7 +196,7 @@ def validate_against_manifest(plan: WorkflowPlan, tools: dict[str, Tool], max_st
 
 def _refs(v: Any) -> list[str]:
     if isinstance(v, str):
-        return [v] if v.startswith("$steps.") else []
+        return [v] if _is_ref(v) else []
     if isinstance(v, dict):
         return [r for x in v.values() for r in _refs(x)]
     if isinstance(v, list):
@@ -209,12 +220,20 @@ def apply_risk_policy(plan: WorkflowPlan, tools: dict[str, Tool]) -> WorkflowPla
 
 # ---------- reference resolution at run time ----------
 def resolve_refs(value: Any, outputs: dict[str, dict[str, Any]]) -> Any:
-    if isinstance(value, str) and value.startswith("$steps."):
-        m = REF.match(value)
+    """`outputs` maps step key -> output; the earlier run of a follow-up sits under the key "$previous"."""
+    if isinstance(value, str) and _is_ref(value):
+        m = PREV_REF.match(value) if value.startswith(PREVIOUS) else REF.match(value)
         if not m:
             raise KeyError(f"malformed reference {value!r}")
-        cur: Any = outputs[m.group(1)]
-        for part in [p for p in m.group(2).split(".") if p]:
+        if value.startswith(PREVIOUS):
+            if PREVIOUS not in outputs:
+                raise KeyError("this run is not a follow-up, there is no previous result")
+            cur: Any = outputs[PREVIOUS]
+            path = m.group(1)
+        else:
+            cur = outputs[m.group(1)]
+            path = m.group(2)
+        for part in [p for p in path.split(".") if p]:
             if isinstance(cur, list):
                 cur = cur[int(part)] if part.isdigit() and int(part) < len(cur) else None
             elif isinstance(cur, dict):

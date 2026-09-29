@@ -93,8 +93,10 @@ def run_workflow(self, task_id: str) -> str:
                 log.info("workflow.continue_from_checkpoint", task_id=task_id)
                 continue_after_crash(g, ctx, thread_id=task.thread_id)
             else:
+                config = dict(task.config_json or {})
+                previous = config.pop("previous", None)
                 start(g, ctx, task_id=task_id, user_id=str(task.user_id), prompt=task.prompt,
-                      thread_id=task.thread_id, config=task.config_json or {})
+                      thread_id=task.thread_id, config=config, previous=previous)
         except Exception as exc:
             log.exception("workflow.crashed", task_id=task_id)
             _fail(task_id, "TOOL_ERROR", f"orchestrator error: {type(exc).__name__}: {exc}")
