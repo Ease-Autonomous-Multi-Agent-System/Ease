@@ -114,6 +114,8 @@ class DbStore:
         if value:
             return value
         st = get_settings()
+        if ref == "telegram:chat_id":  # a plain setting, not a secret
+            return st.telegram_chat_id or None
         fallback = {
             "notion:default": st.notion_token,
             "telegram:default": st.telegram_bot_token,
