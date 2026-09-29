@@ -42,7 +42,8 @@ async function setSession(req: NextRequest, data: { access_token: string; refres
   (await cookies()).set(COOKIE, data.refresh_token, {
     httpOnly: true,
     sameSite: "strict",
-    secure: req.nextUrl.protocol === "https:",
+    // behind the gateway/tunnel the app itself speaks http; the forwarded protocol says what the browser used
+    secure: req.nextUrl.protocol === "https:" || req.headers.get("x-forwarded-proto") === "https",
     path: "/api/session",
     maxAge: MAX_AGE,
   });

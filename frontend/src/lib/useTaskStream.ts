@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "./auth";
-import { WS_URL } from "./config";
+import { wsUrl } from "./config";
 import { TERMINAL, type EventEnvelope, type TaskDetail } from "./types";
 
 export type Connection = "connecting" | "live" | "reconnecting" | "closed";
@@ -64,6 +64,10 @@ export function useTaskStream(taskId: string) {
       const shot = typeof d.screenshot_url === "string" ? (d.screenshot_url as string) : null;
       // only browser steps have something to show in the agent's view
       const browserStart = e.event === "step.started" && d.agent_kind === "browser";
+      if (!shot && e.event === "step.progress" && typeof d.message === "string") {
+        // text-only progress of the step on screen: keep the caption under the screenshot current
+        setView((v) => (v && v.stepKey === step ? { ...v, message: d.message as string, at: e.ts } : v));
+      }
       if (shot || browserStart) {
         setView((v) => ({
           stepKey: step ?? v?.stepKey ?? null,
@@ -94,7 +98,7 @@ export function useTaskStream(taskId: string) {
           method: "POST",
           body: JSON.stringify({ task_id: taskId }),
         });
-        const ws = new WebSocket(`${WS_URL}/ws/tasks/${taskId}?ticket=${encodeURIComponent(ticket)}&since=${lastSeq.current}`);
+        const ws = new WebSocket(`${wsUrl()}/ws/tasks/${taskId}?ticket=${encodeURIComponent(ticket)}&since=${lastSeq.current}`);
         wsRef.current = ws;
         ws.onopen = () => {
           attempt = 0;

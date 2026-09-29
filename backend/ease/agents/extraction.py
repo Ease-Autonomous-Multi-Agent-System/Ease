@@ -153,6 +153,10 @@ class ExtractionAgent:
         if rules:
             rules += ("\nWrite for a non-technical reader: never show field names or values like exact_match, "
                       "trust= or price_value - say \"exact model\", \"different model\", \"trusted seller\".")
+        facts = exact_facts(items)
+        if facts:
+            rules += ("\nFACTS computed exactly by code - use these for any counting or totals, never recount: "
+                      + facts)
         msg = (f"{call.inputs.get('instruction', 'Summarise the key points')}{rules}\n"
                'Return {"summary": "..."} using short markdown bullet points where helpful. Refer to listings '
                "and pages by name - do not paste URLs, the links are shown to the user separately.\n\n"
@@ -162,6 +166,24 @@ class ExtractionAgent:
                                    purpose=f"summarize:{call.step_key}")
         s = res.parsed.summary
         return {"summary": s}, s[:200], 0 if res.cached else 1, res.tokens
+
+
+def exact_facts(items: Any, max_distinct: int = 12) -> str:
+    """Counts done by code, not the model: the number of items and, for every field with few distinct values
+    (credits, type, category...), how many items have each value. LLMs miscount long lists."""
+    if not isinstance(items, list) or len(items) < 3 or not all(isinstance(i, dict) for i in items):
+        return ""
+    parts = [f"{len(items)} items in total"]
+    keys = sorted({k for i in items for k in i if k not in ("url", "trust_reasons")})
+    for k in keys:
+        values = [i.get(k) for i in items if isinstance(i.get(k), str | int | float | bool)]
+        counts: dict[str, int] = {}
+        for v in values:
+            counts[str(v)] = counts.get(str(v), 0) + 1
+        if 1 < len(counts) <= max_distinct and len(values) >= len(items) // 2:
+            ordered = sorted(counts.items(), key=lambda kv: -kv[1])
+            parts.append(f"{k}: " + ", ".join(f"{v} -> {n} items" for v, n in ordered))
+    return "; ".join(parts)[:1500]
 
 
 def _brief_trust(item: dict[str, Any]) -> dict[str, Any]:

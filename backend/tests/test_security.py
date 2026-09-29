@@ -153,3 +153,12 @@ def test_dns_to_private_blocked(monkeypatch):
     monkeypatch.setattr(netguard, "_resolve", lambda h: ("127.0.0.1",))
     with pytest.raises(netguard.BlockedURL):
         netguard.check_url("https://evil-rebind.example/")
+
+
+def test_websocket_origin_rules():
+    from ease.api.routes.ws import origin_allowed
+
+    assert origin_allowed("http://localhost:3000", "127.0.0.1:8000")  # allowlisted
+    assert origin_allowed("https://demo.trycloudflare.com", "demo.trycloudflare.com")  # same origin via gateway
+    assert not origin_allowed("https://evil.example", "demo.trycloudflare.com")
+    assert not origin_allowed("javascript://demo.trycloudflare.com", "demo.trycloudflare.com")

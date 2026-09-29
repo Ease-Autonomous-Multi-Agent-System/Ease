@@ -259,3 +259,13 @@ def test_previous_references_resolve_and_validate():
     import pytest
     with pytest.raises(KeyError):
         resolve_refs("$previous.items", {})
+
+
+def test_exact_facts_count_by_code():
+    from ease.agents.extraction import exact_facts
+
+    items = [{"title": f"c{i}", "credits": 4 if i % 3 == 0 else 3, "url": f"u{i}"} for i in range(45)]
+    facts = exact_facts(items)
+    assert "45 items in total" in facts and "4 -> 15 items" in facts and "3 -> 30 items" in facts
+    assert "title" not in facts  # too many distinct values to be useful
+    assert exact_facts([{"a": 1}]) == ""

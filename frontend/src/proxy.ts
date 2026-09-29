@@ -9,8 +9,11 @@ import { NextRequest, NextResponse } from "next/server";
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const isDev = process.env.NODE_ENV === "development";
-  const api = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
-  const ws = (process.env.NEXT_PUBLIC_WS_URL || api.replace(/^http/, "ws")).replace(/\/$/, "");
+  const rawApi = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "");
+  // a same-origin API ("/backend") is already covered by 'self' (CSP3 'self' includes ws/wss to the same host)
+  const api = rawApi.startsWith("/") ? "" : rawApi;
+  const ws = rawApi.startsWith("/") ? "" : (process.env.NEXT_PUBLIC_WS_URL || api.replace(/^http/, "ws")).replace(/\/$/, "");
+  const https = rawApi.startsWith("https") || request.headers.get("x-forwarded-proto") === "https";
   const csp = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""};
@@ -22,7 +25,7 @@ export function proxy(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    ${api.startsWith("https") ? "upgrade-insecure-requests;" : ""}
+    ${https ? "upgrade-insecure-requests;" : ""}
   `.replace(/\s{2,}/g, " ").trim();
 
   const requestHeaders = new Headers(request.headers);

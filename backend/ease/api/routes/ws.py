@@ -12,6 +12,7 @@ import json
 import secrets
 import uuid
 from typing import Any
+from urllib.parse import urlsplit
 
 import redis.asyncio as aioredis
 from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, WebSocketDisconnect, status
@@ -52,11 +53,21 @@ def _backlog(task_id: uuid.UUID, after: int) -> list[dict[str, Any]]:
                  "data": _sign_fields(e.data)} for e in rows]
 
 
+def origin_allowed(origin: str | None, host: str | None) -> bool:
+    """Allowlisted origins, or the same origin as the request itself (the deployed gateway serves the web app and
+    the API on one public address). A page on another site always has a different host, so it is refused."""
+    if not origin:
+        return True  # non-browser clients; they still need a single-use ticket
+    if origin in get_settings().cors_origin_list:
+        return True
+    parsed = urlsplit(origin)
+    return parsed.scheme in ("http", "https") and bool(host) and parsed.netloc == host
+
+
 @router.websocket("/ws/tasks/{task_id}")
 async def task_socket(ws: WebSocket, task_id: uuid.UUID, ticket: str = Query(max_length=64),
                       since: int = Query(default=0, ge=0)) -> None:
-    origin = ws.headers.get("origin")
-    if origin and origin not in get_settings().cors_origin_list:
+    if not origin_allowed(ws.headers.get("origin"), ws.headers.get("host")):
         await ws.close(code=4403)
         return
     owner = get_redis().getdel(f"wsticket:{ticket}")  # single use

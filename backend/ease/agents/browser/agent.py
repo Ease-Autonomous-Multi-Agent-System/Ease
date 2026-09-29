@@ -115,8 +115,10 @@ STEP GOAL: {goal}
 {extra}"""
 
 EXTRA = {
-    "browser.extract": "Apply the filters/search described in the goal, then use `extract`. If more items are "
-                       "needed and a next page exists, go to it and `extract` again. Then `done`.\n"
+    "browser.extract": "Apply the filters/search described in the goal, then use `extract` ONCE per page. Only "
+                       "go to the next page when the goal needs items from more pages (it says 'all', 'every', "
+                       "'check all pages', or asks for more items than this page has); then `extract` there. "
+                       "If the goal names one page (e.g. 'the first page'), stay on it. Then `done`.\n"
                        "Fields to extract: {fields}. Max items: {max_items}.",
     "browser.act": "Find the information and finish with done(answer=...) containing the answer. Read-only: "
                    "do not submit forms or change anything.",
@@ -144,6 +146,8 @@ class _Run:
     want_look: bool = False
     last_no_effect: bool = False
     injection: bool = False
+    extracted_pages: set[str] = field(default_factory=set)  # page signatures already extracted
+    repeat_extracts: int = 0
 
 
 def irreversible(el) -> bool:
@@ -255,6 +259,9 @@ class BrowserAgent:
             seen[sig] = seen.get(sig, 0) + 1
             if seen[sig] >= 3:
                 run.artifacts.append(s.screenshot("stuck"))
+                if call.tool == "browser.extract" and run.items:  # keep what was already collected
+                    return self._ok(call, run, {"items": run.items, "final_url": s.page.url, "partial": True},
+                                    f"extracted {len(run.items)} items (stopped: agent was repeating itself)")
                 return self._fail(call, FailureLabel.GROUNDING_MISS,
                                   f"stuck repeating {action.action} on the same page", run, retryable=True)
             outcome = self._execute(s, run, obs, action)
@@ -291,7 +298,8 @@ class BrowserAgent:
         user_text = (
             f"{page_view}\n\n<page_content>\n{obs.text[:3500] if mode != 'vision' else ''}\n</page_content>\n\n"
             f"PREVIOUS ACTIONS: {'; '.join(run.history[-8:]) or 'none'}\n"
-            f"ITEMS EXTRACTED SO FAR: {len(run.items)}"
+            f"ITEMS EXTRACTED SO FAR: {len(run.items)} from {len(run.extracted_pages)} page(s)"
+            + (" - THIS PAGE IS ALREADY EXTRACTED" if obs.signature() in run.extracted_pages else "")
         )
         if call.previous_error:
             # Informed retry: a plain retry would repeat the same decisions (and hit the same cached answers).
@@ -377,6 +385,14 @@ class BrowserAgent:
                 run.want_look = True
                 return "screenshot will be attached next turn"
             elif a.action == "extract":
+                if obs.signature() in run.extracted_pages:
+                    # Re-extracting the same page only finds duplicates; say so, and finish if it keeps happening.
+                    run.repeat_extracts += 1
+                    if run.items and run.repeat_extracts >= 2:
+                        return self._finish(s, run, obs, a)
+                    return ("already extracted this page - nothing new here. Go to the next page if the goal "
+                            "needs more pages, otherwise reply done")
+                run.extracted_pages.add(obs.signature())
                 return self._extract(s, run, obs)
             elif a.action == "done":
                 return self._finish(s, run, obs, a)
