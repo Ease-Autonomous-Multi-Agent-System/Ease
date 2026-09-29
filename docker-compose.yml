@@ -106,6 +106,20 @@ services:
     depends_on:
       redis: { condition: service_healthy }
 
+  # The web app (http://localhost:3000). The browser talks to the API on 127.0.0.1:8000; the sign-in route
+  # (server side) reaches it inside the compose network.
+  web:
+    build:
+      context: ./frontend
+      args: { NEXT_PUBLIC_API_URL: "http://127.0.0.1:8000" }
+    image: ease/web:dev
+    environment:
+      API_INTERNAL_URL: http://api:8000
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api: { condition: service_healthy }
+    profiles: ["web"]
+
   flower:
     image: ease/backend-api:dev
     pull_policy: never

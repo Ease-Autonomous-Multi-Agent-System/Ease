@@ -14,8 +14,17 @@ type Body = { action?: string; email?: string; password?: string; full_name?: st
 
 function sameOrigin(req: NextRequest): boolean {
   // CSRF defence on top of SameSite=Strict: only our own pages may call this.
+  // Compared with the Host the browser sent: behind Docker or a proxy, req.nextUrl carries the server's own bind
+  // address (e.g. 0.0.0.0:3000), not the address the user opened.
   const origin = req.headers.get("origin");
-  return !!origin && origin === req.nextUrl.origin;
+  const host = req.headers.get("host");
+  if (!origin || !host) return false;
+  try {
+    const o = new URL(origin);
+    return (o.protocol === "http:" || o.protocol === "https:") && o.host === host;
+  } catch {
+    return false;
+  }
 }
 
 async function backend(path: string, payload: unknown) {

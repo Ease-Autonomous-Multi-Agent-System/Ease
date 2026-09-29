@@ -58,9 +58,10 @@ Requirements: Docker Desktop (8 GB memory), Python 3.12, and free API keys for G
 
 ```bash
 cp .env.example .env          # then paste your keys; generate secrets as described in the file
-docker compose up -d --build  # api :8000, fixtures :8080 (all bound to 127.0.0.1)
+docker compose --profile web up -d --build   # web :3000, api :8000, fixtures :8080 (all on 127.0.0.1)
 ```
 
+- The app: http://localhost:3000 (create an account on the sign-up page)
 - API docs: http://127.0.0.1:8000/docs
 - Fixture sites: http://127.0.0.1:8080
 - Queue dashboard: `docker compose --profile ops up -d flower` → http://127.0.0.1:5555
@@ -74,6 +75,8 @@ docker compose up -d postgres redis fixtures
 cd backend
 ../.venv/Scripts/python -m ease.graph.run --prompt "Get the 5 most recent cs.AI papers from arXiv"
 ```
+
+For frontend work, leave out `--profile web` and run `npm --prefix frontend run dev` instead (hot reload, same port).
 
 Put your resume at `private/resume.pdf` (git-ignored) to use matching and form filling.
 
