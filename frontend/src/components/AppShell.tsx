@@ -1,6 +1,6 @@
 "use client";
 
-import { IconHistory, IconLogout, IconPlugConnected, IconSparkles } from "@tabler/icons-react";
+import { IconBook, IconHistory, IconLogout, IconPlugConnected, IconSparkles } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -12,6 +12,7 @@ const NAV = [
   { href: "/", label: "New task", icon: IconSparkles },
   { href: "/runs", label: "History", icon: IconHistory },
   { href: "/settings", label: "Profile & apps", icon: IconPlugConnected },
+  { href: "/guide", label: "Guide", icon: IconBook },
 ];
 
 /** Signed-in layout: top bar + page. Redirects to /login when there is no session. */

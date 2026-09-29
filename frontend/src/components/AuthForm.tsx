@@ -83,6 +83,9 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             {mode === "login" ? <>New here? <Link href="/register">Create an account</Link></> : <>Have an account? <Link href="/login">Sign in</Link></>}
           </p>
         </form>
+        <p className="small muted" style={{ textAlign: "center" }}>
+          <Link href="/about">What is Ease?</Link> · <Link href="/guide">Getting started</Link>
+        </p>
       </div>
     </div>
   );

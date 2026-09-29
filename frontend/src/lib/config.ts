@@ -30,3 +30,5 @@ export function safeHref(value: unknown): string | null {
     return null;
   }
 }
+
+export const REPO_URL = "https://github.com/Ease-Autonomous-Multi-Agent-System/Ease";

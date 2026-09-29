@@ -119,9 +119,36 @@ Every failed run is labelled (`BOT_WALL`, `GROUNDING_MISS`, `PLAN_INVALID`, `PLA
   tickets with origin checks, short-lived signed artifact URLs, upload type detection by content.
 - **Repo:** `.env` and `private/` are git-ignored; gitleaks runs in pre-commit and CI.
 
+## Using Ease
+
+The app has two public pages: **About** (`/about`: the project in detail) and **Getting started** (`/guide`:
+account setup). In short:
+
+1. **Sign up** at `/register` (with the invite code if the server sets `REGISTRATION_INVITE_CODE`).
+2. **Profile & apps** (optional):
+   - Upload a resume, which fills your profile, and check the fields the agent will type into forms.
+   - Paste free keys for the services you want: Tavily (web search), Serper (price comparison), Notion, Telegram,
+     Slack, or Google Sheets. Keys are encrypted and write-only.
+3. **New task:** describe the goal in plain English. Watch the plan, the agent's view and the event log live.
+4. **Approve:** irreversible steps pause with the filled form. Edit any field, then approve or skip.
+5. **Results:** read the answer and the table (price results carry seller trust badges), then ask a follow-up.
+
+## Future work
+
+- **Vision grounding:** a stronger or fine-tuned vision model for icon-only and canvas-heavy pages.
+- **Skill memory:** reusable per-site action sequences learned from successful runs, repaired when a layout changes.
+- **Scheduled and triggered workflows:** e.g. "every Monday, new ML internships to Telegram".
+- **More connectors:** Gmail and Calendar (OAuth), LinkedIn, GitHub, college portals, so more steps use APIs
+  instead of the browser.
+- **Hosted multi-user deployment:** per-user browser sandboxes, OAuth sign-in, quotas, and optional paid models.
+- **Voice input and mobile approvals** from a push notification.
+- **Larger evaluation:** WebVoyager / Mind2Web-style live tasks, multiple models, and a user study of time saved.
+- **Prompt-injection classifier:** screens page text before the agent reads it, alongside today's rule-based flag.
+
 ## Scope and ethics
 
-In scope: career and document workflows up to (not including) unapproved submission; research aggregation.
+In scope: research, price comparison, browsing and extraction, and form workflows up to (not including)
+unapproved submission.
 Out of scope: payments, CAPTCHA/2FA bypass, account creation, mass crawling. The agent prepares, the human submits.
 
 ## Team
