@@ -38,6 +38,7 @@ def worker_context(user_id: str, emitter: EventEmitter | None = None) -> EaseCon
     from ease.connectors.base import redis_idempotency
     from ease.graph.store_db import DbStore
     from ease.security.ratelimit import LlmBudget
+    from ease.security.site_logins import load_login
 
     store = DbStore()
     router = LlmRouter(budget=LlmBudget())
@@ -47,7 +48,7 @@ def worker_context(user_id: str, emitter: EventEmitter | None = None) -> EaseCon
         emitter=emitter or EventEmitter(),
         store=store,
         browser=BrowserAgent(router, settings.artifacts_dir, cookie_lookup=store.cookies,
-                             profile_lookup=store.profile),
+                             profile_lookup=store.profile, login_lookup=load_login),
         extraction=ExtractionAgent(router, store.similarity, profile_lookup=store.profile),
         tools=available_tools(lambda ref: store.secret(user_id, ref)),
         idempotency=redis_idempotency,

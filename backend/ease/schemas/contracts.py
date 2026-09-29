@@ -130,6 +130,8 @@ class ApprovalRequest(BaseModel):
     # Fix for the "resume on a different worker" flaw: the browser that filled the form is gone after the
     # pause, so the approval carries a script that a fresh browser can replay before committing.
     action_script: ActionScript | None = None
+    # Set when a sign-in page blocked the step: the UI then offers "sign in for me" for exactly this host.
+    login_host: str | None = None
 
 
 class ApprovalDecision(BaseModel):

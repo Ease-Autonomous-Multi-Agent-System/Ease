@@ -11,7 +11,7 @@ import { ResultPanel } from "@/components/run/ResultPanel";
 import { Timeline } from "@/components/run/Timeline";
 import { StatusPill } from "@/components/StatusPill";
 import { useAuth } from "@/lib/auth";
-import { TERMINAL } from "@/lib/types";
+import { TERMINAL, type SiteLogin } from "@/lib/types";
 import { useTaskStream } from "@/lib/useTaskStream";
 
 export default function RunPage() {
@@ -44,14 +44,14 @@ export default function RunPage() {
     ? { stepKey: pending.step_key, screenshot: pending.screenshot_url, message: pending.reason, at: pending.created_at }
     : view;
 
-  async function decide(decision: "approve" | "reject", edited: Record<string, string>) {
+  async function decide(decision: "approve" | "reject", edited: Record<string, string>, login?: SiteLogin) {
     if (!pending) return;
     setBusy(true);
     setActionError(null);
     try {
       await api(`/tasks/${id}/approve`, {
         method: "POST",
-        body: JSON.stringify({ approval_id: pending.approval_id, decision, edited_fields: edited }),
+        body: JSON.stringify({ approval_id: pending.approval_id, decision, edited_fields: edited, ...(login ? { login } : {}) }),
       });
       await reload();
     } catch (e) {

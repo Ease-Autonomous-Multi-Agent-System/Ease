@@ -141,7 +141,16 @@ export default function GuidePage() {
           <li><div>Look at the <b>screenshot of the filled form</b> and the list of fields the agent filled.</div></li>
           <li><div><b>Edit any field</b> directly in the panel if something is wrong. Changed fields are highlighted.</div></li>
           <li><div>Choose <b>Approve and submit</b> (or <b>Approve with N edits</b>) to go ahead, or <b>Skip this step</b>. Ease replays the form in a fresh browser with your edits, so it is safe to approve even hours later.</div></li>
-          <li><div>If the agent gets stuck (a CAPTCHA, a login page, a missing resume), the same panel explains what it needs. Fix it, then choose <b>Try again</b>, or skip the step.</div></li>
+          <li><div>If the agent gets stuck (a CAPTCHA, a missing resume), the same panel explains what it needs. Fix it, then choose <b>Try again</b>, or skip the step.</div></li>
+          <li><div>
+            If a website asks to <b>sign in</b>, the panel offers <b>Sign in to &lt;site&gt; for me</b>. Enter your
+            username and password for that site and choose <b>Sign in and continue</b>. Ease&apos;s own code types them
+            into that site&apos;s sign-in form: the AI never sees your password, it is only used on that exact site
+            (over https), and it is deleted when the run ends unless you tick <b>Remember</b>. Remembered logins are
+            listed under Profile &amp; apps, where you can delete them. Try it on the demo portal
+            (<code>What is my attendance on http://fixtures:8080/portal/ ?</code>) with the test login
+            <code>demo.student</code> / <code>ease-demo-2026</code>.
+          </div></li>
         </ol>
       </section>
 

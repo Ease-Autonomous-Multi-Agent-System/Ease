@@ -109,6 +109,7 @@ class ApprovalOut(BaseModel):
     screenshot_url: str | None
     destructive: bool
     created_at: datetime
+    login_host: str | None = None  # the step is blocked by this site's sign-in page
 
 
 class TaskOut(BaseModel):
@@ -134,10 +135,22 @@ class TaskDetail(TaskOut):
     last_seq: int
 
 
+class SiteLoginIn(BaseModel):
+    """A login for the website that blocked a step. Typed by Ease's code into that site only; never shown to the
+    AI, never logged, and deleted when the run ends unless `remember` is set."""
+
+    model_config = ConfigDict(hide_input_in_errors=True)  # validation errors must not echo the password
+    username: str = Field(min_length=1, max_length=200)
+    password: str = Field(min_length=1, max_length=200, repr=False)
+    remember: bool = False
+
+
 class ApproveIn(BaseModel):
+    model_config = ConfigDict(hide_input_in_errors=True)
     approval_id: uuid.UUID
     decision: Literal["approve", "reject"]
     edited_fields: dict[str, str] = Field(default_factory=dict, max_length=50)
+    login: SiteLoginIn | None = None
 
     @field_validator("edited_fields")
     @classmethod

@@ -374,6 +374,9 @@ def finalize(state: GraphState, runtime: Ctx) -> dict[str, Any]:
     if state.get("error"):
         error_label, error_msg = state["error"]["label"], state["error"]["message"]
     summary = "\n".join(lines) or (error_msg or "")
+    forget = getattr(ctx.store, "forget_temporary_logins", None)
+    if forget:  # website logins given for this run only are deleted as soon as it ends
+        forget(tid)
     ctx.store.set_status(tid, outcome, summary=summary, error_label=error_label, error_message=error_msg)
     ctx.emitter.emit(tid, "task.status", {"status": outcome})
     last_output = {}

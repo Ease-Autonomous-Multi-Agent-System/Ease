@@ -108,7 +108,8 @@ class Vault:
         return self._kek
 
     def put(
-        self, user_id: uuid.UUID, service: str, name: str, secret: str, kind: CredentialKind = CredentialKind.API_KEY
+        self, user_id: uuid.UUID, service: str, name: str, secret: str, kind: CredentialKind = CredentialKind.API_KEY,
+        hint: str | None = None,
     ) -> Credential:
         sealed = seal(secret, _aad(user_id, service, name), self.kek)
         row = self.session.scalar(
@@ -122,7 +123,7 @@ class Vault:
         row.kind = kind
         row.ciphertext, row.nonce, row.tag = sealed.ciphertext, sealed.nonce, sealed.tag
         row.wrapped_dek, row.dek_nonce = sealed.wrapped_dek, sealed.dek_nonce
-        row.hint = mask_hint(secret)
+        row.hint = hint if hint is not None else mask_hint(secret)  # logins show the username, never the password
         self.session.add(AuditLog(user_id=user_id, action="vault.put", resource=f"{service}:{name}"))
         self.session.flush()
         return row

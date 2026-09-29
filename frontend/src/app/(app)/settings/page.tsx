@@ -105,7 +105,36 @@ export default function SettingsPage() {
           {SERVICES.map((s) => <ServiceCard key={s.service} spec={s} creds={creds} onChange={load} />)}
         </div>
       </section>
+      <SavedLogins creds={creds.filter((c) => c.service === "login")} onChange={load} />
     </div>
+  );
+}
+
+/** Website logins the user chose to remember when a sign-in page blocked a run. Only the username hint is shown. */
+function SavedLogins({ creds, onChange }: { creds: Credential[]; onChange: () => Promise<void> }) {
+  const { api } = useAuth();
+  if (!creds.length) return null;
+  return (
+    <section className="card stack" style={{ gap: 12 }}>
+      <div>
+        <h2>Saved website logins</h2>
+        <p className="small muted" style={{ marginTop: 4 }}>
+          Ease signs in to these sites for you when a task needs it. Encrypted; the AI never sees them.
+        </p>
+      </div>
+      {creds.map((c) => (
+        <div key={c.name} className="row" style={{ borderTop: "1px solid var(--border)", paddingTop: 12 }}>
+          <IconLock size={18} aria-hidden="true" className="muted" />
+          <span>{c.name}</span>
+          <span className="small muted">as {c.hint}</span>
+          <span className="spacer" />
+          <button className="btn btn-danger btn-sm" aria-label={`Delete the saved login for ${c.name}`}
+            onClick={async () => { await api(`/credentials/login/${c.name}`, { method: "DELETE" }); await onChange(); }}>
+            <IconTrash size={15} aria-hidden="true" /> Delete
+          </button>
+        </div>
+      ))}
+    </section>
   );
 }
 

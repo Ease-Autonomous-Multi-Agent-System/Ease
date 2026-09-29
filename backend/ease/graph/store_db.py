@@ -152,6 +152,11 @@ class DbStore:
             rows = s.execute(select(1 - dist).where(DocChunk.document_id == doc_id).order_by(dist).limit(3)).all()
             return sum(r[0] for r in rows) / len(rows) if rows else None
 
+    def forget_temporary_logins(self, task_id: str) -> None:
+        from ease.security.site_logins import forget_temporary
+
+        forget_temporary(task_id)
+
     def cookies(self, user_id: str, host: str | None) -> list[dict[str, Any]]:
         """Session cookies stored in the vault as credential 'cookies:<host>' (JSON list, Playwright format)."""
         import json

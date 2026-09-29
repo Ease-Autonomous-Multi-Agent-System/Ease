@@ -31,9 +31,9 @@ _HOST = re.compile(r"^[a-z0-9.\-]{1,100}$")
 
 
 def _check_name(service: str, name: str) -> None:
-    if service == "cookies":
+    if service in ("cookies", "login"):  # website sessions / logins are named by hostname
         if not _HOST.match(name):
-            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "cookie credentials are named by hostname")
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"{service} credentials are named by hostname")
         return
     if service not in _SERVICES or name not in _SERVICES[service]:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"unsupported credential {service}:{name}")

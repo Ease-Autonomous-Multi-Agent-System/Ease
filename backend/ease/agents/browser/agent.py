@@ -147,6 +147,7 @@ class _Run:
     want_look: bool = False
     last_no_effect: bool = False
     injection: bool = False
+    tried_login: bool = False  # signed in with the user's saved login once in this step
     extracted_pages: set[str] = field(default_factory=set)  # page signatures already extracted
     repeat_extracts: int = 0
 
@@ -179,10 +180,13 @@ def normalize_fixture_url(url: str) -> str:
 
 
 class BrowserAgent:
-    def __init__(self, router: LlmRouter, artifacts_root, cookie_lookup=None, profile_lookup=None):
+    def __init__(self, router: LlmRouter, artifacts_root, cookie_lookup=None, profile_lookup=None,
+                 login_lookup=None):
         self.router = router
         self.artifacts_root = artifacts_root
         self.cookie_lookup = cookie_lookup or (lambda user_id, host: [])
+        # (user_id, host) -> {"username", "password"} the user gave for that site, or None
+        self.login_lookup = login_lookup or (lambda user_id, host: None)
         self.profile_lookup = profile_lookup or (lambda user_id: {})
         # Live view for the UI: called with (call, message, screenshot_uri | None) as the agent works.
         self.progress = None
@@ -246,10 +250,21 @@ class BrowserAgent:
                                       "The site is showing a bot check / CAPTCHA. Please complete it yourself, "
                                       "then approve to retry this step, or reject to skip it.")
             if s.login_wall(obs) and call.tool != "browser.fill_form":
+                host = (urlsplit(s.page.url).hostname or "").lower()
+                creds = None if run.tried_login else self.login_lookup(call.user_id, host)
+                if creds:
+                    run.tried_login = True
+                    self._report(call, f"signing in to {host} with the login you gave")
+                    outcome = self._sign_in(s, obs, host, creds)
+                    run.history.append(f"signed in to {host} with the user's login -> {outcome}")
+                    continue
                 run.artifacts.append(s.screenshot("login-wall"))
-                return self._escalate(call, run, FailureLabel.AUTH_EXPIRED,
-                                      "This page needs you to be signed in. Add a session for this site in the "
-                                      "vault (or sign in), then approve to retry, or reject to skip.")
+                reason = (f"Signing in to {host} with the login you gave did not work (still on the sign-in page). "
+                          "Check the username and password and try again, or skip this step."
+                          if run.tried_login else
+                          f"{host} needs you to be signed in. Enter your login for {host} and Ease will sign in "
+                          "for you (the AI never sees your password), or skip this step.")
+                return self._escalate(call, run, FailureLabel.AUTH_EXPIRED, reason, login_host=host)
             if INJECTION.search(obs.text):
                 run.injection = True
             self._live_view(s, call, obs)
@@ -585,10 +600,37 @@ class BrowserAgent:
                           summary=msg[:200], artifacts=run.artifacts, latency_ms=self._ms(run),
                           tokens_used=run.tokens, llm_calls=run.llm_calls)
 
-    def _escalate(self, call: ToolCall, run: _Run, label: FailureLabel, reason: str) -> StepResult:
+    def _sign_in(self, s: BrowserSession, obs: Observation, host: str, creds: dict[str, str]) -> str:
+        """Type the user's own login into this page's sign-in form. Deterministic code, never the model: the
+        password is not in any prompt, log or event (the page index already omits password values)."""
+        from ease.security.netguard import is_fixture
+
+        url = s.page.url
+        if (urlsplit(url).hostname or "").lower() != host:
+            return "not signed in: the page moved to another site"
+        if not url.startswith("https://") and not is_fixture(url):
+            return "not signed in: the page is not encrypted (http), so the password was not sent"
+        pw_el = next((e for e in obs.elements if e.type == "password"), None)
+        if pw_el is None:
+            return "not signed in: no password field found"
+        user_el = next((e for e in reversed(obs.elements) if e.id < pw_el.id and e.tag == "input"
+                        and e.type in ("text", "email", "tel", "")), None)
+        try:
+            if user_el is not None:
+                s.el(user_el.id).fill(creds["username"], timeout=5000)
+            s.el(pw_el.id).fill(creds["password"], timeout=5000)
+            s.el(pw_el.id).press("Enter", timeout=5000)
+            s.settle(2500)
+        except Exception as exc:
+            return f"not signed in: {type(exc).__name__}"
+        return "submitted the sign-in form"
+
+    def _escalate(self, call: ToolCall, run: _Run, label: FailureLabel, reason: str,
+                  login_host: str | None = None) -> StepResult:
         shot = run.artifacts[-1] if run.artifacts else None
         approval = ApprovalRequest(approval_id=str(uuid.uuid4()), step_key=call.step_key, reason=reason,
-                                   screenshot_uri=shot.uri if shot else None, destructive=False)
+                                   screenshot_uri=shot.uri if shot else None, destructive=False,
+                                   login_host=login_host)
         return StepResult(step_key=call.step_key, status="NEEDS_HUMAN", summary=reason,
                           error=ErrorInfo(label=label, message=reason), approval=approval,
                           artifacts=run.artifacts, latency_ms=self._ms(run), tokens_used=run.tokens,

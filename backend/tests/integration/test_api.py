@@ -4,6 +4,7 @@ Run:  pytest -m integration
 Celery enqueueing is intercepted so no worker (and no LLM) is involved.
 """
 
+import json
 import time
 import uuid
 
@@ -230,6 +231,50 @@ def test_follow_up_carries_previous_result_and_is_owner_only(client, no_celery):
     assert cfg["follow_up_of"] == tid and cfg["previous"]["items"][0]["store"] == "Flipkart"
     # the stored context is not echoed back to the browser
     assert "previous" not in client.get(f"/tasks/{r.json()['task_id']}", headers=alice).json()["config"]
+
+
+def test_site_login_handover_is_encrypted_scoped_and_forgotten(client, no_celery):
+    from ease.db.models import Approval, AuditLog, Credential, Task, TaskStatus
+    from ease.db.session import session_scope
+    from ease.security.site_logins import forget_temporary, load_login
+
+    _, h, me = _register(client)
+    uid = client.get("/me", headers=h).json()["id"]
+    tid = client.post("/tasks", json={"prompt": "what is my attendance on the portal"}, headers=h).json()["task_id"]
+    tid2 = client.post("/tasks", json={"prompt": "some other task"}, headers=h).json()["task_id"]
+    walled, plain = uuid.uuid4(), uuid.uuid4()
+    with session_scope() as s:
+        for t in (tid, tid2):
+            s.get(Task, uuid.UUID(t)).status = TaskStatus.AWAITING_APPROVAL
+        s.add(Approval(id=walled, task_id=uuid.UUID(tid), step_key="read",
+                       payload_json={"reason": "sign in", "kind": "escalation", "login_host": "fixtures"}))
+        s.add(Approval(id=plain, task_id=uuid.UUID(tid2), step_key="other",
+                       payload_json={"reason": "stuck", "kind": "escalation"}))
+    secret_pw = "Sup3r-Secret-Pw!"
+    login = {"username": "demo.student", "password": secret_pw, "remember": False}
+
+    # a step that did not hit a sign-in page cannot receive a login
+    r = client.post(f"/tasks/{tid2}/approve", json={"approval_id": str(plain), "decision": "approve", "login": login},
+                    headers=h)
+    assert r.status_code == 422 and secret_pw not in r.text
+
+    r = client.post(f"/tasks/{tid}/approve", json={"approval_id": str(walled), "decision": "approve", "login": login},
+                    headers=h)
+    assert r.json()["status"] == "accepted"
+    assert secret_pw not in json.dumps(no_celery[-1][1])  # only a reference travels to the worker
+    with session_scope() as s:
+        cred = s.scalar(select(Credential).where(Credential.user_id == uuid.UUID(uid), Credential.service == "login"))
+        assert cred.name == "fixtures" and secret_pw.encode() not in bytes(cred.ciphertext)
+        assert secret_pw not in cred.hint
+        audits = [a.meta_json for a in s.scalars(select(AuditLog).where(AuditLog.task_id == uuid.UUID(tid)))]
+        assert secret_pw not in json.dumps(audits, default=str)
+    listed = client.get("/credentials", headers=h).json()
+    assert any(c["service"] == "login" and c["name"] == "fixtures" for c in listed)
+    assert load_login(uid, "fixtures") == {"username": "demo.student", "password": secret_pw}
+    assert load_login(uid, "evil.example") is None  # bound to the host it was given for
+
+    assert forget_temporary(tid) == 1  # not "remember": gone when the run ends
+    assert load_login(uid, "fixtures") is None
 
 
 def test_admin_password_reset(client, monkeypatch):

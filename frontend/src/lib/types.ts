@@ -62,6 +62,12 @@ export interface FieldPreview {
   sensitive?: boolean;
 }
 
+export interface SiteLogin {
+  username: string;
+  password: string;
+  remember: boolean;
+}
+
 export interface ApprovalOut {
   approval_id: string;
   step_key: string;
@@ -71,6 +77,8 @@ export interface ApprovalOut {
   screenshot_url: string | null;
   destructive: boolean;
   created_at: string;
+  /** a sign-in page blocked the step: the drawer offers to sign in to this host with the user's login */
+  login_host?: string | null;
 }
 
 export interface TaskDetail extends TaskOut {

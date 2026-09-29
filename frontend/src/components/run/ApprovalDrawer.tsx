@@ -1,25 +1,29 @@
 /* eslint-disable @next/next/no-img-element -- signed screenshot URL from the API */
 "use client";
 
-import { IconAlertTriangle, IconRefresh, IconShieldCheck } from "@tabler/icons-react";
+import { IconAlertTriangle, IconLock, IconLogin, IconRefresh, IconShieldCheck } from "@tabler/icons-react";
 import { useState } from "react";
 import { fileUrl } from "@/lib/config";
-import type { ApprovalOut } from "@/lib/types";
+import type { ApprovalOut, SiteLogin } from "@/lib/types";
 
 /**
  * Side drawer shown when a run pauses. For a "commit" (irreversible action) the human can edit every filled value;
  * only changed fields are sent back. For an "escalation" (the agent got stuck, hit a login or a CAPTCHA) the choice
- * is to try again or skip the step.
+ * is to try again or skip the step. When a sign-in page blocked the step, the human can hand over their login for
+ * exactly that site: Ease's code types it in, the AI never sees it.
  */
 export function ApprovalDrawer({ approval, busy, onDecide }: {
   approval: ApprovalOut;
   busy: boolean;
-  onDecide: (decision: "approve" | "reject", edited: Record<string, string>) => void;
+  onDecide: (decision: "approve" | "reject", edited: Record<string, string>, login?: SiteLogin) => void;
 }) {
   // The parent keys this component on approval_id, so a new approval always starts from fresh values.
   const [values, setValues] = useState<Record<string, string>>(
     () => Object.fromEntries(approval.fields.map((f) => [f.locator, f.value])));
   const [showShot, setShowShot] = useState(false);
+  const [login, setLogin] = useState<SiteLogin>({ username: "", password: "", remember: false });
+  const host = approval.login_host;
+  const loginReady = !!host && login.username.trim() !== "" && login.password !== "";
 
   const commit = approval.kind === "commit";
   const edited = Object.fromEntries(
@@ -42,6 +46,31 @@ export function ApprovalDrawer({ approval, busy, onDecide }: {
 
       <div className="drawer-body">
         {commit && approval.reason ? <p className="small muted">{approval.reason}</p> : null}
+        {host ? (
+          <form className="stack" style={{ gap: 12 }} autoComplete="off"
+            onSubmit={(e) => { e.preventDefault(); if (loginReady) onDecide("approve", {}, login); }}>
+            <h3 className="row" style={{ gap: 8 }}><IconLogin size={18} aria-hidden="true" /> Sign in to {host} for me</h3>
+            <label className="field"><span>Username or email for {host}</span>
+              <input className="input" value={login.username} autoComplete="off" spellCheck={false}
+                onChange={(e) => setLogin({ ...login, username: e.target.value })} />
+            </label>
+            <label className="field"><span>Password for {host}</span>
+              <input className="input" type="password" value={login.password} autoComplete="new-password"
+                onChange={(e) => setLogin({ ...login, password: e.target.value })} />
+            </label>
+            <label className="check">
+              <input type="checkbox" checked={login.remember} onChange={(e) => setLogin({ ...login, remember: e.target.checked })} />
+              Remember for {host} (encrypted; delete it any time under Profile &amp; apps)
+            </label>
+            <p className="tiny muted row" style={{ gap: 6, alignItems: "flex-start" }}>
+              <IconLock size={14} aria-hidden="true" style={{ flexShrink: 0, marginTop: 2 }} />
+              The AI never sees your password. Ease&apos;s own code types it into {host}&apos;s sign-in form, only on that
+              site and only over an encrypted (https) connection or a local test site. Unless you tick Remember, it is
+              deleted when this run ends.
+            </p>
+            <button type="submit" hidden aria-hidden="true" tabIndex={-1} />
+          </form>
+        ) : null}
         {approval.fields.map((f) => {
           const changed = values[f.locator] !== f.value;
           const long = (values[f.locator] ?? "").length > 60;
@@ -72,7 +101,13 @@ export function ApprovalDrawer({ approval, busy, onDecide }: {
         <button className="btn btn-quiet" disabled={busy} onClick={() => onDecide("reject", {})}>
           Skip this step
         </button>
-        <button className="btn btn-primary" disabled={busy} onClick={() => onDecide("approve", edited)}>
+        {host ? (
+          <button className="btn btn-primary" disabled={busy || !loginReady} onClick={() => onDecide("approve", {}, login)}>
+            <IconLogin size={18} aria-hidden="true" /> Sign in and continue
+          </button>
+        ) : null}
+        <button className={host ? "btn" : "btn btn-primary"} disabled={busy} onClick={() => onDecide("approve", edited)}
+          title={host ? "Retry without a login (e.g. after adding a session yourself)" : undefined}>
           {commit ? <IconShieldCheck size={18} aria-hidden="true" /> : <IconRefresh size={18} aria-hidden="true" />}
           {commit ? (Object.keys(edited).length ? `Approve with ${Object.keys(edited).length} edit${Object.keys(edited).length > 1 ? "s" : ""}` : "Approve and submit") : "Try again"}
         </button>

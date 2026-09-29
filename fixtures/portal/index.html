@@ -9,8 +9,18 @@
   <header class="bar"><div class="wrap"><strong>Member Portal</strong><span id="who"></span></div></header>
   <main class="wrap" id="main"></main>
   <script>
-    // Login-gated fixture. The agent never types passwords: it gets in by having the user's session cookie
-    // injected from the vault (credential ref "portal:session"). Valid demo session value: demo-session-2026.
+    // Login-gated fixture. Two ways in, both decided by the user, never by the model:
+    //  * a session cookie from the vault ("cookies:<host>"): portal_session=demo-session-2026
+    //  * the user's own login, typed by Ease's code after they enter it in the approval panel.
+    //    Demo account for this local test site only: demo.student / ease-demo-2026
+    function signIn(event) {
+      event.preventDefault();
+      const ok = document.getElementById("user").value === "demo.student"
+        && document.getElementById("pass").value === "ease-demo-2026";
+      if (!ok) { document.getElementById("err").textContent = "Invalid username or password."; return; }
+      document.cookie = "portal_session=demo-session-2026; path=/";
+      location.reload();
+    }
     const session = document.cookie.split("; ").find(c => c.startsWith("portal_session="))?.split("=")[1];
     const main = document.getElementById("main");
     if (session === "demo-session-2026") {
@@ -28,7 +38,7 @@
     } else {
       main.innerHTML = `
         <h1>Sign in</h1>
-        <form class="card" onsubmit="event.preventDefault(); document.getElementById('err').textContent='Invalid username or password.'">
+        <form class="card" onsubmit="signIn(event)">
           <div class="field"><label for="user">Username</label><input id="user" autocomplete="username"></div>
           <div class="field"><label for="pass">Password</label><input id="pass" type="password" autocomplete="current-password"></div>
           <p id="err" role="alert" style="color:#b42318"></p>

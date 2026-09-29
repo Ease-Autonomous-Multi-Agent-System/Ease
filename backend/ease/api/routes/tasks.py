@@ -149,7 +149,8 @@ def _approval_out(a: Approval) -> ApprovalOut:
     p = a.payload_json or {}
     return ApprovalOut(approval_id=a.id, step_key=a.step_key, reason=p.get("reason", ""), kind=p.get("kind", ""),
                        fields=p.get("fields", []), screenshot_url=sign_artifact(a.screenshot_uri),
-                       destructive=p.get("destructive", True), created_at=a.created_at)
+                       destructive=p.get("destructive", True), created_at=a.created_at,
+                       login_host=p.get("login_host"))
 
 
 @router.get("/{task_id}/events")
@@ -177,6 +178,9 @@ def cancel_task(task_id: uuid.UUID, user: User = Depends(current_user), db: Sess
         from ease.events.emitter import EventEmitter
 
         EventEmitter().emit(str(t.id), "task.status", {"status": "CANCELLED"})
+        from ease.security.site_logins import forget_temporary
+
+        forget_temporary(str(t.id))  # a paused run never reaches finalize, so drop its one-time logins here
     db.add(AuditLog(user_id=user.id, task_id=t.id, action="task.cancel"))
     return _task_out(t)
 
@@ -192,6 +196,9 @@ def submit_decision(db: Session, user: User, task_id: uuid.UUID, body: ApproveIn
     unknown = set(body.edited_fields) - allowed
     if unknown:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, f"cannot edit unknown field(s): {sorted(unknown)}")
+    login_host = (appr.payload_json or {}).get("login_host")
+    if body.login is not None and (not login_host or body.decision != "approve"):
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "this step did not ask for a website login")
     claimed = db.execute(
         update(Approval).where(Approval.id == appr.id, Approval.decision == Decision.PENDING)
         .values(decision=Decision.APPROVED if body.decision == "approve" else Decision.REJECTED,
@@ -199,8 +206,17 @@ def submit_decision(db: Session, user: User, task_id: uuid.UUID, body: ApproveIn
     ).rowcount
     if not claimed:
         return {"status": "already_decided", "decision": appr.decision.value}
+    meta: dict[str, Any] = {"edited": sorted(body.edited_fields)}
+    if body.login is not None:
+        from ease.security.site_logins import save_login
+
+        # Encrypted into the vault before the worker resumes; only a reference travels with the decision, so the
+        # password never reaches the Celery queue or the graph checkpoint.
+        save_login(db, user.id, login_host, body.login.username, body.login.password,
+                   remember=body.login.remember, task_id=t.id)
+        meta |= {"login_for": login_host, "remember": body.login.remember}  # never the password
     db.add(AuditLog(user_id=user.id, task_id=t.id, action=f"approval.{body.decision}",
-                    resource=str(appr.id), meta_json={"edited": sorted(body.edited_fields)}))
+                    resource=str(appr.id), meta_json=meta))
     db.commit()
     from ease.worker.tasks import resume_workflow
 
