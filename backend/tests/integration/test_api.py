@@ -232,6 +232,18 @@ def test_follow_up_carries_previous_result_and_is_owner_only(client, no_celery):
     assert "previous" not in client.get(f"/tasks/{r.json()['task_id']}", headers=alice).json()["config"]
 
 
+def test_admin_password_reset(client, monkeypatch):
+    from ease import admin
+
+    email, _, _ = _register(client)
+    new_pw = "brand-new-pass-77"
+    monkeypatch.setattr(admin.getpass, "getpass", lambda prompt="": new_pw)
+    assert admin.reset_password(email.upper()) == 0  # emails are matched case-insensitively
+    assert client.post("/auth/login", json={"email": email, "password": PW}).status_code == 401
+    assert client.post("/auth/login", json={"email": email, "password": new_pw}).status_code == 200
+    assert admin.reset_password("nobody@example.com") == 1
+
+
 def test_public_site_runs_only_on_the_users_own_ai_key(client, no_celery, monkeypatch):
     from ease.config import get_settings
 

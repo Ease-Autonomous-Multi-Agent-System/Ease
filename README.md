@@ -126,6 +126,8 @@ The in-app **Guide** (top bar) and the **About** page explain every feature.
 | update to the latest code | `git pull` then `docker compose --profile web up -d --build` |
 | see what it is doing | `docker compose logs -f api worker-agent` |
 | wipe everything and start fresh (deletes accounts and runs) | `docker compose --profile web down -v` |
+| see which emails have accounts | `docker compose exec api python -m ease.admin list-users` |
+| set a new password (forgot it) | `docker compose exec api python -m ease.admin reset-password you@example.com` (asks for the new one, hidden) |
 
 ### Other local addresses
 
@@ -143,6 +145,7 @@ All ports are bound to `127.0.0.1`, so nothing is reachable from other devices o
 | "port is already allocated" (3000, 8000, 5432, 6379 or 8080) | Another program uses that port. Stop it, or stop another copy of Ease with `docker compose --profile web down`. |
 | The build stops with a network or timeout error | Run the same `up -d --build` command again. It continues where it stopped. |
 | Tasks fail with "no AI key" or "add your own Groq or Gemini API key" | Add a key in `.env` (then run `docker compose --profile web up -d`), or in the app under Profile & apps. |
+| "Too many requests, slow down" when signing up or signing in | Sign-ups are limited to 5 per hour per address. Run `docker compose exec api python -m ease.admin clear-rate-limits`. |
 | Tasks pause with a rate-limit message | The free AI tiers allow limited requests per minute and day. Wait a minute and run the task again. |
 | A red "Console Error … hydration" box in the browser | A browser extension (e.g. an antivirus toolbar) changed the page. Use a private window, or turn the extension off for localhost. |
 | Anything else | `docker compose logs --tail 100 api worker-agent` shows the error. |
