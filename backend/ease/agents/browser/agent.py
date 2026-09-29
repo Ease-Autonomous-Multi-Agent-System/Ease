@@ -62,7 +62,7 @@ SUCCESS = re.compile(r"application received|thank you|successfully|submitted|con
 
 
 class FieldFill(BaseModel):
-    id: int
+    id: int | None = None  # a missing id is reported back as "no such element" instead of rejecting the action
     value: str = Field(max_length=2000)
 
 
@@ -119,7 +119,8 @@ EXTRA = {
                        "go to the next page when the goal needs items from more pages (it says 'all', 'every', "
                        "'check all pages', or asks for more items than this page has); then `extract` there. "
                        "If the goal names one page (e.g. 'the first page'), stay on it. Then `done`.\n"
-                       "Fields to extract: {fields}. Max items: {max_items}.",
+                       "Fields to extract: {fields}. Max items: {max_items}. A field the page does not show (e.g. "
+                       "items without their own link) is simply left empty - that is never a reason to fail.",
     "browser.act": "Find the information and finish with done(answer=...) containing the answer. Read-only: "
                    "do not submit forms or change anything.",
     "browser.fill_form": "If this page is not the form itself (e.g. a job description page), first click its "
@@ -397,6 +398,11 @@ class BrowserAgent:
             elif a.action == "done":
                 return self._finish(s, run, obs, a)
             elif a.action == "fail":
+                if call.tool == "browser.extract" and obs.signature() not in run.extracted_pages:
+                    # Giving up before even extracting this page is premature (the model often "fails" over a
+                    # missing optional field such as a URL): extract what is there, then let it decide again.
+                    run.extracted_pages.add(obs.signature())
+                    return self._extract(s, run, obs) + " (extracted instead of giving up)"
                 run.artifacts.append(s.screenshot("fail"))
                 return self._fail(call, FailureLabel.PLAN_WRONG, a.answer or a.thought or "agent gave up", run)
         except BlockedURL as exc:
@@ -451,7 +457,8 @@ class BrowserAgent:
         links = [f"{e.name} -> {s.resolve(e.href)}" for e in obs.elements if e.tag == "a" and e.href and e.name]
         msg = (
             f"Extract items matching this goal: {call.inputs.get('goal', '')}\nFields: {fields}\n"
-            "Copy values exactly as shown. Use absolute URLs from LINKS. Only include items actually on the page. "
+            "Copy values exactly as shown. Use absolute URLs from LINKS; if an item has no link of its own, leave "
+            "its url empty. Only include items actually on the page. "
             'Return {"items": [...], "has_more_pages": bool}.\n\n'
             f"<page_content>\n{obs.text[:6000]}\n</page_content>\nLINKS:\n" + "\n".join(links[:80])
         )
@@ -470,7 +477,10 @@ class BrowserAgent:
         call = run.call
         run.artifacts.append(s.screenshot("final"))
         if call.tool == "browser.extract":
-            if not run.items:
+            if obs.signature() not in run.extracted_pages:
+                # Finishing on a page it never extracted (typically the last page of a list) would drop its items;
+                # extract it first. Items already collected are de-duplicated.
+                run.extracted_pages.add(obs.signature())
                 self._extract(s, run, obs)
             return self._ok(call, run, {"items": run.items, "final_url": s.page.url, "count": len(run.items)},
                             f"extracted {len(run.items)} items")
