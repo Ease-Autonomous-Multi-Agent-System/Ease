@@ -25,7 +25,7 @@ WORKDIR /app
 COPY --from=src /frontend/package.json /frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY --from=src /frontend/next.config.ts /frontend/tsconfig.json /frontend/next-env.d.ts ./
-COPY --from=src /frontend/public ./public
+RUN mkdir -p public  # git keeps no empty folders; the app has no static files of its own yet
 COPY --from=src /frontend/src ./src
 ENV NEXT_PUBLIC_API_URL=/backend NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
