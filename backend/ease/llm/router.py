@@ -236,8 +236,9 @@ class LlmRouter:
                 last = exc
         raise last or LlmError("no structured-output mode worked")
 
-    def _wait_for_cooldown(self, need_vision: bool, max_wait: int = 30) -> bool:
+    def _wait_for_cooldown(self, need_vision: bool, max_wait: int | None = None) -> bool:
         """Every configured provider is cooling down: wait for the soonest one (bounded) instead of failing."""
+        max_wait = get_settings().llm_max_cooldown_wait_s if max_wait is None else max_wait
         try:
             r = get_redis()
             ttls = [r.ttl(f"llm:cooldown:{n}") for n in (self.vision_order if need_vision else self.text_order)

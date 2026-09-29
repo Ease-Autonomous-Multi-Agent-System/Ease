@@ -27,7 +27,7 @@ from dataclasses import dataclass, field
 from typing import Any, Literal
 from urllib.parse import urlsplit, urlunsplit
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from ease.agents.browser.dom import Observation
 from ease.agents.browser.session import ArtifactWriter, BrowserSession, log_blocked
@@ -74,6 +74,12 @@ class AgentAction(BaseModel):
     text: str | None = Field(default=None, max_length=2000)
     answer: str | None = Field(default=None, max_length=3000)
     fields: list[FieldFill] | None = Field(default=None, max_length=40)
+
+    @field_validator("thought", mode="before")
+    @classmethod
+    def _short_thought(cls, v: object) -> object:
+        # a long-winded thought is not a wrong action: keep the start instead of rejecting the whole decision
+        return v[:600] if isinstance(v, str) else v
 
 
 class ExtractedItems(BaseModel):

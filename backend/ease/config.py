@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     llm_provider_order: str = "gemini,openrouter,github,ollama"  # used when an image is attached
     llm_text_provider_order: str = "groq,gemini,openrouter,github,ollama"  # text-only calls: fastest first
     llm_cache_mode: str = "readwrite"  # off | readwrite | replay
+    llm_max_cooldown_wait_s: int = 30  # when every provider is rate-limited, wait up to this long before failing
     llm_cache_path: Path = REPO_ROOT / "data" / "llm_cache.sqlite3"
 
     # --- abuse / cost limits (the "don't let anyone exhaust the free tier" knobs) ---

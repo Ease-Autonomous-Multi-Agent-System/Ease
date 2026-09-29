@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 import uuid
@@ -27,7 +28,7 @@ from typing import Any
 from langgraph.checkpoint.memory import InMemorySaver
 
 from ease.agents.browser.agent import normalize_fixture_url
-from ease.config import REPO_ROOT
+from ease.config import REPO_ROOT, get_settings
 from ease.graph.build import build_graph
 from ease.graph.run import _load_resume, local_context, pending_interrupt, resume, start
 from ease.logs import configure_logging
@@ -68,6 +69,17 @@ class RunRecord:
     wall_ms: int = 0
     step_latency_ms: dict[str, int] = field(default_factory=dict)
     tools: list[str] = field(default_factory=list)
+    rate_limited: bool = False  # the free LLM tiers refused calls during this run
+    infra_retries: int = 0  # times this case was re-run because it died of rate limits only
+
+
+RATE_LIMIT_MARKERS = ("no llm provider succeeded", "http 429", "http 503")
+
+
+def _rate_limited(state: dict[str, Any]) -> bool:
+    blob = json.dumps([state.get("error"), [r.get("error") for r in (state.get("results") or {}).values()]],
+                      default=str).lower()
+    return any(m in blob for m in RATE_LIMIT_MARKERS)
 
 
 def load_cases(suite: str, only: set[str] | None) -> list[dict[str, Any]]:
@@ -135,6 +147,8 @@ def run_checks(case: dict[str, Any], state: dict[str, Any], escalations: list[st
 def failure_label(state: dict[str, Any], success: bool) -> str | None:
     if success:
         return None
+    if _rate_limited(state):
+        return "RATE_LIMITED"  # infrastructure (free-tier quota), not an agent failure - reported separately
     if state.get("error"):
         return str(state["error"]["label"])
     for r in (state.get("results") or {}).values():
@@ -181,6 +195,7 @@ def run_case(case: dict[str, Any], cond: dict[str, Any], repeat: int, run_id: st
         escalations=escalations, llm_calls=usage.get("llm_calls", 0), tokens=usage.get("tokens", 0), wall_ms=wall,
         step_latency_ms={k: int(v.get("latency_ms") or 0) for k, v in results.items()},
         tools=[s["tool"] for s in (state.get("plan") or {}).get("steps", [])],
+        rate_limited=_rate_limited(state),
     )
 
 
@@ -191,8 +206,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--repeats", type=int, default=1)
     ap.add_argument("--cases", default="", help="comma-separated case ids")
     ap.add_argument("--run-id", default=time.strftime("%Y%m%d-%H%M%S"))
+    ap.add_argument("--pause", type=float, default=10, help="seconds between cases (free-tier rate limits)")
+    ap.add_argument("--infra-retries", type=int, default=2,
+                    help="re-run a case that failed only because every LLM provider was rate-limited")
     args = ap.parse_args(argv)
     configure_logging("WARNING")
+    # A benchmark may wait longer for a rate-limited provider than an interactive user should.
+    os.environ.setdefault("LLM_MAX_COOLDOWN_WAIT_S", "120")
+    get_settings.cache_clear()
 
     only = {c.strip() for c in args.cases.split(",") if c.strip()} or None
     cases = load_cases(args.suite, only)
@@ -206,16 +227,24 @@ def main(argv: list[str] | None = None) -> int:
             for case in cases:
                 n += 1
                 print(f"[{n}/{total}] {case['id']} | {cond['name']} | repeat {rep + 1}", flush=True)
-                try:
-                    rec = run_case(case, cond, rep, args.run_id, profile, vectors)
-                except Exception as exc:  # the harness itself must never stop a long benchmark run
-                    rec = RunRecord(args.run_id, case["id"], case["suite"], case["domain"], case.get("pair"), cond,
-                                    rep, False, "TOOL_ERROR", [f"harness exception: {exc}"[:300]], None, 0, 0)
+                for attempt in range(args.infra_retries + 1):
+                    try:
+                        rec = run_case(case, cond, rep, args.run_id, profile, vectors)
+                    except Exception as exc:  # the harness itself must never stop a long benchmark run
+                        rec = RunRecord(args.run_id, case["id"], case["suite"], case["domain"], case.get("pair"),
+                                        cond, rep, False, "TOOL_ERROR", [f"harness exception: {exc}"[:300]], None,
+                                        0, 0)
+                    rec.infra_retries = attempt
+                    if rec.success or rec.failure_label != "RATE_LIMITED" or attempt == args.infra_retries:
+                        break
+                    print(f"    rate-limited - waiting 90s, then re-running (retry {attempt + 1})", flush=True)
+                    time.sleep(90)
                 with out.open("a", encoding="utf-8") as f:
                     f.write(json.dumps(asdict(rec), ensure_ascii=False) + "\n")
                 mark = "PASS" if rec.success else f"FAIL[{rec.failure_label}]"
                 print(f"    -> {mark}  {rec.wall_ms / 1000:.1f}s  llm={rec.llm_calls}  hitl={rec.hitl_count}  "
                       f"{'; '.join(rec.check_details)}", flush=True)
+                time.sleep(args.pause)
     print(f"\nresults: {out}\nreport:  python -m ease.eval.report {out}")
     return 0
 

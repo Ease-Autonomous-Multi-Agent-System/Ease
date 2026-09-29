@@ -22,7 +22,7 @@ from typing import Any
 from ease.config import REPO_ROOT
 
 AGENT_FAILURES = {"GROUNDING_MISS", "PLAN_INVALID", "PLAN_WRONG", "TIMEOUT", "TOOL_ERROR"}
-ENV_FAILURES = {"BOT_WALL", "AUTH_EXPIRED", "BLOCKED_BY_POLICY"}
+ENV_FAILURES = {"BOT_WALL", "AUTH_EXPIRED", "BLOCKED_BY_POLICY", "RATE_LIMITED"}
 
 
 def load(paths: list[Path]) -> list[dict[str, Any]]:
@@ -45,6 +45,10 @@ def table(headers: list[str], rows: list[list[Any]]) -> str:
 def build(rows: list[dict[str, Any]], out_dir: Path) -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
     md = [f"# Ease benchmark report\n\nGenerated {time.strftime('%Y-%m-%d %H:%M')} from {len(rows)} runs.\n"]
+    lost = sum(1 for r in rows if r.get("failure_label") == "RATE_LIMITED")
+    retried = sum(1 for r in rows if r.get("infra_retries"))
+    md.append(f"Free-tier LLM rate limits: {retried} run(s) were re-run after being rate-limited; {lost} still "
+              "failed for that reason and are labelled RATE_LIMITED (infrastructure, not agent behaviour).\n")
 
     # 1. success by suite x condition
     by = defaultdict(list)
