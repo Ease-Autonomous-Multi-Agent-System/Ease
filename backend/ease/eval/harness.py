@@ -199,6 +199,17 @@ def run_case(case: dict[str, Any], cond: dict[str, Any], repeat: int, run_id: st
     )
 
 
+def _fixtures_up() -> bool:
+    import urllib.request
+
+    url = normalize_fixture_url("http://fixtures:8080/")
+    try:
+        with urllib.request.urlopen(url, timeout=5) as r:  # noqa: S310 - local fixture URL from settings
+            return r.status == 200
+    except OSError:
+        return False
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Ease benchmark runner")
     ap.add_argument("--suite", choices=["fixture", "live", "all"], default="fixture")
@@ -218,6 +229,10 @@ def main(argv: list[str] | None = None) -> int:
 
     only = {c.strip() for c in args.cases.split(",") if c.strip()} or None
     cases = load_cases(args.suite, only)
+    if any(c["suite"] == "fixture" for c in cases) and not _fixtures_up():
+        print("The fixture test sites are not reachable (start them: docker compose up -d fixtures). "
+              "Not running - every browser case would fail for an environment reason.", file=sys.stderr)
+        return 2
     profile, vectors = _load_resume(REPO_ROOT / "private" / "resume.pdf")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"{args.run_id}.jsonl"
