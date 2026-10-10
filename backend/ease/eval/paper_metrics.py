@@ -112,7 +112,8 @@ def main() -> None:
     lx, ly = recovery_from_log(EVAL / f"{a.live}.log")
     out["recovery"] = {"fixture": [f_rec, f_failed], "live": [ly, lx]}
 
-    auth = [r for r in fixture if r["case_id"] in ("F10-portal-deadlines", "F11-portal-no-session")]
+    auth = [r for r in fixture if r["case_id"] in ("F10-portal-deadlines", "F11-portal-no-session")
+            and r["failure_label"] != "RATE_LIMITED"]
     out["auth"] = {cid: f"{sum(r['success'] for r in auth if r['case_id'] == cid)}/"
                         f"{sum(1 for r in auth if r['case_id'] == cid)}"
                    for cid in sorted({r['case_id'] for r in auth})}
