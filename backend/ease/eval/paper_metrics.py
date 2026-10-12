@@ -86,6 +86,17 @@ def per_repeat(rows: list[dict[str, Any]]) -> dict[int, float]:
     return {k: round(100 * sum(v) / len(v), 1) for k, v in sorted(by.items())}
 
 
+def run_counts(rows: list[dict[str, Any]]) -> list[dict[str, int]]:
+    """Per independent run: valid runs, passes and runs excluded for rate limits (in run order)."""
+    out = []
+    for rep in sorted({r["repeat"] for r in rows}):
+        v = [r for r in rows if r["repeat"] == rep]
+        valid = [r for r in v if r["failure_label"] != "RATE_LIMITED"]
+        out.append({"valid": len(valid), "passed": sum(r["success"] for r in valid),
+                    "rate_limited": len(v) - len(valid)})
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fixture", required=True, help="run_id:repeat,repeat (e.g. full-hybrid:2,3,4)")
@@ -100,6 +111,7 @@ def main() -> None:
     fixture = load(fid, {int(x) for x in reps.split(",")} if reps else None)
     live = load(a.live)
     out: dict[str, Any] = {"fixture": summarize(fixture), "fixture_per_repeat": per_repeat(fixture),
+                           "fixture_runs": run_counts(fixture),
                            "live": summarize(live)}
     api_live = [r for r in live if not any(t.startswith("browser.") for t in r["tools"])]
     out["live_api_only"] = summarize(api_live)
