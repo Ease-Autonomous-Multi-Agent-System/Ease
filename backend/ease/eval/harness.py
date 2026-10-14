@@ -218,6 +218,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--repeat-start", type=int, default=0, help="first repeat index (to resume an interrupted run)")
     ap.add_argument("--cases", default="", help="comma-separated case ids")
     ap.add_argument("--run-id", default=time.strftime("%Y%m%d-%H%M%S"))
+    ap.add_argument("--profile-json", default="", help="use this profile instead of extracting it from the resume")
     ap.add_argument("--pause", type=float, default=10, help="seconds between cases (free-tier rate limits)")
     ap.add_argument("--infra-retries", type=int, default=2,
                     help="re-run a case that failed only because every LLM provider was rate-limited")
@@ -233,7 +234,10 @@ def main(argv: list[str] | None = None) -> int:
         print("The fixture test sites are not reachable (start them: docker compose up -d fixtures). "
               "Not running - every browser case would fail for an environment reason.", file=sys.stderr)
         return 2
-    profile, vectors = _load_resume(REPO_ROOT / "private" / "resume.pdf")
+    if args.profile_json:  # e.g. the same profile given to an external agent in a comparison
+        profile, vectors = json.loads(Path(args.profile_json).read_text(encoding="utf-8")), []
+    else:
+        profile, vectors = _load_resume(REPO_ROOT / "private" / "resume.pdf")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"{args.run_id}.jsonl"
     total = len(cases) * len(CONDITIONS[args.conditions]) * args.repeats
