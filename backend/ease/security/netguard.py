@@ -3,6 +3,9 @@
  * SSRF: an LLM-chosen or page-supplied URL must not reach the Docker network, cloud metadata endpoints or the
    user's LAN. Only http(s) to public addresses is allowed, plus the explicitly allowlisted fixture hosts.
  * robots.txt is respected for browser navigation (ethics section of the paper), cached per origin.
+ * Sensitive sites (banking, payments, crypto exchanges, government identity and tax portals) are never opened:
+   an agent acting for a stranger must not be able to reach where money or identity documents live. Operators can
+   add more with BLOCKED_SITES.
 """
 
 from __future__ import annotations
@@ -21,6 +24,21 @@ from ease.config import get_settings
 USER_AGENT = "EaseAgent/0.1 (+academic research project; supervised automation)"
 _ALLOWED_PUBLIC_PORTS = {None, 80, 443}
 _BLOCKED_HOSTNAMES = {"metadata.google.internal", "metadata", "host.docker.internal", "postgres", "redis", "api"}
+# Domain suffixes: "hdfcbank.com" also blocks "netbanking.hdfcbank.com".
+_SENSITIVE_SITES = {
+    # payments and wallets
+    "paypal.com", "paytm.com", "phonepe.com", "razorpay.com", "stripe.com", "pay.google.com", "mobikwik.com",
+    "npci.org.in", "bhimupi.org.in",
+    # banks
+    "onlinesbi.sbi", "sbi.co.in", "hdfcbank.com", "icicibank.com", "axisbank.com", "kotak.com", "pnbindia.in",
+    "bankofbaroda.in", "canarabank.com", "unionbankofindia.co.in", "idfcfirstbank.com", "yesbank.in",
+    "indusind.com", "bankofindia.co.in",
+    # crypto exchanges and trading
+    "binance.com", "coinbase.com", "wazirx.com", "coindcx.com", "zerodha.com", "groww.in", "upstox.com",
+    # government identity, tax and pension portals
+    "uidai.gov.in", "incometax.gov.in", "digilocker.gov.in", "passportindia.gov.in", "epfindia.gov.in",
+    "gst.gov.in", "parivahan.gov.in",
+}
 
 
 class BlockedURL(Exception):
@@ -40,8 +58,10 @@ def _resolve(host: str) -> tuple[str, ...]:
         raise BlockedURL(f"cannot resolve host {host!r}") from exc
 
 
-def check_url(url: str) -> str:
-    """Return the URL if it may be fetched, else raise BlockedURL."""
+def check_url(url: str, *, opening: bool = True) -> str:
+    """Return the URL if it may be fetched, else raise BlockedURL. `opening` is False for resources a page loads
+    by itself (scripts, images): a shop that embeds a payment script still works, but the agent never opens the
+    payment site."""
     parts = urlsplit(url)
     if parts.scheme not in {"http", "https"}:
         raise BlockedURL(f"scheme {parts.scheme!r} is not allowed")
@@ -57,12 +77,20 @@ def check_url(url: str) -> str:
         return url
     if host in _BLOCKED_HOSTNAMES or host.endswith(".internal") or host.endswith(".local"):
         raise BlockedURL(f"host {host!r} is internal")
+    if opening and is_sensitive(host):
+        raise BlockedURL(f"{host} is a banking, payment or government-identity site; Ease does not open these")
     if parts.port not in _ALLOWED_PUBLIC_PORTS:
         raise BlockedURL(f"port {parts.port} is not allowed for public hosts")
     for ip in _resolve(host):
         if not _is_public(ip):
             raise BlockedURL(f"host {host!r} resolves to non-public address")
     return url
+
+
+def is_sensitive(host: str) -> bool:
+    host = host.lower().rstrip(".")
+    extra = {d.strip().lower().lstrip(".") for d in get_settings().blocked_sites.split(",") if d.strip()}
+    return any(host == d or host.endswith("." + d) for d in _SENSITIVE_SITES | extra)
 
 
 def is_fixture(url: str) -> bool:

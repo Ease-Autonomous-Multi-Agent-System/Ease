@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     jwt_refresh_ttl_s: int = 7 * 24 * 3600
     # When set, /auth/register requires this code. Stops strangers from signing up and burning LLM quota.
     registration_invite_code: SecretStr | None = None
+    # Cloudflare Turnstile (free CAPTCHA) on sign-up, so bots cannot mass-create accounts. Both empty = off.
+    turnstile_site_key: str = ""
+    turnstile_secret_key: SecretStr | None = None
 
     # --- vault ---
     vault_master_key: SecretStr = SecretStr("")
@@ -38,6 +41,9 @@ class Settings(BaseSettings):
     # True (public website): only the signed-in user's own keys (AI models and every connector); keys in the
     # server's environment are never used, so visitors cannot spend the operator's quota.
     user_keys_only: bool = False
+    # Whether users may ask Ease to keep a website login after the run. A public server turns this off, so it never
+    # holds strangers' passwords longer than the run that needs them.
+    remember_site_logins: bool = True
 
     # --- LLM providers (all optional; router skips providers without a key) ---
     gemini_api_key: SecretStr | None = None
@@ -83,6 +89,9 @@ class Settings(BaseSettings):
     browser_headless: bool = True
     browser_cdp_url: str | None = None  # connect to a real Chrome (host mode) instead of launching one
     respect_robots_txt: bool = True
+    # Extra comma-separated domains the agents must never open, on top of the built-in banking / payment /
+    # government-identity list in netguard (each entry also blocks its subdomains).
+    blocked_sites: str = ""
     # When running outside Docker, "http://fixtures:8080" is rewritten to this (e.g. http://127.0.0.1:8080).
     fixtures_base_url: str | None = None
 

@@ -182,3 +182,36 @@ def test_fixture_hosts_can_be_limited_to_fixture_ports(monkeypatch):
         monkeypatch.delenv("FIXTURE_HOSTS")
         monkeypatch.delenv("FIXTURE_PORTS")
         get_settings.cache_clear()
+
+
+@pytest.mark.parametrize("url", ["https://www.paypal.com/signin", "https://netbanking.hdfcbank.com/",
+                                 "https://retail.onlinesbi.sbi/", "https://myaadhaar.uidai.gov.in/",
+                                 "https://www.incometax.gov.in/iec/foportal/"])
+def test_sensitive_sites_never_opened(url, monkeypatch):
+    monkeypatch.setattr(netguard, "_resolve", lambda h: ("93.184.215.14",))
+    with pytest.raises(netguard.BlockedURL, match="banking, payment or government-identity"):
+        netguard.check_url(url)
+
+
+def test_sensitive_rule_is_by_domain_not_substring(monkeypatch):
+    monkeypatch.setattr(netguard, "_resolve", lambda h: ("93.184.215.14",))
+    assert netguard.check_url("https://notpaypal.com.example.org/")  # look-alike name, different domain
+    assert netguard.check_url("https://js.stripe.com/v3/", opening=False)  # a page's embedded payment script
+    with pytest.raises(netguard.BlockedURL):
+        netguard.check_url("https://js.stripe.com/v3/")  # but the agent cannot open it as a page
+
+
+def test_operator_can_block_more_sites(monkeypatch):
+    from ease.config import get_settings
+
+    monkeypatch.setattr(netguard, "_resolve", lambda h: ("93.184.215.14",))
+    monkeypatch.setenv("BLOCKED_SITES", "example.org, .casino.example")
+    get_settings.cache_clear()
+    try:
+        for url in ("https://example.org/", "https://shop.example.org/", "https://a.casino.example/"):
+            with pytest.raises(netguard.BlockedURL):
+                netguard.check_url(url)
+        assert netguard.check_url("https://example.com/")
+    finally:
+        monkeypatch.delenv("BLOCKED_SITES")
+        get_settings.cache_clear()

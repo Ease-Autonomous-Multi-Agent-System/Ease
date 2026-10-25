@@ -97,7 +97,7 @@ class BrowserSession:
             route.continue_()
             return
         try:
-            check_url(url)
+            check_url(url, opening=request.is_navigation_request())
         except BlockedURL as exc:
             self.blocked.append(f"{url[:100]} ({exc})")
             route.abort("blockedbyclient")
