@@ -10,6 +10,8 @@ services:
     env_file: .env  # JWT_SECRET and VAULT_MASTER_KEY: generated once at setup, must never change
     environment:
       USER_KEYS_ONLY: "true"  # every visitor runs on their own AI and service keys
+      REMEMBER_SITE_LOGINS: "false"  # website logins live only for the run that needs them
+      # Sign-up human check: add TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY to .env (free, Cloudflare dashboard)
     volumes:
       - easedata:/home/user/data  # accounts, runs, encrypted keys: survive restarts and reboots
     shm_size: 1gb  # Chromium

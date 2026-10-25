@@ -3,6 +3,7 @@
 
 import { IconAlertTriangle, IconLock, IconLogin, IconRefresh, IconShieldCheck } from "@tabler/icons-react";
 import { useState } from "react";
+import { useAuth } from "@/lib/auth";
 import { fileUrl } from "@/lib/config";
 import type { ApprovalOut, SiteLogin } from "@/lib/types";
 
@@ -22,6 +23,7 @@ export function ApprovalDrawer({ approval, busy, onDecide }: {
     () => Object.fromEntries(approval.fields.map((f) => [f.locator, f.value])));
   const [showShot, setShowShot] = useState(false);
   const [login, setLogin] = useState<SiteLogin>({ username: "", password: "", remember: false });
+  const canRemember = useAuth().me?.remember_logins !== false;
   const host = approval.login_host;
   const loginReady = !!host && login.username.trim() !== "" && login.password !== "";
 
@@ -58,15 +60,17 @@ export function ApprovalDrawer({ approval, busy, onDecide }: {
               <input className="input" type="password" value={login.password} autoComplete="new-password"
                 onChange={(e) => setLogin({ ...login, password: e.target.value })} />
             </label>
-            <label className="check">
-              <input type="checkbox" checked={login.remember} onChange={(e) => setLogin({ ...login, remember: e.target.checked })} />
-              Remember for {host} (encrypted; delete it any time under Profile &amp; apps)
-            </label>
+            {canRemember ? (
+              <label className="check">
+                <input type="checkbox" checked={login.remember} onChange={(e) => setLogin({ ...login, remember: e.target.checked })} />
+                Remember for {host} (encrypted; delete it any time under Profile &amp; apps)
+              </label>
+            ) : null}
             <p className="tiny muted row" style={{ gap: 6, alignItems: "flex-start" }}>
               <IconLock size={14} aria-hidden="true" style={{ flexShrink: 0, marginTop: 2 }} />
               The AI never sees your password. Ease&apos;s own code types it into {host}&apos;s sign-in form, only on that
-              site and only over an encrypted (https) connection or a local test site. Unless you tick Remember, it is
-              deleted when this run ends.
+              site and only over an encrypted (https) connection or a local test site.{" "}
+              {canRemember ? "Unless you tick Remember, it is deleted when this run ends." : "It is deleted when this run ends."}
             </p>
             <button type="submit" hidden aria-hidden="true" tabIndex={-1} />
           </form>

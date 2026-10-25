@@ -18,10 +18,15 @@ class RegisterIn(BaseModel):
     password: str = Field(min_length=10, max_length=72)
     full_name: str = Field(default="", max_length=200)
     invite_code: str | None = Field(default=None, max_length=100)
+    captcha_token: str | None = Field(default=None, max_length=4096)
 
 
 class LoginIn(BaseModel):
     email: EmailStr
+    password: str = Field(max_length=200)
+
+
+class DeleteAccountIn(BaseModel):
     password: str = Field(max_length=200)
 
 
@@ -57,6 +62,7 @@ class MeOut(BaseModel):
     usage: dict[str, int]
     limits: dict[str, int]
     ai: dict[str, bool] = {}  # own_ai_key, own_vision_key, ai_ready, user_keys_only
+    remember_logins: bool = True  # the server lets users keep website logins after a run
 
 
 class RunConfig(BaseModel):

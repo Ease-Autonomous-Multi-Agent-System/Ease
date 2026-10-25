@@ -10,7 +10,9 @@ const BACKEND = (process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL
 const COOKIE = "ease_rt";
 const MAX_AGE = 7 * 24 * 3600;
 
-type Body = { action?: string; email?: string; password?: string; full_name?: string; invite_code?: string };
+type Body = {
+  action?: string; email?: string; password?: string; full_name?: string; invite_code?: string; captcha_token?: string;
+};
 
 function sameOrigin(req: NextRequest): boolean {
   // CSRF defence on top of SameSite=Strict: only our own pages may call this.
@@ -81,7 +83,7 @@ export async function POST(req: NextRequest) {
     case "register": {
       const r = await backend("/auth/register", {
         email: body.email, password: body.password, full_name: body.full_name ?? "",
-        invite_code: body.invite_code || undefined,
+        invite_code: body.invite_code || undefined, captcha_token: body.captcha_token || undefined,
       }, ip);
       if (!r.ok && r.status === 422 && Array.isArray(r.data?.detail)) {
         return NextResponse.json({ detail: "Use a valid email and a password of at least 10 characters with letters and digits." }, { status: 422 });

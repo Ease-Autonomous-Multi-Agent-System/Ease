@@ -2,7 +2,7 @@
 
 import {
   IconBolt, IconBrandNotion, IconBrandSlack, IconBrandTelegram, IconCheck, IconFileText, IconLock, IconRoute,
-  IconSparkles, IconTable, IconTag, IconTrash, IconUpload, IconWorldSearch,
+  IconAlertTriangle, IconSparkles, IconTable, IconTag, IconTrash, IconUpload, IconWorldSearch,
 } from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
@@ -106,7 +106,60 @@ export default function SettingsPage() {
         </div>
       </section>
       <SavedLogins creds={creds.filter((c) => c.service === "login")} onChange={load} />
+      <DeleteAccount />
     </div>
+  );
+}
+
+/** Permanently erases the account and everything stored for it. Asks for the password again. */
+function DeleteAccount() {
+  const { api, logout } = useAuth();
+  const [open, setOpen] = useState(false);
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function erase(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setBusy(true);
+    try {
+      await api("/me/delete", { method: "POST", body: JSON.stringify({ password }) });
+      await logout();
+    } catch (err) {
+      setError((err as Error).message);
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="card stack" style={{ gap: 12 }}>
+      <div className="row">
+        <div>
+          <h2>Delete account</h2>
+          <p className="small muted" style={{ marginTop: 4 }}>
+            Permanently removes your profile, resume, saved keys and logins, and every run with its screenshots. This cannot be undone.
+          </p>
+        </div>
+        <span className="spacer" />
+        {open ? null : <button className="btn btn-danger" onClick={() => setOpen(true)}>Delete my account</button>}
+      </div>
+      {open ? (
+        <form className="stack" style={{ gap: 12 }} onSubmit={erase}>
+          <p className="small"><IconAlertTriangle size={15} aria-hidden="true" style={{ verticalAlign: -2 }} /> Enter your password to confirm.</p>
+          <label className="field"><span>Password</span>
+            <input className="input" type="password" autoComplete="current-password" value={password}
+              onChange={(e) => setPassword(e.target.value)} required />
+          </label>
+          {error ? <p className="error-text" role="alert">{error}</p> : null}
+          <div className="row">
+            <button type="button" className="btn btn-quiet" onClick={() => { setOpen(false); setPassword(""); setError(null); }}>Cancel</button>
+            <span className="spacer" />
+            <button className="btn btn-danger" type="submit" disabled={busy || !password}>{busy ? "Deleting…" : "Delete everything"}</button>
+          </div>
+        </form>
+      ) : null}
+    </section>
   );
 }
 

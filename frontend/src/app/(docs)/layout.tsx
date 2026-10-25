@@ -28,7 +28,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
       <main className="page doc">{children}</main>
       <footer className="doc-footer small muted">
         Ease — final-year major project, ABES Engineering College · Varun Narayan Singh, Uddesh Pratap Singh, Utkarsh Dubey ·{" "}
-        <a href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href={REPO_URL} target="_blank" rel="noopener noreferrer">GitHub</a> · <Link href="/privacy">Privacy and terms</Link>
       </footer>
     </div>
   );

@@ -12,6 +12,7 @@ export interface Me {
   profile: Record<string, unknown>;
   usage: Record<string, number>;
   limits: Record<string, number>;
+  remember_logins?: boolean;
   /** whose AI keys pay for runs: own_ai_key / own_vision_key (the user saved one), ai_ready (tasks can run) */
   ai?: { own_ai_key: boolean; own_vision_key: boolean; ai_ready: boolean; user_keys_only: boolean };
 }

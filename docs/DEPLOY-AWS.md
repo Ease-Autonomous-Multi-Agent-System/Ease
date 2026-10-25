@@ -68,6 +68,34 @@ Connect with EC2 Instance Connect and run:
 cd /opt/ease/deploy/aws && sudo docker compose build --no-cache ease && sudo docker compose up -d
 ```
 
+## Sign-up human check (recommended before sharing the link)
+
+Stops bots from creating accounts in bulk. Free, no card:
+
+1. In the Cloudflare dashboard open **Turnstile → Add widget**, add your site's address (e.g. `3-110-20-5.sslip.io`)
+   as the hostname, mode **Managed**.
+2. On the server, add the two keys it shows to `/opt/ease/deploy/aws/.env`:
+   ```
+   TURNSTILE_SITE_KEY=0x4AAAA...
+   TURNSTILE_SECRET_KEY=0x4AAAA...
+   ```
+3. `cd /opt/ease/deploy/aws && sudo docker compose up -d`
+
+The sign-up page then shows the check, and the API refuses sign-ups without a valid one.
+
+## Backups and restore
+
+Every night at 03:30 the database and uploaded resumes are saved to `/opt/ease-backups` (7 days kept). Run one now
+with `sudo /opt/ease/deploy/aws/backup.sh`. To restore a database backup:
+
+```bash
+cd /opt/ease/deploy/aws
+sudo docker compose exec -T ease sh -c 'PGPASSWORD="$(cat /home/user/data/pg.pw)" /usr/lib/postgresql/16/bin/pg_restore -h 127.0.0.1 -U ease -d ease --clean --if-exists' < /opt/ease-backups/db-YYYYMMDD-HHMM.dump
+```
+
+Saved API keys in a backup can only be decrypted with the `VAULT_MASTER_KEY` in `deploy/aws/.env`. If you copy
+backups off the server, keep that file somewhere else.
+
 ## Stopping the costs
 
 **Instance state → Terminate** deletes the server and its data. Also release the Elastic IP if you made one,
@@ -81,3 +109,6 @@ because unattached Elastic IPs are billed.
 - Rate limits use each visitor's real IP.
 - The browser agent cannot reach the internal API, database or Redis.
 - The interactive API docs are off.
+- The agent never opens banking, payment, crypto or government-identity sites (add more with `BLOCKED_SITES`).
+- Website logins a visitor hands over are deleted when their run ends (`REMEMBER_SITE_LOGINS=false`).
+- Visitors can delete their account and all its data themselves (Profile & apps → Delete account).

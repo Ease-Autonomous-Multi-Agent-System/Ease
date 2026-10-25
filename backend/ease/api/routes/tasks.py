@@ -212,9 +212,9 @@ def submit_decision(db: Session, user: User, task_id: uuid.UUID, body: ApproveIn
 
         # Encrypted into the vault before the worker resumes; only a reference travels with the decision, so the
         # password never reaches the Celery queue or the graph checkpoint.
-        save_login(db, user.id, login_host, body.login.username, body.login.password,
-                   remember=body.login.remember, task_id=t.id)
-        meta |= {"login_for": login_host, "remember": body.login.remember}  # never the password
+        remember = body.login.remember and get_settings().remember_site_logins
+        save_login(db, user.id, login_host, body.login.username, body.login.password, remember=remember, task_id=t.id)
+        meta |= {"login_for": login_host, "remember": remember}  # never the password
     db.add(AuditLog(user_id=user.id, task_id=t.id, action=f"approval.{body.decision}",
                     resource=str(appr.id), meta_json=meta))
     db.commit()

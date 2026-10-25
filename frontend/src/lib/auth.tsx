@@ -16,7 +16,7 @@ interface AuthValue {
   status: Status;
   me: Me | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, fullName: string, inviteCode?: string) => Promise<void>;
+  register: (email: string, password: string, fullName: string, inviteCode?: string, captchaToken?: string) => Promise<void>;
   logout: () => Promise<void>;
   api: <T = unknown>(path: string, init?: RequestInit) => Promise<T>;
   reloadMe: () => Promise<void>;
@@ -136,8 +136,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await session("login", { email, password });
       await enter();
     },
-    register: async (email, password, fullName, inviteCode) => {
-      await session("register", { email, password, full_name: fullName, invite_code: inviteCode });
+    register: async (email, password, fullName, inviteCode, captchaToken) => {
+      await session("register", { email, password, full_name: fullName, invite_code: inviteCode, captcha_token: captchaToken });
       await enter();
     },
     logout: async () => {

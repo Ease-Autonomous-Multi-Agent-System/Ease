@@ -2,10 +2,14 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { API_URL } from "@/lib/config";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
+import { Turnstile, type TurnstileHandle } from "./Turnstile";
+
+type SignupConfig = { turnstile_site_key: string; invite_required: boolean };
 
 function safeNext(next: string | null): string {
   // only same-site relative paths - never an open redirect
@@ -22,6 +26,16 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const [invite, setInvite] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [config, setConfig] = useState<SignupConfig | null>(null);
+  const [captcha, setCaptcha] = useState<string | null>(null);
+  const human = useRef<TurnstileHandle>(null);
+
+  useEffect(() => {
+    if (mode !== "register") return;
+    let alive = true;
+    fetch(`${API_URL}/auth/config`).then((r) => r.json()).then((c) => { if (alive) setConfig(c); }).catch(() => null);
+    return () => { alive = false; };
+  }, [mode]);
 
   useEffect(() => {
     if (status === "in") router.replace(safeNext(params.get("next")));
@@ -32,12 +46,14 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
     setError(null);
     if (!email.includes("@")) return setError("Enter your email address.");
     if (mode === "register" && password.length < 10) return setError("Use at least 10 characters for your password.");
+    if (mode === "register" && config?.turnstile_site_key && !captcha) return setError("Complete the human check first.");
     setBusy(true);
     try {
       if (mode === "login") await login(email, password);
-      else await register(email, password, name, invite || undefined);
+      else await register(email, password, name, invite || undefined, captcha || undefined);
     } catch (err) {
       setError((err as Error).message);
+      human.current?.reset();
     } finally {
       setBusy(false);
     }
@@ -70,15 +86,23 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             <input className="input" type="password" value={password} onChange={(e) => { setPassword(e.target.value); setError(null); }}
               autoComplete={mode === "login" ? "current-password" : "new-password"} required />
           </label>
-          {mode === "register" ? (
-            <label className="field"><span>Invite code (if your deployment uses one)</span>
+          {mode === "register" && config?.invite_required ? (
+            <label className="field"><span>Invite code</span>
               <input className="input" value={invite} onChange={(e) => setInvite(e.target.value)} autoComplete="off" />
             </label>
+          ) : null}
+          {mode === "register" && config?.turnstile_site_key ? (
+            <Turnstile ref={human} siteKey={config.turnstile_site_key} onToken={setCaptcha} />
           ) : null}
           {error ? <p className="error-text" role="alert">{error}</p> : null}
           <button className="btn btn-primary btn-lg" disabled={busy} type="submit">
             {busy ? "One moment…" : mode === "login" ? "Sign in" : "Create account"}
           </button>
+          {mode === "register" ? (
+            <p className="small muted" style={{ textAlign: "center" }}>
+              By creating an account you agree to the <Link href="/privacy">terms and privacy policy</Link>.
+            </p>
+          ) : null}
           <p className="small muted" style={{ textAlign: "center" }}>
             {mode === "login" ? <>New here? <Link href="/register">Create an account</Link></> : <>Have an account? <Link href="/login">Sign in</Link></>}
           </p>

@@ -13,7 +13,9 @@ fi
 # Docker (official convenience script) and the Ease source
 curl -fsSL https://get.docker.com | sh
 git clone --depth 1 https://github.com/Ease-Autonomous-Multi-Agent-System/Ease.git /opt/ease
-chmod +x /opt/ease/deploy/aws/refresh-domain.sh
+chmod +x /opt/ease/deploy/aws/refresh-domain.sh /opt/ease/deploy/aws/backup.sh
+# daily database backup, 7 days kept (restore: see docs/DEPLOY-AWS.md)
+echo '30 3 * * * root /opt/ease/deploy/aws/backup.sh >> /var/log/ease-backup.log 2>&1' > /etc/cron.d/ease-backup
 
 # Secrets, generated once on this server and never shown anywhere else. They must stay the same for the life of
 # the data volume: VAULT_MASTER_KEY encrypts every user's saved API keys.

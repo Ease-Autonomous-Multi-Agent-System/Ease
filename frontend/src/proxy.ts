@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
  * Per-request Content-Security-Policy with a nonce (Next.js 16 "proxy" convention, formerly middleware).
  * Only our own scripts run (nonce + strict-dynamic); the page may talk to the Ease API (HTTP + WebSocket) and
  * nothing else. Styles allow 'unsafe-inline' because Next.js and React inject <style> tags without a nonce;
- * script execution - the part that matters for XSS - stays nonce-only.
+ * script execution - the part that matters for XSS - stays nonce-only. The only frame allowed is Cloudflare's
+ * sign-up human check (Turnstile), which our own nonce'd code loads.
  */
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
@@ -23,6 +24,7 @@ export function proxy(request: NextRequest) {
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: ${api};
     font-src 'self';
+    frame-src https://challenges.cloudflare.com;
     connect-src 'self' ${api} ${ws}${isDev ? " ws://localhost:* ws://127.0.0.1:*" : ""};
     object-src 'none';
     base-uri 'self';

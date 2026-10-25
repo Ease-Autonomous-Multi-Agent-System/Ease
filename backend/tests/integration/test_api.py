@@ -327,3 +327,93 @@ def test_router_uses_the_run_owners_key_and_never_the_servers(monkeypatch):
     assert seen == ["Bearer gsk_alice"]
     with pytest.raises(LlmUnavailable, match="add your own"):
         r.complete([{"role": "user", "content": "y"}], user_id="bob")
+
+
+def test_delete_account_erases_everything(client, no_celery):
+    from ease.config import get_settings
+    from ease.db.models import Credential, Document, Task, TaskStatus, User
+    from ease.db.session import session_scope
+
+    email, h, tokens = _register(client)
+    r = client.post("/documents", files={"file": ("cv.txt", b"my resume text", "text/plain")}, headers=h)
+    assert r.status_code == 202
+    assert client.put("/credentials/groq/default", json={"secret": "gsk_user_key_123456"}, headers=h).status_code == 200
+    tid = client.post("/tasks", json={"prompt": "find remote internships"}, headers=h).json()["task_id"]
+    shot = get_settings().artifacts_dir / tid / "s1"
+    shot.mkdir(parents=True, exist_ok=True)
+    (shot / "001-page.png").write_bytes(b"png")
+    with session_scope() as s:
+        uid = s.scalar(select(User.id).where(User.email == email))
+        s.get(Task, uuid.UUID(tid)).status = TaskStatus.RUNNING
+
+    assert client.post("/me/delete", json={"password": "wrong-password-1"}, headers=h).status_code == 403
+    assert client.post("/me/delete", json={"password": PW}, headers=h).status_code == 409  # task still running
+    with session_scope() as s:
+        s.get(Task, uuid.UUID(tid)).status = TaskStatus.COMPLETED
+    assert client.post("/me/delete", json={"password": PW}, headers=h).status_code == 204
+
+    with session_scope() as s:
+        assert s.get(User, uid) is None
+        for model in (Credential, Document, Task):
+            assert s.scalar(select(model).where(model.user_id == uid)) is None
+    assert not (get_settings().uploads_dir / str(uid)).exists()
+    assert not (get_settings().artifacts_dir / tid).exists()
+    assert client.get("/me", headers=h).status_code == 401  # the old session no longer works
+    assert client.post("/auth/refresh", json={"refresh_token": tokens["refresh_token"]}).status_code == 401
+    assert client.post("/auth/login", json={"email": email, "password": PW}).status_code == 401
+
+
+def test_signup_needs_the_human_check_when_turnstile_is_on(client, monkeypatch):
+    from ease.api.routes import auth as auth_routes
+    from ease.config import get_settings
+
+    assert client.get("/auth/config").json() == {"turnstile_site_key": "", "invite_required": False}
+    monkeypatch.setenv("TURNSTILE_SITE_KEY", "0x4AAAA-site")
+    monkeypatch.setenv("TURNSTILE_SECRET_KEY", "0x4AAAA-secret")
+    get_settings.cache_clear()
+    seen = []
+
+    def fake_post(url, timeout, data):
+        seen.append(data)
+
+        class R:
+            def json(self):
+                return {"success": data["response"] == "good-token"}
+        return R()
+
+    monkeypatch.setattr(auth_routes.httpx, "post", fake_post)
+    assert client.get("/auth/config").json()["turnstile_site_key"] == "0x4AAAA-site"
+    new = {"email": f"bot-{uuid.uuid4().hex[:8]}@example.com", "password": PW}
+    assert client.post("/auth/register", json=new).status_code == 400  # no token
+    assert client.post("/auth/register", json={**new, "captcha_token": "forged"}).status_code == 400
+    assert client.post("/auth/register", json={**new, "captcha_token": "good-token"}).status_code == 201
+    assert seen[-1]["secret"] == "0x4AAAA-secret"
+
+
+def test_public_server_never_keeps_website_logins(client, monkeypatch):
+    from ease.config import get_settings
+    from ease.db.models import Approval, Credential, Task, TaskStatus
+    from ease.db.session import session_scope
+
+    monkeypatch.setenv("REMEMBER_SITE_LOGINS", "false")
+    get_settings.cache_clear()
+    _, h, _ = _register(client)
+    assert client.get("/me", headers=h).json()["remember_logins"] is False
+    tid = client.post("/tasks", json={"prompt": "check my portal"}, headers=h).json()["task_id"]
+    aid = uuid.uuid4()
+    with session_scope() as s:
+        s.get(Task, uuid.UUID(tid)).status = TaskStatus.AWAITING_APPROVAL
+        s.add(Approval(id=aid, task_id=uuid.UUID(tid), step_key="login",
+                       payload_json={"reason": "sign-in page", "kind": "escalation", "fields": [],
+                                     "login_host": "portal.example.com"}))
+    r = client.post(f"/tasks/{tid}/approve", headers=h, json={
+        "approval_id": str(aid), "decision": "approve",
+        "login": {"username": "me", "password": "site-pass-1", "remember": True}})
+    assert r.status_code == 200, r.text
+    from ease.security.ratelimit import get_redis
+
+    with session_scope() as s:
+        cred = s.scalar(select(Credential).where(Credential.service == "login", Credential.name == "portal.example.com"))
+        assert cred is not None
+        # "remember" was ignored: the login is on this run's delete-when-finished list
+        assert get_redis().sismember(f"templogin:{tid}", f"{cred.user_id}|portal.example.com")
