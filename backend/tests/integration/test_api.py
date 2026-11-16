@@ -413,7 +413,8 @@ def test_public_server_never_keeps_website_logins(client, monkeypatch):
     from ease.security.ratelimit import get_redis
 
     with session_scope() as s:
-        cred = s.scalar(select(Credential).where(Credential.service == "login", Credential.name == "portal.example.com"))
+        cred = s.scalar(
+            select(Credential).where(Credential.service == "login", Credential.name == "portal.example.com"))
         assert cred is not None
         # "remember" was ignored: the login is on this run's delete-when-finished list
         assert get_redis().sismember(f"templogin:{tid}", f"{cred.user_id}|portal.example.com")

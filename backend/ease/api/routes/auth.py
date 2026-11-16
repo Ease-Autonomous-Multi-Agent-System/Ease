@@ -37,8 +37,10 @@ def captcha_ok(token: str | None, ip: str | None) -> bool:
     if not token:
         return False
     try:
-        r = httpx.post(TURNSTILE_VERIFY, timeout=10, data={
-            "secret": secret.get_secret_value() if secret else "", "response": token, **({"remoteip": ip} if ip else {})})
+        data = {"secret": secret.get_secret_value() if secret else "", "response": token}
+        if ip:
+            data["remoteip"] = ip
+        r = httpx.post(TURNSTILE_VERIFY, timeout=10, data=data)
         return bool(r.json().get("success"))
     except (httpx.HTTPError, ValueError):
         return False
