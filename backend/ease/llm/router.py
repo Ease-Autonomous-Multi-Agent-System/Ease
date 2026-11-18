@@ -78,6 +78,11 @@ PROVIDERS: dict[str, Provider] = {
 }
 
 
+# Which provider:model answered each live (uncached) call in this process, in order. The benchmark harness reads
+# and clears it per run so every record states the models that actually served it.
+SERVED: list[str] = []
+
+
 class LlmError(Exception):
     pass
 
@@ -340,6 +345,7 @@ class LlmRouter:
             raise LlmError(f"empty response (finish_reason={data['choices'][0].get('finish_reason')})")
         usage = data.get("usage") or {}
         log.debug("llm.latency", provider=p.name, ms=int((time.monotonic() - t0) * 1000))
+        SERVED.append(f"{p.name}:{body['model']}")
         return LlmResult(text, p.name, body["model"], int(usage.get("total_tokens") or 0))
 
     @staticmethod

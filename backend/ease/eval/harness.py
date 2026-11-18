@@ -21,6 +21,7 @@ import os
 import sys
 import time
 import uuid
+from collections import Counter
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -29,8 +30,10 @@ from langgraph.checkpoint.memory import InMemorySaver
 
 from ease.agents.browser.agent import normalize_fixture_url
 from ease.config import REPO_ROOT, get_settings
+from ease.eval.scoring import ease_final_output, receipts_between, render_answer, score, utc_now
 from ease.graph.build import build_graph
 from ease.graph.run import _load_resume, local_context, pending_interrupt, resume, start
+from ease.llm.router import SERVED
 from ease.logs import configure_logging
 from ease.schemas.contracts import ApprovalDecision
 
@@ -43,6 +46,8 @@ CONDITIONS: dict[str, list[dict[str, Any]]] = {
                   for g in ("dom", "vision", "hybrid")],
     "hitl": [{"name": "hitl-on", "grounding": "hybrid", "hitl": True, "planner": "hierarchical"},
              {"name": "hitl-off", "grounding": "hybrid", "hitl": False, "planner": "hierarchical"}],
+    # one arm of the hitl ablation on its own, to re-run a rate-limited case without re-running the other arm
+    "hitl-off": [{"name": "hitl-off", "grounding": "hybrid", "hitl": False, "planner": "hierarchical"}],
     "planner": [{"name": "hierarchical", "grounding": "hybrid", "hitl": True, "planner": "hierarchical"},
                 {"name": "single", "grounding": "hybrid", "hitl": True, "planner": "single"}],
 }
@@ -71,6 +76,10 @@ class RunRecord:
     tools: list[str] = field(default_factory=list)
     rate_limited: bool = False  # the free LLM tiers refused calls during this run
     infra_retries: int = 0  # times this case was re-run because it died of rate limits only
+    answer: str = ""  # the final user-facing answer the checks were applied to (ease.eval.scoring)
+    submitted_jobs: list[str] = field(default_factory=list)  # what the fixture site received during the run
+    served_by: dict[str, int] = field(default_factory=dict)  # provider:model -> live calls it answered
+    started_at: str = ""  # UTC ISO time the run started
 
 
 RATE_LIMIT_MARKERS = ("no llm provider succeeded", "providers are cooling down", "http 429", "http 503")
@@ -87,63 +96,6 @@ def load_cases(suite: str, only: set[str] | None) -> list[dict[str, Any]]:
     return [c for c in cases if (suite == "all" or c["suite"] == suite) and (not only or c["id"] in only)]
 
 
-# ------------------------------------------------------------------ checks
-def _all_items(state: dict[str, Any]) -> list[dict[str, Any]]:
-    items: list[dict[str, Any]] = []
-    for r in (state.get("results") or {}).values():
-        for it in (r.get("output") or {}).get("items") or []:
-            if isinstance(it, dict):
-                items.append(it)
-    return items
-
-
-def _final_items(state: dict[str, Any]) -> list[dict[str, Any]]:
-    plan = state.get("plan") or {}
-    for s in reversed(plan.get("steps", [])):
-        out = ((state.get("results") or {}).get(s["key"]) or {}).get("output") or {}
-        if isinstance(out.get("items"), list):
-            return [i for i in out["items"] if isinstance(i, dict)]
-    return []
-
-
-def run_checks(case: dict[str, Any], state: dict[str, Any], escalations: list[str]) -> tuple[bool, list[str]]:
-    blob = json.dumps(state.get("results") or {}, ensure_ascii=False, default=str).lower()
-    tools = [s["tool"] for s in (state.get("plan") or {}).get("steps", [])]
-    details, ok = [], True
-    for chk in case["checks"]:
-        t = chk["type"]
-        if t == "titles_include":
-            got = {str(i.get(chk["field"], "")).strip().lower() for i in _final_items(state)}
-            exp = [e.lower() for e in chk["expected"]]
-            hit = sum(1 for e in exp if any(e in g or g in e for g in got if g))
-            recall = hit / len(exp)
-            passed = recall >= chk.get("min_recall", 1.0)
-            if "max_extra" in chk:
-                passed = passed and len(got) - hit <= chk["max_extra"]
-            details.append(f"titles recall {hit}/{len(exp)}, returned {len(got)}")
-        elif t == "text_contains":
-            passed = any(s.lower() in blob for s in chk["any_of"])
-            details.append(f"text contains {chk['any_of']}: {passed}")
-        elif t == "min_items":
-            n = len(_final_items(state)) or len(_all_items(state))
-            passed = n >= chk["n"]
-            details.append(f"items {n} >= {chk['n']}")
-        elif t == "submitted":
-            passed = '"submitted": true' in blob
-            details.append(f"submitted: {passed}")
-        elif t == "tool_used":
-            passed = chk["tool"] in tools
-            details.append(f"tool {chk['tool']} used: {passed}")
-        elif t == "escalated":
-            passed = case.get("expect_escalation") in escalations
-            details.append(f"escalated {escalations}")
-        else:
-            passed = False
-            details.append(f"unknown check {t}")
-        ok = ok and passed
-    return ok, details
-
-
 def failure_label(state: dict[str, Any], success: bool) -> str | None:
     if success:
         return None
@@ -155,8 +107,8 @@ def failure_label(state: dict[str, Any], success: bool) -> str | None:
         err = r.get("error")
         if err and r.get("status") != "OK":
             return str(err["label"])
-    # executed cleanly but did not achieve the goal: genuine reasoning failure
-    return "PLAN_WRONG"
+    # ran to completion without a step error, but the final answer fails the checks
+    return "WRONG_ANSWER"
 
 
 # ------------------------------------------------------------------ one run
@@ -167,7 +119,8 @@ def run_case(case: dict[str, Any], cond: dict[str, Any], repeat: int, run_id: st
     ctx.browser.cookie_lookup = lambda user_id, host: cookies
     graph = build_graph(InMemorySaver())
     thread = uuid.uuid4().hex
-    t0 = time.monotonic()
+    t0, started = time.monotonic(), utc_now()
+    SERVED.clear()
     hitl_count, escalations = 0, []
     state = start(graph, ctx, task_id=str(uuid.uuid4()), user_id="eval", prompt=case["prompt"], thread_id=thread,
                   config={k: cond[k] for k in ("grounding", "hitl", "planner")})
@@ -185,7 +138,13 @@ def run_case(case: dict[str, Any], cond: dict[str, Any], repeat: int, run_id: st
         if hitl_count > 6:
             break
     wall = int((time.monotonic() - t0) * 1000)
-    success, details = run_checks(case, state, escalations)
+    output = ease_final_output(state)
+    answer = render_answer(output)
+    jobs = receipts_between(started, utc_now(), email=profile.get("email") or None)
+    want = case.get("expect_escalation")
+    success, details = score(case, answer, items=output.get("items") if isinstance(output.get("items"), list)
+                             else None, submitted_jobs=jobs,
+                             escalated=(want in escalations) if want else bool(escalations))
     usage = ctx.store.tasks.get(next(iter(ctx.store.tasks), ""), {})
     results = state.get("results") or {}
     return RunRecord(
@@ -195,7 +154,8 @@ def run_case(case: dict[str, Any], cond: dict[str, Any], repeat: int, run_id: st
         escalations=escalations, llm_calls=usage.get("llm_calls", 0), tokens=usage.get("tokens", 0), wall_ms=wall,
         step_latency_ms={k: int(v.get("latency_ms") or 0) for k, v in results.items()},
         tools=[s["tool"] for s in (state.get("plan") or {}).get("steps", [])],
-        rate_limited=_rate_limited(state),
+        rate_limited=_rate_limited(state), answer=answer[:20000], submitted_jobs=jobs,
+        served_by=dict(Counter(SERVED)), started_at=started.isoformat(),
     )
 
 
@@ -210,6 +170,36 @@ def _fixtures_up() -> bool:
         return False
 
 
+def _resume_vectors(path: Path) -> list[list[float]]:
+    from ease.agents.documents import chunk_text, embed, extract_text, sniff_type
+
+    data = path.read_bytes()
+    return embed(chunk_text(extract_text(data, sniff_type(data, path.name))))
+
+
+def run_metadata(argv: list[str] | None) -> dict[str, Any]:
+    from importlib.metadata import PackageNotFoundError, version
+
+    def v(pkg: str) -> str | None:
+        try:
+            return version(pkg)
+        except PackageNotFoundError:
+            return None
+
+    s = get_settings()
+    return {
+        "started_utc": utc_now().isoformat(), "argv": argv if argv is not None else sys.argv[1:],
+        "python": sys.version.split()[0], "platform": sys.platform,
+        "packages": {p: v(p) for p in ("langgraph", "playwright", "pydantic", "httpx", "fastembed")},
+        "llm": {"text_order": s.llm_text_provider_order, "vision_order": s.llm_provider_order,
+                "cache_mode": s.llm_cache_mode, "max_cooldown_wait_s": os.environ.get("LLM_MAX_COOLDOWN_WAIT_S"),
+                "temperature": 0,
+                "overrides": {k: val for k, val in os.environ.items() if k.startswith("LLM_MODEL_")}},
+        "limits": {"max_plan_steps": s.max_plan_steps, "max_browser_actions_per_step": s.max_browser_actions_per_step,
+                   "task_llm_call_budget": s.task_llm_call_budget},
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Ease benchmark runner")
     ap.add_argument("--suite", choices=["fixture", "live", "all"], default="fixture")
@@ -219,6 +209,10 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--cases", default="", help="comma-separated case ids")
     ap.add_argument("--run-id", default=time.strftime("%Y%m%d-%H%M%S"))
     ap.add_argument("--profile-json", default="", help="use this profile instead of extracting it from the resume")
+    ap.add_argument("--with-vectors", action="store_true",
+                    help="with --profile-json: still embed the resume locally (no LLM call) for ranking tasks")
+    ap.add_argument("--resume", default=str(Path(__file__).with_name("synthetic_resume.pdf")),
+                    help="resume for form filling and matching (default: the released synthetic resume)")
     ap.add_argument("--pause", type=float, default=10, help="seconds between cases (free-tier rate limits)")
     ap.add_argument("--infra-retries", type=int, default=2,
                     help="re-run a case that failed only because every LLM provider was rate-limited")
@@ -226,6 +220,7 @@ def main(argv: list[str] | None = None) -> int:
     configure_logging("WARNING")
     # A benchmark may wait longer for a rate-limited provider than an interactive user should.
     os.environ.setdefault("LLM_MAX_COOLDOWN_WAIT_S", "120")
+    os.environ["LLM_CACHE_MODE"] = "off"  # every benchmark call goes to the model; nothing is replayed
     get_settings.cache_clear()
 
     only = {c.strip() for c in args.cases.split(",") if c.strip()} or None
@@ -235,11 +230,17 @@ def main(argv: list[str] | None = None) -> int:
               "Not running - every browser case would fail for an environment reason.", file=sys.stderr)
         return 2
     if args.profile_json:  # e.g. the same profile given to an external agent in a comparison
-        profile, vectors = json.loads(Path(args.profile_json).read_text(encoding="utf-8")), []
+        profile = json.loads(Path(args.profile_json).read_text(encoding="utf-8"))
+        vectors = _resume_vectors(Path(args.resume)) if args.with_vectors else []
     else:
-        profile, vectors = _load_resume(REPO_ROOT / "private" / "resume.pdf")
+        profile, vectors = _load_resume(Path(args.resume))
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"{args.run_id}.jsonl"
+    # Everything needed to repeat this run: the exact arguments, model settings, package versions, the profile.
+    (OUT_DIR / f"{args.run_id}-profile.json").write_text(json.dumps(profile, indent=1), encoding="utf-8")
+    meta_path = OUT_DIR / f"{args.run_id}-meta.json"
+    if not meta_path.exists():
+        meta_path.write_text(json.dumps(run_metadata(argv), indent=1), encoding="utf-8")
     total = len(cases) * len(CONDITIONS[args.conditions]) * args.repeats
     n = 0
     for cond in CONDITIONS[args.conditions]:
@@ -252,8 +253,8 @@ def main(argv: list[str] | None = None) -> int:
                         rec = run_case(case, cond, rep, args.run_id, profile, vectors)
                     except Exception as exc:  # the harness itself must never stop a long benchmark run
                         rec = RunRecord(args.run_id, case["id"], case["suite"], case["domain"], case.get("pair"),
-                                        cond, rep, False, "TOOL_ERROR", [f"harness exception: {exc}"[:300]], None,
-                                        0, 0)
+                                        cond, rep, False, "HARNESS_ERROR", [f"harness exception: {exc}"[:300]],
+                                        None, 0, 0)
                     rec.infra_retries = attempt
                     if rec.success or rec.failure_label != "RATE_LIMITED" or attempt == args.infra_retries:
                         break

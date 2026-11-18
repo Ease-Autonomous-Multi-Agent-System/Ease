@@ -32,7 +32,6 @@ export default function ComposerPage() {
   const router = useRouter();
   const [prompt, setPrompt] = useState("");
   const [grounding, setGrounding] = useState<"hybrid" | "dom" | "vision">("hybrid");
-  const [hitl, setHitl] = useState(true);
   const [advanced, setAdvanced] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -53,7 +52,7 @@ export default function ComposerPage() {
     try {
       const res = await api<{ task_id: string }>("/tasks", {
         method: "POST",
-        body: JSON.stringify({ prompt: text, config: { grounding, hitl, planner: "hierarchical" } }),
+        body: JSON.stringify({ prompt: text, config: { grounding, planner: "hierarchical" } }),
       });
       router.push(`/runs/${res.task_id}`);
     } catch (err) {
@@ -110,10 +109,9 @@ export default function ComposerPage() {
                 <option value="vision">Screenshots only</option>
               </select>
             </label>
-            <label className="check">
-              <input type="checkbox" checked={hitl} onChange={(e) => setHitl(e.target.checked)} />
-              Ask me before anything irreversible (recommended)
-            </label>
+            <p style={{ margin: 0, color: "var(--muted)", fontSize: 13 }}>
+              Ease always asks you before anything irreversible, such as submitting a form.
+            </p>
           </div>
         ) : null}
         {error ? <p className="error-text" role="alert" style={{ padding: "4px 12px" }}>{error}</p> : null}

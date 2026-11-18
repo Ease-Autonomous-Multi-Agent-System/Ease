@@ -277,36 +277,45 @@ CI (GitHub Actions) runs lint, migrations up/down/up, unit and integration tests
 
 ## Reproducing the evaluation
 
-The benchmark ([backend/ease/eval/benchmark.json](backend/ease/eval/benchmark.json)) has fixture tasks on the local
-test sites and live tasks on real websites, each with programmatic checks. Run from `backend` with the fixture sites
-up (`docker compose up -d fixtures`) and a resume at `private/resume.pdf` (or pass `--profile-json`). Results are
-written to `data/eval/<run-id>.jsonl`.
+**Benchmark v2** ([backend/ease/eval/benchmark.json](backend/ease/eval/benchmark.json)): 15 fixture tasks on the
+local test sites and 9 live tasks. One scorer ([backend/ease/eval/scoring.py](backend/ease/eval/scoring.py)) judges
+every system the same way:
+
+- it reads only the **final answer** a user would see, never intermediate results or logs;
+- a form counts as submitted only if the **test site's own receipt log** (`data/fixture-logs/receipts.log`) shows it;
+- listing tasks check **precision** too: listing a wrong item fails. The expected items and distractors are derived
+  from the fixture data by `backend/scripts/derive_fixture_checks.py`.
+
+Form-filling uses a **synthetic resume** of a fictional applicant
+([backend/ease/eval/synthetic_resume.pdf](backend/ease/eval/synthetic_resume.pdf)), so no personal data is needed.
+Every run record stores the final answer, what the site received, and which provider and model served each call.
+Each run also writes a `-meta.json` file with its arguments, package versions and model settings. The response cache
+is always off.
+
+Run from `backend` with the fixture sites up (`docker compose up -d fixtures`):
 
 ```bash
-python -m ease.eval.harness --suite all --repeats 3                 # fixture and live suites, reported separately
-python -m ease.eval.harness --suite all --conditions grounding      # DOM vs vision vs hybrid
-python -m ease.eval.harness --suite fixture --conditions hitl       # approvals on vs off
-python -m ease.eval.harness --suite all --conditions planner        # hierarchical vs single prompt
-python -m ease.eval.report data/eval/<run-id>.jsonl                 # Markdown tables + PNG charts
-python -m ease.eval.paper_metrics --fixture <run-id>:<repeats>      # success, time, recovery, intervention, auth, safety
-python scripts/workload_scaling.py --levels 1,2,4,8                 # N concurrent users against the running stack
+python -m ease.eval.harness --suite fixture --repeats 3 --run-id v2-fixture   # main fixture suite
+python -m ease.eval.harness --suite live --run-id v2-live                     # live websites and APIs
+python -m ease.eval.harness --suite fixture --conditions hitl --run-id v2-hitl     --cases F04-apply-cv,F05-rank-apply,F10-portal-deadlines,F11-portal-no-session   # approvals on vs off
+python scripts/crash_injection.py --repeats 20                                # kill the process inside a commit
+bash scripts/run_paper_v2.sh comparison                                       # Ease vs browser-use vs Magentic-One
 ```
 
 (`python` here means the project environment: `../.venv/Scripts/python` on Windows, `../.venv/bin/python` elsewhere.)
 
-Useful harness options: `--cases F01-remote-interns,...` to run a subset, `--pause` between cases for free-tier rate
-limits, `--repeat-start` to resume an interrupted run. The harness refuses to start if the fixture sites are down.
+The comparison runs every system on one pinned model (`gemini-flash-lite-latest`, failover off). browser-use 0.13.11
+and Magentic-One (autogen-agentchat/ext 0.7.5) each need their own virtual environment, passed as `BU_PY` and `M1_PY`
+(see the header of `scripts/run_paper_v2.sh`).
 
-**External baselines**, under identical tasks, scoring, model and local sites, each in its own virtual environment:
+Useful harness options: `--cases` to run a subset, `--pause` between cases for free-tier rate limits, `--repeat-start`
+to resume an interrupted run, `--profile-json` to reuse an extracted profile. The harness refuses to start if the
+fixture sites are down.
 
-```bash
-<venv with browser-use>/python ease/eval/external_agent.py --cases F01-remote-interns,...
-<venv with autogen-ext[magentic-one,openai]>/python ease/eval/external_magentic.py --cases F01-remote-interns,...
-```
-
-Every failed run is labelled (`BOT_WALL`, `GROUNDING_MISS`, `PLAN_INVALID`, `PLAN_WRONG`, `AUTH_EXPIRED`,
-`TIMEOUT`, `TOOL_ERROR`, `ESCALATED`, `RATE_LIMITED`), and environment failures are reported separately from agent
-failures.
+Failure labels: a run that finishes without a step error but fails the checks is `WRONG_ANSWER`; runs refused by
+every LLM provider after retries are `RATE_LIMITED` and are reported separately from agent failures; faults of the
+harness itself are `HARNESS_ERROR`. Free-tier note: Groq allows 8,000 tokens per minute per model, so run one Groq-heavy
+job at a time.
 
 ## Security
 
@@ -319,8 +328,14 @@ failures.
   per task / user / day / deployment, checked before every model call.
 - **Agent safety:** SSRF guard on every browser and connector request; navigation pinned to the task's site;
   banking, payment, crypto and government-identity sites blocked; robots.txt respected; no typing into
-  password/payment/OTP fields by the model; irreversible actions need approval; page text treated as untrusted data;
-  seller trust decided by code, which web content cannot raise.
+  password/payment/OTP fields by the model; page text treated as untrusted data; seller trust decided by code, which
+  web content cannot raise.
+- **Irreversible actions:** the browser holds every request that could change a website (anything but GET, HEAD or
+  OPTIONS: form posts, script submits, Enter in a field) unless code opens a write window, which happens only for an
+  approved submission or the code-driven sign-in. An approved form is replayed in a fresh browser, checked against
+  what was approved, and submitted at most once: a one-time marker per approval means a retry, a resumed run or a
+  duplicate click never submits again. Approvals cannot be switched off through the API (`ALLOW_APPROVALS_OFF` is
+  for the evaluation only).
 - **API:** strict CORS, security headers, body-size limit, 404 for other users' resources, single-use WebSocket
   tickets with origin checks, short-lived signed artifact URLs, upload type detection by content.
 - **Repo:** `.env` and `private/` are git-ignored; gitleaks runs in pre-commit and CI.

@@ -1,0 +1,48 @@
+{
+ "started_utc": "2026-11-17T14:09:55.716292+00:00",
+ "argv": [
+  "--suite",
+  "fixture",
+  "--cases",
+  "F01-remote-interns,F02-count-fulltime,F03-salary-lookup,F04-apply-cv,F06-paginated-old-posts,F07-shop-under-budget,F08-shop-cheapest-phone,F09-shop-best-audio,F12-popup-articles,F13-popup-latest,F14-list-instructor,F15-list-credits",
+  "--repeats",
+  "1",
+  "--repeat-start",
+  "0",
+  "--run-id",
+  "v2-cmp-ease",
+  "--profile-json",
+  "../data/eval/v2-profile-ease-cmp.json",
+  "--pause",
+  "8",
+  "--infra-retries",
+  "3"
+ ],
+ "python": "3.12.6",
+ "platform": "win32",
+ "packages": {
+  "langgraph": "1.2.12",
+  "playwright": "1.63.0",
+  "pydantic": "2.13.5",
+  "httpx": "0.28.1",
+  "fastembed": "0.8.1"
+ },
+ "llm": {
+  "text_order": "gemini",
+  "vision_order": "gemini",
+  "cache_mode": "off",
+  "max_cooldown_wait_s": "120",
+  "temperature": 0,
+  "overrides": {
+   "LLM_MODEL_GEMINI_FAST": "gemini-flash-lite-latest",
+   "LLM_MODEL_GEMINI_STRONG": "gemini-flash-lite-latest",
+   "LLM_MODEL_GEMINI_VISION_FAST": "gemini-flash-lite-latest",
+   "LLM_MODEL_GEMINI_VISION_STRONG": "gemini-flash-lite-latest"
+  }
+ },
+ "limits": {
+  "max_plan_steps": 8,
+  "max_browser_actions_per_step": 20,
+  "task_llm_call_budget": 80
+ }
+}

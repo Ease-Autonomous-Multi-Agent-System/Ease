@@ -1,0 +1,1074 @@
+{
+ "summary": {
+  "none": {
+   "trials": 20,
+   "double_submissions": 0,
+   "submitted_once": 20,
+   "not_submitted": 0,
+   "as_expected": 20
+  },
+  "before_marker": {
+   "trials": 20,
+   "double_submissions": 0,
+   "submitted_once": 20,
+   "not_submitted": 0,
+   "as_expected": 20
+  },
+  "before_click": {
+   "trials": 20,
+   "double_submissions": 0,
+   "submitted_once": 0,
+   "not_submitted": 20,
+   "as_expected": 20
+  },
+  "after_click": {
+   "trials": 20,
+   "double_submissions": 0,
+   "submitted_once": 20,
+   "not_submitted": 0,
+   "as_expected": 20
+  }
+ },
+ "trials": [
+  {
+   "point": "none",
+   "trial": 0,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 1,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 2,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 3,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 4,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 5,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 6,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 7,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 8,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 9,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-45489"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 10,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 11,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 12,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 13,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 14,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 15,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 16,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 17,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 18,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "none",
+   "trial": 19,
+   "first_exit": 0,
+   "first": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-53408"
+   },
+   "second_exit": null,
+   "second": {},
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 0,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 1,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 2,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 3,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 4,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 5,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 6,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 7,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 8,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 9,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-16760"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 10,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 11,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 12,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 13,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 14,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 15,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 16,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 17,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 18,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_marker",
+   "trial": 19,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "OK",
+    "message": "submitted: Apply \u2014 Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-24679"
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 0,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 1,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 2,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 3,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 4,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 5,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 6,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 7,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 8,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 9,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 10,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 11,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 12,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 13,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 14,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 15,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 16,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 17,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 18,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "before_click",
+   "trial": 19,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 0,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 0,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 1,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 2,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 3,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 4,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 5,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 6,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 7,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 8,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 9,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 10,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 11,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 12,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 13,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 14,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 15,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 16,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 17,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 18,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  },
+  {
+   "point": "after_click",
+   "trial": 19,
+   "first_exit": 137,
+   "first": {},
+   "second_exit": 0,
+   "second": {
+    "status": "FATAL",
+    "message": "A submission was already attempted with this approval. Ease never submits twice, so it stopped; check the site to see whether it went through."
+   },
+   "site_submissions": 1,
+   "as_expected": true
+  }
+ ]
+}

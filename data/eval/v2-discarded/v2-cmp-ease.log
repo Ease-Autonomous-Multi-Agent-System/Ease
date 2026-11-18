@@ -1,0 +1,86 @@
+[1/12] F01-remote-interns | hybrid+hitl | repeat 1
+
+[plan] List all remote internships with their company and location from the website
+   - jobs           browser.extract            risk=LOW  Extract remote internships with company, location, title, and URL
+[step.started] jobs: browser.extract 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: fill_many — filled 2 field(s) 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: extract — error: LlmUnavailable: no LLM provider succeeded: gemini: HTTP 503 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: extract — already extracted this page - nothing new here. Go to the next page if the go 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: click Next — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+{"attempt": 0, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:58:36.551676Z"}
+[step.progress] jobs: stuck repeating extract on the same page 
+[step.progress] jobs: retrying after GROUNDING_MISS (attempt 2/3) 
+[step.started] jobs: browser.extract 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: fill_many — filled 2 field(s) 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: extract — extracted 3 new items (total 3); more pages: True 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: click Next — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: extract — already extracted this page - nothing new here. Go to the next page if the go 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: extracted 3 items 
+[step.finished] jobs: DONE extracted 3 items
+
+[task.completed] COMPLETED
+jobs: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "title": "Machine Learning Intern",
+      "company": "Nimbus Labs",
+      "location": "Remote (India)",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=ml-intern-01"
+    },
+    {
+      "title": "Generative AI Intern (RAG)",
+      "company": "Lexica Systems",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=genai-intern-03"
+    },
+    {
+      "title": "Data Analyst",
+      "company": "Northwind Retail",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=data-analyst-05"
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/jobs/",
+  "count": 3
+}
+    -> FAIL[WRONG_ANSWER]  211.8s  llm=12  hitl=0  includes 2/5; excludes: 1 wrong item(s) ['Data Analyst']
+[2/12] F02-count-fulltime | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 503
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[plan] Count full-time jobs listed on http://fixtures:8080/jobs/
+   - extract_jobs   browser.extract            risk=LOW  Extract job listings and their employment types from the jobs page
+   - count_full_time extract.summarize          risk=LOW  Count how many jobs are full-time
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — error: LlmUnavailable: no LLM provider succeeded: gemini: HTTP 503 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+{"attempt": 0, "error": "all LLM providers are cooling down after errors/rate limits", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T14:03:20.013054Z"}
+{"attempt": 1, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T14:03:59.089792Z"}
+[step.progress] extract_jobs: LLM gave no usable action 
+[step.progress] extract_jobs: retrying after TOOL_ERROR (attempt 2/3) 
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 5 new items (total 5); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Next — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 2 — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Reject non-essential — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+{"attempt": 0, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T14:06:40.446687Z"}
+{"attempt": 1, "error": "all LLM providers are cooling down after errors/rate limits", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T14:07:10.951155Z"}

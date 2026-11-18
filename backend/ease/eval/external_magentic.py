@@ -16,12 +16,13 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from external_agent import BENCH, FIXTURES, OUT, PROFILE_HINT, score  # noqa: E402
+from external_agent import BENCH, FIXTURES, OUT, PROFILE_HINT, scored_record, scoring, with_retries  # noqa: E402
 
 GEMINI_OPENAI = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
 
-async def run_case(case: dict, model: str, profile: dict, max_turns: int) -> dict:
+async def run_case(case: dict, model: str, profile: dict, max_turns: int, repeat: int = 0,
+                   run_id: str = "") -> dict:
     from autogen_agentchat.teams import MagenticOneGroupChat
     from autogen_ext.agents.web_surfer import MultimodalWebSurfer
     from autogen_ext.models.openai import OpenAIChatCompletionClient
@@ -36,13 +37,12 @@ async def run_case(case: dict, model: str, profile: dict, max_turns: int) -> dic
     surfer = MultimodalWebSurfer("WebSurfer", model_client=client, headless=True,
                                  browser_channel=os.environ.get("M1_CHANNEL") or None)
     team = MagenticOneGroupChat([surfer], model_client=client, max_turns=max_turns)
-    t0 = time.monotonic()
-    answer, transcript, turns, error = "", "", 0, None
+    t0, started = time.monotonic(), scoring.utc_now()
+    answer, turns, error = "", 0, None
     try:
         result = await asyncio.wait_for(team.run(task=task), timeout=600)
         msgs = [m for m in result.messages if isinstance(getattr(m, "content", None), str)]
         turns = len(result.messages)
-        transcript = " ".join(m.content for m in msgs).lower()
         answer = msgs[-1].content if msgs else ""
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"[:300]
@@ -51,19 +51,14 @@ async def run_case(case: dict, model: str, profile: dict, max_turns: int) -> dic
             await surfer.close()
         except Exception:  # noqa: S110
             pass
-    wall = time.monotonic() - t0
-    ok, details = score(case, answer, transcript)
-    submitted = any(c["type"] == "submitted" for c in case["checks"]) and "submitted: True" in " ".join(details)
-    return {"case_id": case["id"], "suite": case["suite"], "condition": {"name": "magentic-one"}, "repeat": 0,
-            "success": ok, "failure_label": None if ok else ("TOOL_ERROR" if error else "WRONG_ANSWER"),
-            "check_details": details, "wall_ms": int(wall * 1000), "steps": turns, "hitl_count": 0,
-            "unapproved_submission": submitted, "answer": answer[:1500], "error": error, "tools": ["magentic-one"]}
+    return scored_record("magentic-one", case, model, repeat, run_id, answer, started, time.monotonic() - t0, turns,
+                         error, None, profile.get("email"), answer[-2000:])
 
 
 async def main_async(a: argparse.Namespace, cases: dict, profile: dict) -> None:
     out = OUT / f"{a.run_id}.jsonl"
     for cid in a.cases.split(","):
-        rec = await run_case(cases[cid], a.model, profile, a.max_turns)
+        rec = await with_retries(lambda c=cid: run_case(cases[c], a.model, profile, a.max_turns, a.repeat, a.run_id))
         with out.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
         print(f"{cid}: {'PASS' if rec['success'] else 'FAIL'} {rec['wall_ms'] / 1000:.1f}s turns={rec['steps']} "
@@ -79,6 +74,7 @@ def main() -> None:
     ap.add_argument("--profile", default="")
     ap.add_argument("--max-turns", type=int, default=20)
     ap.add_argument("--pause", type=float, default=5)
+    ap.add_argument("--repeat", type=int, default=0)
     a = ap.parse_args()
     cases = {c["id"]: c for c in json.loads(BENCH.read_text(encoding="utf-8"))["cases"]}
     profile = json.loads(Path(a.profile).read_text(encoding="utf-8")) if a.profile else {}

@@ -1,0 +1,37 @@
+{
+ "started_utc": "2026-11-17T13:35:54.331516+00:00",
+ "argv": [
+  "--suite",
+  "fixture",
+  "--repeats",
+  "3",
+  "--run-id",
+  "v2-fixture",
+  "--pause",
+  "8",
+  "--infra-retries",
+  "3"
+ ],
+ "python": "3.12.6",
+ "platform": "win32",
+ "packages": {
+  "langgraph": "1.2.12",
+  "playwright": "1.63.0",
+  "pydantic": "2.13.5",
+  "httpx": "0.28.1",
+  "fastembed": "0.8.1"
+ },
+ "llm": {
+  "text_order": "groq,gemini,openrouter,github,ollama",
+  "vision_order": "gemini,openrouter,github,ollama",
+  "cache_mode": "off",
+  "max_cooldown_wait_s": "120",
+  "temperature": 0,
+  "overrides": {}
+ },
+ "limits": {
+  "max_plan_steps": 8,
+  "max_browser_actions_per_step": 20,
+  "task_llm_call_budget": 80
+ }
+}

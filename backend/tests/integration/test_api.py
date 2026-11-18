@@ -70,6 +70,12 @@ def test_security_headers_and_health(client):
     assert client.get("/ready").json() == {"postgres": "ok", "redis": "ok"}
 
 
+def test_approvals_cannot_be_switched_off_through_the_api(client):
+    _, h, _ = _register(client)
+    r = client.post("/tasks", json={"prompt": "apply to the job", "config": {"hitl": False}}, headers=h)
+    assert r.status_code == 422 and "cannot be turned off" in r.text
+
+
 def test_register_login_refresh_rotation(client):
     weak = {"email": f"w-{uuid.uuid4().hex[:6]}@example.com", "password": "weakpassword"}
     r = client.post("/auth/register", json=weak)
@@ -413,8 +419,9 @@ def test_public_server_never_keeps_website_logins(client, monkeypatch):
     from ease.security.ratelimit import get_redis
 
     with session_scope() as s:
-        cred = s.scalar(
-            select(Credential).where(Credential.service == "login", Credential.name == "portal.example.com"))
+        owner = s.get(Task, uuid.UUID(tid)).user_id  # this test's user (the database may hold other runs' rows)
+        cred = s.scalar(select(Credential).where(Credential.user_id == owner, Credential.service == "login",
+                                                 Credential.name == "portal.example.com"))
         assert cred is not None
         # "remember" was ignored: the login is on this run's delete-when-finished list
         assert get_redis().sismember(f"templogin:{tid}", f"{cred.user_id}|portal.example.com")

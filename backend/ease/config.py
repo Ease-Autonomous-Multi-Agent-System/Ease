@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     # Whether users may ask Ease to keep a website login after the run. A public server turns this off, so it never
     # holds strangers' passwords longer than the run that needs them.
     remember_site_logins: bool = True
+    # Approvals before irreversible actions cannot be switched off through the API unless this is set. Only the
+    # evaluation's HITL-off ablation needs it; a server for real users leaves it False.
+    allow_approvals_off: bool = False
 
     # --- LLM providers (all optional; router skips providers without a key) ---
     gemini_api_key: SecretStr | None = None

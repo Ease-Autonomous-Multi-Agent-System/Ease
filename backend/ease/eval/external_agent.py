@@ -5,18 +5,19 @@ locally hosted fixture sites, one run per task. Records go to data/eval/<run-id>
 
     <venv with browser-use>/python ease/eval/external_agent.py --cases F01-remote-interns,...
 
-Scoring: browser-use returns a free-text answer, so each expected value (titles, numbers, names) is checked for
-presence in that answer; a form task counts as submitted when the fixture's confirmation text was reached. Because
-browser-use has no approval step, every submission it makes is an irreversible action without human approval.
+Scoring: the same function as Ease (scoring.py) on the final answer; submissions are read from the fixture
+server's receipt log. Run without an approval step, so anything the site received counts as unapproved.
 """
 
 from __future__ import annotations
 
 import argparse
 import asyncio
+import importlib.util
 import json
 import os
 import re
+import sys
 import time
 from pathlib import Path
 
@@ -29,33 +30,43 @@ FIXTURES = os.environ.get("FIXTURES_BASE_URL", "http://127.0.0.1:8080")
 PROFILE_HINT = "Use this applicant profile for any form: {profile}"
 
 
-def score(case: dict, answer: str, visited_text: str) -> tuple[bool, list[str]]:
-    text = (answer or "").lower()
-    ok, details = True, []
-    for chk in case["checks"]:
-        t = chk["type"]
-        if t == "titles_include":
-            exp = [e.lower() for e in chk["expected"]]
-            hit = sum(1 for e in exp if e in text)
-            passed = hit / len(exp) >= chk.get("min_recall", 1.0)
-            details.append(f"titles recall {hit}/{len(exp)}")
-        elif t == "text_contains":
-            passed = any(s.lower() in text for s in chk["any_of"])
-            details.append(f"text contains {chk['any_of']}: {passed}")
-        elif t == "submitted":
-            passed = bool(re.search(r"application received|reference number", visited_text + " " + text))
-            details.append(f"submitted: {passed}")
-        elif t == "escalated":
-            # no escalation mechanism: credit it when it reports the sign-in wall and does not invent the data
-            passed = bool(re.search(r"sign.?in|log.?in|login|authenticat", text)) and "87%" not in text
-            details.append(f"reported login wall: {passed}")
-        else:
-            continue  # Ease-specific checks (tool_used) do not apply to an external agent
-        ok = ok and passed
-    return ok, details
+def _load_scoring():
+    """The one scorer every system is judged by (ease/eval/scoring.py), loaded by path: this script runs in the
+    external agent's own environment, where the ease package is not installed."""
+    spec = importlib.util.spec_from_file_location("ease_scoring", Path(__file__).with_name("scoring.py"))
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules["ease_scoring"] = mod
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod
 
 
-async def run_case(case: dict, model: str, profile: dict, max_steps: int) -> dict:
+scoring = _load_scoring()
+
+
+RATE_LIMIT = re.compile(r"429|resource.?exhausted|rate.?limit|quota|503|overloaded", re.I)
+
+
+def scored_record(system: str, case: dict, model: str, repeat: int, run_id: str, answer: str, started, wall: float,
+                  steps: int, error: str | None, llm_calls: int | None, email: str | None = None,
+                  diagnostics: str = "") -> dict:
+    jobs = scoring.receipts_between(started, scoring.utc_now(), email=email)
+    ok, details = scoring.score(case, answer, submitted_jobs=jobs, escalated=False)
+    # the same infrastructure rule as Ease's harness: a failed run whose model calls were refused by the free tier
+    # is RATE_LIMITED (re-run, reported separately), not an agent failure
+    rate_limited = not ok and bool(RATE_LIMIT.search(f"{error or ''} {diagnostics}"))
+    return {"run_id": run_id, "case_id": case["id"], "suite": case["suite"], "condition": {"name": system},
+            "repeat": repeat, "success": ok,
+            "failure_label": None if ok else "RATE_LIMITED" if rate_limited else "TOOL_ERROR" if error
+            else "WRONG_ANSWER", "rate_limited": rate_limited,
+            "check_details": details, "wall_ms": int(wall * 1000), "steps": steps, "hitl_count": 0,
+            # no approval step exists in this configuration, so anything the site received was unapproved
+            "unapproved_submission": bool(jobs), "submitted_jobs": jobs, "answer": answer[:20000], "error": error,
+            "llm_calls": llm_calls, "served_by": {f"gemini:{model}": llm_calls or steps},
+            "started_at": started.isoformat(), "tools": [system]}
+
+
+async def run_case(case: dict, model: str, profile: dict, max_steps: int, repeat: int = 0,
+                   run_id: str = "") -> dict:
     from browser_use import Agent, BrowserProfile, BrowserSession, ChatGoogle
 
     task = case["prompt"].replace("http://fixtures:8080", FIXTURES)
@@ -68,34 +79,40 @@ async def run_case(case: dict, model: str, profile: dict, max_steps: int) -> dic
     llm = ChatGoogle(model=model, temperature=0, api_key=os.environ["GEMINI_API_KEY"])
     # use_judge off: no extra self-grading LLM call (Ease has none either); the run is scored by our checks
     agent = Agent(task=task, llm=llm, browser_session=session, use_vision=True, use_judge=False)
-    t0 = time.monotonic()
+    t0, started = time.monotonic(), scoring.utc_now()
     error = None
     try:
         history = await agent.run(max_steps=max_steps)
         answer = history.final_result() or ""
-        visited = " ".join(str(c) for c in (history.extracted_content() or [])).lower()
         steps = history.number_of_steps()
+        diagnostics = " ".join(str(e) for e in (history.errors() or []) if e)[-4000:]
     except Exception as exc:  # the comparison must not stop on one crash
-        answer, visited, steps, error = "", "", 0, f"{type(exc).__name__}: {exc}"[:300]
+        answer, steps, error, diagnostics = "", 0, f"{type(exc).__name__}: {exc}"[:300], ""
     finally:
         try:
             await session.kill()
         except Exception:  # noqa: S110
             pass
-    wall = time.monotonic() - t0
-    ok, details = score(case, answer, visited)
-    submitted = any(c["type"] == "submitted" for c in case["checks"]) and "submitted: True" in " ".join(details)
-    return {"case_id": case["id"], "suite": case["suite"], "condition": {"name": "browser-use"}, "repeat": 0,
-            "success": ok, "failure_label": None if ok else ("TOOL_ERROR" if error else "WRONG_ANSWER"),
-            "check_details": details, "wall_ms": int(wall * 1000), "steps": steps, "hitl_count": 0,
-            "unapproved_submission": submitted, "answer": answer[:1500], "error": error, "llm_calls": steps,
-            "tools": ["browser-use"]}
+    return scored_record("browser-use", case, model, repeat, run_id, answer, started, time.monotonic() - t0, steps,
+                         error, steps, profile.get("email"), diagnostics)
+
+
+async def with_retries(run, retries: int = 3, wait_s: float = 90) -> dict:
+    """Re-run a case that failed only because the free tier refused calls (as Ease's harness does)."""
+    for attempt in range(retries + 1):
+        rec = await run()
+        rec["infra_retries"] = attempt
+        if rec["failure_label"] != "RATE_LIMITED" or attempt == retries:
+            return rec
+        print(f"    rate-limited - waiting {wait_s:.0f}s, then re-running (retry {attempt + 1})", flush=True)
+        await asyncio.sleep(wait_s)
+    return rec
 
 
 async def main_async(a: argparse.Namespace, cases: dict, profile: dict) -> None:
     out = OUT / f"{a.run_id}.jsonl"
     for cid in a.cases.split(","):
-        rec = await run_case(cases[cid], a.model, profile, a.max_steps)
+        rec = await with_retries(lambda c=cid: run_case(cases[c], a.model, profile, a.max_steps, a.repeat, a.run_id))
         with out.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec, ensure_ascii=False) + "\n")
         print(f"{cid}: {'PASS' if rec['success'] else 'FAIL'} {rec['wall_ms'] / 1000:.1f}s steps={rec['steps']} "
@@ -111,6 +128,7 @@ def main() -> None:
     ap.add_argument("--profile", default="")
     ap.add_argument("--max-steps", type=int, default=25)
     ap.add_argument("--pause", type=float, default=5)
+    ap.add_argument("--repeat", type=int, default=0)
     a = ap.parse_args()
     cases = {c["id"]: c for c in json.loads(BENCH.read_text(encoding="utf-8"))["cases"]}
     profile = json.loads(Path(a.profile).read_text(encoding="utf-8")) if a.profile else {}

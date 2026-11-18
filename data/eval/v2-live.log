@@ -1,0 +1,435 @@
+[1/9] R01-arxiv-recent | hybrid+hitl | repeat 1
+
+[plan] Get the 5 most recent cs.AI papers from arXiv
+   - search         api.arxiv.search           risk=LOW  Fetch the 5 newest cs.AI papers
+   - summarize      extract.summarize          risk=LOW  Summarise each paper in two sentences
+[step.started] search: api.arxiv.search 
+[step.progress] search: api.arxiv.search ok (5 items) 
+[step.finished] search: DONE api.arxiv.search ok (5 items)
+[step.started] summarize: extract.summarize 
+[step.progress] summarize: * Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching introduces Ambient SFT, a framework utilizing a frozen pre-trained mode 
+[step.finished] summarize: DONE * Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching introduces Ambient SFT, a framework utili
+
+[task.completed] COMPLETED
+search: DONE - api.arxiv.search ok (5 items)
+summarize: DONE - * Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching introduces Ambient SFT, a framework utilizing a frozen pre-trained model as a noi
+{
+  "summary": "* Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching introduces Ambient SFT, a framework utilizing a frozen pre-trained model as a noisy teacher to prevent overfitting and catastrophic forgetting during fine-tuning. This approach matches high-temperature conditional distributions to achieve up to a 21% relative improvement over standard SFT across various tasks.\n* StringQFT: A Multiuse Textbook Resource for AI-Assisted Theoretical Physics presents an 18-volume collection with associated benchmarks, retrieval tools, and calculation resources for string constructions in quantum field theory. The resource functions as an infrastructure for AI-assisted theoretical physics by linking textbook derivations to agent-accessible tools.\n* Do LLM Agents Still Need to Be Told How to Self-Improve? studies an autonomous paradigm where agents with a compute budget and tools construct their own self-learning algorithms for context-based optimization. The authors find that capable models successfully self-improve using strategies aligned with cognitive frameworks for self-regulated learning and transfer those learned artifacts to external benchmarks.\n* Higher-Scoring Coding Models Did Not Get More Work Done uses an unexpected export control directive as a natural experiment to study the productivity impact of switching between coding models. By tracking GitHub pull requests, the authors discover that higher benchmark scores did not translate into statistically significant increases in developer productivity or merge rates.\n* Reading Scene States: Uncovering Safety Failures in Vision-Language Models identifies a scene-state safety vulnerability where vision-language models provide harmful assistance by interpreting visual events across different scene states. The paper introduces SceneSafetyBench and the S3TA attack framework to demonstrate that current text-side filters and visual moderation offer limited protection against these vulnerabilities."
+}
+    -> PASS  3.8s  llm=2  hitl=0  items 5 >= 5
+[2/9] R02-arxiv-topic-summary | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[plan] Find 3 recent arXiv papers about retrieval augmented generation and summarise each in one line
+   - search_arxiv   api.arxiv.search           risk=LOW  Search arXiv for 3 recent papers on retrieval augmented generation
+   - summarize_papers extract.summarize          risk=LOW  Summarise each paper in one line
+[step.started] search_arxiv: api.arxiv.search 
+[step.progress] search_arxiv: api.arxiv.search ok (3 items) 
+[step.finished] search_arxiv: DONE api.arxiv.search ok (3 items)
+[step.started] summarize_papers: extract.summarize 
+[step.progress] summarize_papers: - Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching: Introduces Ambient SFT, leveraging a frozen pre-trained model as a noi 
+[step.finished] summarize_papers: DONE - Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching: Introduces Ambient SFT, leveraging a fro
+
+[task.completed] COMPLETED
+search_arxiv: DONE - api.arxiv.search ok (3 items)
+summarize_papers: DONE - - Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching: Introduces Ambient SFT, leveraging a frozen pre-trained model as a noisy teacher
+{
+  "summary": "- Ambient LLMs: Data-Efficient Supervised Fine-tuning via Temperature Matching: Introduces Ambient SFT, leveraging a frozen pre-trained model as a noisy teacher via temperature matching to prevent overfitting and improve performance across domain adaptation, instruction-tuning, and reasoning.\n- Expressivity of two-dimensional Gaussian fermion tensor network states: Proves that for 2D translation-invariant Gaussian fermionic states, an area law for the Renyi-0 entropy is equivalent to an exact Gaussian fermionic TNS representation with a finite bond dimension.\n- FastFrames: Video Generation at Interactive Latency: Presents FastFrames, a family of fast autoregressive video diffusion models that replaces slow inference components like VAE decoding and KV cache updates with lightweight alternatives to achieve interactive latency."
+}
+    -> FAIL[WRONG_ANSWER]  22.7s  llm=2  hitl=0  contains one of ['retrieval', 'RAG']: False
+[3/9] R03-openalex-cited | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    -> FAIL[RATE_LIMITED]  0.4s  llm=0  hitl=0  items 0 >= 3
+[4/9] R04-arxiv-cv | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 503
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[plan] List the 3 newest computer vision (cs.CV) papers on arXiv with their authors
+   - search         api.arxiv.search           risk=LOW  Fetch the 3 most recent cs.CV papers from arXiv
+   - summarize      extract.summarize          risk=LOW  Summarise each paper title and authors
+[step.started] search: api.arxiv.search 
+[step.progress] search: api.arxiv.search ok (3 items) 
+[step.finished] search: DONE api.arxiv.search ok (3 items)
+[step.started] summarize: extract.summarize 
+[step.progress] summarize: - **Spool: Low‑Latency Streaming Inference for Hybrid Vision‑Language Models** – Rui Ning, Om Chabra, Hari Balakrishnan
+- **FastFrames: Video Generati 
+[step.finished] summarize: DONE - **Spool: Low‑Latency Streaming Inference for Hybrid Vision‑Language Models** – Rui Ning, Om Chabra, Hari Balakrishnan
+
+
+[task.completed] COMPLETED
+search: DONE - api.arxiv.search ok (3 items)
+summarize: DONE - - **Spool: Low‑Latency Streaming Inference for Hybrid Vision‑Language Models** – Rui Ning, Om Chabra, Hari Balakrishnan
+- **FastFrames: Video Generation at Inte
+{
+  "summary": "- **Spool: Low‑Latency Streaming Inference for Hybrid Vision‑Language Models** – Rui Ning, Om Chabra, Hari Balakrishnan\n- **FastFrames: Video Generation at Interactive Latency** – Gene Chou, Guandao Yang, Fujun Luan, Lars Mescheder, Wei Dong, Stephan Richter, Vladlen Koltun\n- **EviSlide‑MIL: Multi‑Query Pooling and Shared Prediction for Class‑Incremental Whole‑Slide Image Classification** – Zhouhan Qian, Sicheng Chen, Chad Wong, Tianyi Zhang, Enhui Chai, Zeyu Liu, Fei Xia"
+}
+    -> PASS  2.2s  llm=2  hitl=0  items 3 >= 3
+[5/9] L01-greenhouse-jobs | hybrid+hitl | repeat 1
+
+[plan] List 5 currently open engineering jobs at Stripe
+   - jobs           api.greenhouse.list_jobs   risk=LOW  Fetch open engineering jobs at Stripe
+   - top5           extract.summarize          risk=LOW  Select the first 5 jobs from the results
+[step.started] jobs: api.greenhouse.list_jobs 
+[step.progress] jobs: api.greenhouse.list_jobs ok (20 items) 
+[step.finished] jobs: DONE api.greenhouse.list_jobs ok (20 items)
+[step.started] top5: extract.summarize 
+[step.progress] top5: Here are the first 5 job listings out of 20 total items:
+
+* **AI Engineer**
+  * Location: Chicago
+  * Department: 1155 SA Transformation
+  * Applicati 
+[step.finished] top5: DONE Here are the first 5 job listings out of 20 total items:
+
+* **AI Engineer**
+  * Location: Chicago
+  * Department: 1155 S
+
+[task.completed] COMPLETED
+jobs: DONE - api.greenhouse.list_jobs ok (20 items)
+top5: DONE - Here are the first 5 job listings out of 20 total items:
+
+* **AI Engineer**
+  * Location: Chicago
+  * Department: 1155 SA Transformation
+  * Application URL: ht
+{
+  "summary": "Here are the first 5 job listings out of 20 total items:\n\n* **AI Engineer**\n  * Location: Chicago\n  * Department: 1155 SA Transformation\n  * Application URL: https://stripe.com/jobs/search?gh_jid=8144196\n\n* **Android BSP Engineer**\n  * Location: Taipei, Taiwan\n  * Department: 8512 Terminal - Eng\n  * Application URL: https://stripe.com/jobs/search?gh_jid=8239006\n\n* **Android Engineer, Identity**\n  * Location: Seattle, WA; San Francisco, CA; New York City, NY\n  * Department: 8215 Identity - Eng\n  * Application URL: https://stripe.com/jobs/search?gh_jid=8311069\n\n* **Android Engineer, Terminal - CA**\n  * Location: Toronto, CA\n  * Department: 8512 Terminal - Eng\n  * Application URL: https://stripe.com/jobs/search?gh_jid=8274893\n\n* **Backend/API Engineer, Money as a Service**\n  * Location: US\n  * Department: 8546 Treasury for Platforms - Eng\n  * Application URL: https://stripe.com/jobs/search?gh_jid=8546"
+}
+    -> PASS  4.0s  llm=2  hitl=0  items 20 >= 5
+[6/9] L02-books-under-20 | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    -> FAIL[RATE_LIMITED]  0.4s  llm=0  hitl=0  includes 0/3; excludes: 0 wrong item(s)
+[7/9] L03-quotes-einstein | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[plan] Find a quote by Albert Einstein on quotes.toscrape.com
+   - find_quote     browser.act                risk=LOW  Find a quote by Albert Einstein on Quotes to Scrape
+[step.started] find_quote: browser.act 
+[step.progress] find_quote: looking at: Quotes to Scrape 
+[step.progress] find_quote: The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking. — Albert Einstein 
+[step.finished] find_quote: DONE The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking. — Albe
+
+[task.completed] COMPLETED
+find_quote: DONE - The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking. — Albert Einstein
+{
+  "answer": "The world as we have created it is a process of our thinking. It cannot be changed without changing our thinking. — Albert Einstein",
+  "final_url": "https://quotes.toscrape.com/"
+}
+    -> PASS  39.0s  llm=2  hitl=0  includes 1/1; contains one of ['The world as we have created it', 'There are only two ways to live your life', 'Try not to become a man of success']: True
+[8/9] L04-quotes-tags | hybrid+hitl | repeat 1
+
+[plan] List the top 5 tags from quotes.toscrape.com
+   - extract_tags   browser.extract            risk=LOW  Extract the top 5 tags listed in the Top Ten tags section of quotes.toscrape.com
+[step.started] extract_tags: browser.extract 
+[step.progress] extract_tags: looking at: Quotes to Scrape 
+[step.progress] extract_tags: extract — extracted 5 new items (total 5); more pages: False 
+[step.progress] extract_tags: looking at: Quotes to Scrape 
+[step.progress] extract_tags: extracted 5 items 
+[step.finished] extract_tags: DONE extracted 5 items
+
+[task.completed] COMPLETED
+extract_tags: DONE - extracted 5 items
+{
+  "items": [
+    {
+      "tag": "love",
+      "url": "https://quotes.toscrape.com/tag/love/"
+    },
+    {
+      "tag": "inspirational",
+      "url": "https://quotes.toscrape.com/tag/inspirational/"
+    },
+    {
+      "tag": "life",
+      "url": "https://quotes.toscrape.com/tag/life/"
+    },
+    {
+      "tag": "humor",
+      "url": "https://quotes.toscrape.com/tag/humor/"
+    },
+    {
+      "tag": "books",
+      "url": "https://quotes.toscrape.com/tag/books/"
+    }
+  ],
+  "final_url": "https://quotes.toscrape.com/",
+  "count": 5
+}
+    -> PASS  19.2s  llm=4  hitl=0  includes 5/5; excludes: 0 wrong item(s)
+[9/9] L05-books-category | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[plan] List the first 3 book titles in the Travel category on books.toscrape.com
+   - extract_travel browser.extract            risk=LOW  Open the Travel category page and extract the first 3 book titles
+[step.started] extract_travel: browser.extract 
+[step.progress] extract_travel: looking at: Travel | Books to Scrape - Sandbox 
+[step.progress] extract_travel: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] extract_travel: looking at: Travel | Books to Scrape - Sandbox 
+[step.progress] extract_travel: extracted 3 items 
+[step.finished] extract_travel: DONE extracted 3 items
+
+[task.completed] COMPLETED
+extract_travel: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "title": "It's Only the Himalayas",
+      "url": "https://books.toscrape.com/catalogue/its-only-the-himalayas_981/index.html"
+    },
+    {
+      "title": "Full Moon over Noah’s ...",
+      "url": "https://books.toscrape.com/catalogue/full-moon-over-noahs-ark-an-odyssey-to-mount-ararat-and-beyond_811/index.html"
+    },
+    {
+      "title": "See America: A Celebration ...",
+      "url": "https://books.toscrape.com/catalogue/see-america-a-celebration-of-our-national-parks-treasured-sites_732/index.html"
+    }
+  ],
+  "final_url": "https://books.toscrape.com/catalogue/category/books/travel_2/index.html",
+  "count": 3
+}
+    -> FAIL[WRONG_ANSWER]  11.9s  llm=4  hitl=0  includes 2/3; excludes: 0 wrong item(s)
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-live.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-live.jsonl
+[1/2] R03-openalex-cited | hybrid+hitl | repeat 1
+
+[plan] Find the 3 most cited OpenAlex papers about large language model agents
+   - search         api.openalex.search        risk=LOW  Search OpenAlex for papers on large language model agents
+   - summarize      extract.summarize          risk=LOW  Select the three papers with highest citation counts and summarise each
+[step.started] search: api.openalex.search 
+[step.progress] search: api.openalex.search ok (20 items) 
+[step.finished] search: DONE api.openalex.search ok (20 items)
+[step.started] summarize: extract.summarize 
+[step.progress] summarize: no LLM provider succeeded: groq: HTTP 429; gemini: HTTP 503 
+[step.progress] summarize: retrying after TOOL_ERROR (attempt 2/3) 
+[step.started] summarize: extract.summarize 
+[step.progress] summarize: * **InjecAgent: Benchmarking Indirect Prompt Injections in Tool-Integrated Large Language Model Agents**
+  * Authors: Qiusi Zhan, Zhixiang Liang, Zifa 
+[step.finished] summarize: DONE * **InjecAgent: Benchmarking Indirect Prompt Injections in Tool-Integrated Large Language Model Agents**
+  * Authors: Qi
+
+[task.completed] COMPLETED
+search: DONE - api.openalex.search ok (20 items)
+summarize: DONE - * **InjecAgent: Benchmarking Indirect Prompt Injections in Tool-Integrated Large Language Model Agents**
+  * Authors: Qiusi Zhan, Zhixiang Liang, Zifan Ying, Da
+{
+  "summary": "* **InjecAgent: Benchmarking Indirect Prompt Injections in Tool-Integrated Large Language Model Agents**\n  * Authors: Qiusi Zhan, Zhixiang Liang, Zifan Ying, Daniel D. Kang\n  * Year: 2024\n  * Citation Count: 1339\n  * Summary: The paper introduces InjecAgent, a benchmark with 1,054 test cases to evaluate the vulnerability of tool-integrated large language model agents to indirect prompt injection attacks from external content.\n\n* **Large Language Model Agent: A Survey on Methodology, Applications and Challenges**\n  * Authors: Junyu Luo, Weizhi Zhang, Ye Yuan, Yusheng Zhao, Junwei Yang, Yiyang Gu, Bo-Han Wu, Binqi Chen\n  * Year: 2025\n  * Citation Count: 510\n  * Summary: This survey systematically deconstructs large language model agent systems through a methodology-centered taxonomy, linking architectural foundations, collaboration mechanisms, and practical applications.\n\n* **Can Large Language Model Agent Simulate Human Trust Behavior?**\n  * Authors: Chengxing Xie, Canyu Chen, Feiran Jia, Ziyu Ye, Shiyang Lai, Ziniu Hu, Jindong Gu, Adel Bibi\n  * Year: 2024\n  * Citation Count: 326\n  * Summary: The study investigates whether large language model agents can simulate human trust behavior under Trust Games frameworks, discovering high behavioral alignment with humans especially using GPT-4 agents."
+}
+    -> PASS  38.8s  llm=2  hitl=0  items 15 >= 3
+[2/2] L02-books-under-20 | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    -> FAIL[RATE_LIMITED]  0.6s  llm=0  hitl=0  includes 0/3; excludes: 0 wrong item(s)
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-live.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-live.jsonl
+[1/1] L02-books-under-20 | hybrid+hitl | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[plan] List books on the first page of books.toscrape.com that cost less than £20 with their prices
+   - extract_books  browser.extract            risk=LOW  Extract book titles and prices from the first page, then filter to those under 20 pounds
+[step.started] extract_books: browser.extract 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: extract — extracted 3 new items (total 3); more pages: True 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: click next — ok 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: extract — extracted 5 new items (total 8); more pages: True 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: click next — ok 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: extract — extracted 6 new items (total 14); more pages: True 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: click next — ok 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: extract — extracted 3 new items (total 17); more pages: True 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: click next — ok 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: extract — extracted 9 new items (total 20); more pages: True 
+[step.progress] extract_books: looking at: All products | Books to Scrape - Sandbox 
+[step.progress] extract_books: extracted 20 items 
+[step.finished] extract_books: DONE extracted 20 items
+
+[task.completed] COMPLETED
+extract_books: DONE - extracted 20 items
+{
+  "items": [
+    {
+      "title": "The Coming Woman: A ...",
+      "price": "£17.93",
+      "url": "https://books.toscrape.com/catalogue/the-coming-woman-a-novel-based-on-the-life-of-the-infamous-feminist-victoria-woodhull_993/index.html"
+    },
+    {
+      "title": "Starving Hearts (Triangular Trade ...",
+      "price": "£13.99",
+      "url": "https://books.toscrape.com/catalogue/starving-hearts-triangular-trade-trilogy-1_990/index.html"
+    },
+    {
+      "title": "Set Me Free",
+      "price": "£17.46",
+      "url": "https://books.toscrape.com/catalogue/set-me-free_988/index.html"
+    },
+    {
+      "title": "In Her Wake",
+      "price": "£12.84",
+      "url": "https://books.toscrape.com/catalogue/in-her-wake_980/index.html"
+    },
+    {
+      "title": "The Four Agreements: A ...",
+      "price": "£17.66",
+      "url": "https://books.toscrape.com/catalogue/the-four-agreements-a-practical-guide-to-personal-freedom_970/index.html"
+    },
+    {
+      "title": "Sophie's World",
+      "price": "£15.94",
+      "url": ""
+    },
+    {
+      "title": "Maude (1883-1993):She Grew Up ...",
+      "price": "£18.02",
+      "url": ""
+    },
+    {
+      "title": "In a Dark, Dark ...",
+      "price": "£19.63",
+      "url": ""
+    },
+    {
+      "title": "Untitled Collection: Sabbath Poems ...",
+      "price": "£14.27",
+      "url": "https://books.toscrape.com/catalogue/untitled-collection-sabbath-poems-2014_953/index.html"
+    },
+    {
+      "title": "Unicorn Tracks",
+      "price": "£18.78",
+      "url": "https://books.toscrape.com/catalogue/unicorn-tracks_951/index.html"
+    },
+    {
+      "title": "Tsubasa: WoRLD CHRoNiCLE 2 ...",
+      "price": "£16.28",
+      "url": "https://books.toscrape.com/catalogue/tsubasa-world-chronicle-2-tsubasa-world-chronicle-2_949/index.html"
+    },
+    {
+      "title": "This One Summer",
+      "price": "£19.49",
+      "url": "https://books.toscrape.com/catalogue/this-one-summer_947/index.html"
+    },
+    {
+      "title": "Thirst",
+      "price": "£17.27",
+      "url": ""
+    },
+    {
+      "title": "The Torch Is Passed: ...",
+      "price": "£19.09",
+      "url": ""
+    },
+    {
+      "title": "The Life-Changing Magic of ...",
+      "price": "£16.77"
+    },
+    {
+      "title": "The Age of Genius: ...",
+      "price": "£19.73"
+    },
+    {
+      "title": "Reskilling America: Learning to ...",
+      "price": "£19.83"
+    },
+    {
+      "title": "Princess Jellyfish 2-in-1 Omnibus, ...",
+      "price": "£13.61",
+      "url": "https://books.toscrape.com/catalogue/princess-jellyfish-2-in-1-omnibus-vol-01-princess-jellyfish-2-in-1-omnibus-1_920/index.html"
+    },
+    {
+      "title": "Princess Between Worlds (Wide-Awake ...",
+      "price": "£13.34",
+      "url": "https://books.toscrape.com/catalogue/princess-between-worlds-wide-awake-princess-5_919/index.html"
+    },
+    {
+      "title": "Pop Gun War, Volume ...",
+      "price": "£18.97",
+      "url": "https://books.toscrape.com/catalogue/pop-gun-war-volume-1-gift_918/index.html"
+ 
+    -> PASS  55.4s  llm=16  hitl=0  includes 3/3; excludes: 0 wrong item(s)
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-live.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-live.jsonl

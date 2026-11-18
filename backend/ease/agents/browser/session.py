@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 from urllib.parse import urljoin, urlsplit
@@ -15,6 +17,7 @@ from ease.schemas.contracts import ArtifactRef
 from ease.security.netguard import BlockedURL, check_url, robots_allowed
 
 VIEWPORT = {"width": 1280, "height": 800}
+SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
 _BOT_WALL = re.compile(
     r"verify you are (a )?human|are you a robot|unusual traffic|access denied|attention required|"
     r"just a moment\.\.\.|checking your browser|press (and|&) hold|captcha",
@@ -54,6 +57,11 @@ class BrowserSession:
         self.allowed_domain = base_domain(urlsplit(start_url).hostname or "")
         self.cookies = cookies or []
         self.blocked: list[str] = []
+        # Write hold: requests that can change server state (any method but GET/HEAD/OPTIONS: form posts, script
+        # submits, Enter in a text field) are held unless code opened a window for them - the approved commit or
+        # the code-driven sign-in. This catches what the click classifier cannot see.
+        self.writes_open = False
+        self.held_writes: list[str] = []
         self._pw = self._browser = self._context = self.page = None
 
     # -------- lifecycle --------
@@ -102,7 +110,21 @@ class BrowserSession:
             self.blocked.append(f"{url[:100]} ({exc})")
             route.abort("blockedbyclient")
             return
+        if request.method.upper() not in SAFE_METHODS and not self.writes_open:
+            self.held_writes.append(f"{request.method} {url[:100]}")
+            log.info("browser.write_held", method=request.method, url=url[:100])
+            route.abort("blockedbyclient")
+            return
         route.continue_()
+
+    @contextmanager
+    def writes_allowed(self) -> Iterator[None]:
+        """Open the write window for one code-chosen action (approved commit, sign-in), then close it."""
+        self.writes_open = True
+        try:
+            yield
+        finally:
+            self.writes_open = False
 
     # -------- navigation --------
     def resolve(self, href: str) -> str:

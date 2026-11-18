@@ -95,6 +95,9 @@ def create_task(body: TaskIn, user: User = Depends(current_user), db: Session = 
     if body.template_id and not db.scalar(select(WorkflowTemplate.id).where(
             WorkflowTemplate.id == body.template_id, WorkflowTemplate.user_id == user.id)):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "template not found")
+    if not body.config.hitl and not s.allow_approvals_off:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            "approvals before irreversible actions cannot be turned off on this server")
     config = body.config.model_dump()
     if body.follow_up_of:
         parent = owned_task(db, user, body.follow_up_of)

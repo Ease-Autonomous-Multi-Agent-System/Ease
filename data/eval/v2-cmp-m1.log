@@ -1,0 +1,765 @@
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...panies and locations.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... names and locations.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...l remote internships.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...The task is complete.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F01-remote-interns: PASS 117.9s turns=9 includes 5/5; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...m are full-time jobs.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...obs across all pages.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...und across all pages.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ccessfully completed.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F02-count-fulltime: PASS 117.1s turns=9 states 4: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...y salary information.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... the 'Search' button.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...is ₹38,000 / month.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F03-salary-lookup: PASS 97.9s turns=7 contains one of ['38,000', '38000', '38k']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ofile, and submit it.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... and submit the form.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... form, and submit it.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...lete the application.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ck the submit button.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F04-apply-cv: FAIL 492.4s turns=45 site received nothing 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ed before 2026-09-12.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ed before 2026-09-12.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... check its post date.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+Error processing publish message for MagenticOneOrchestrator_800614d8-321c-44f4-8c67-85642e188baf/800614d8-321c-44f4-8c67-85642e188baf
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\autogen_core\_single_threaded_agent_runtime.py", line 606, in _on_message
+    return await agent.on_message(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\autogen_core\_base_agent.py", line 119, in on_message
+    return await self.on_message_impl(message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\autogen_agentchat\teams\_group_chat\_sequential_routed_agent.py", line 67, in on_message_impl
+    return await super().on_message_impl(message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\autogen_core\_routed_agent.py", line 485, in on_message_impl
+    return await h(self, message, ctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\autogen_core\_routed_agent.py", line 268, in wrapper
+    return_value = await func(self, message, ctx)  # type: ignore
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\autogen_agentchat\teams\_group_chat\_magentic_one\_magentic_one_orchestrator.py", line 215, in handle_agent_response
+    await self._orchestrate_step(ctx.cancellation_token)
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\autogen_agentchat\teams\_group_chat\_magentic_one\_magentic_one_orchestrator.py", line 320, in _orchestrate_step
+    response = await self._model_client.create(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\autogen_ext\models\openai\_openai_client.py", line 704, in create
+    result: Union[ParsedChatCompletion[BaseModel], ChatCompletion] = await future
+                                                                     ^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\openai\resources\chat\completions\completions.py", line 1979, in parse
+    return await async_parse(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\openai\lib\_chat_completion_resources.py", line 220, in async_parse
+    return await resource._post(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\openai\_base_client.py", line 2085, in post
+    return await self.request(cast_to, opts, stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\openai\_base_client.py", line 1870, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.RateLimitError: Error code: 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+    rate-limited - waiting 90s, then re-running (retry 2)
+    rate-limited - waiting 90s, then re-running (retry 3)
+F06-paginated-old-posts: FAIL 3.2s turns=0 includes 0/5; excludes: 0 wrong item(s) RateLimitError: Error code: 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+    rate-limited - waiting 90s, then re-running (retry 2)
+    rate-limited - waiting 90s, then re-running (retry 3)
+F07-shop-under-budget: FAIL 3.2s turns=0 includes 0/3; excludes: 0 wrong item(s) RateLimitError: Error code: 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+    rate-limited - waiting 90s, then re-running (retry 2)
+    rate-limited - waiting 90s, then re-running (retry 3)
+F08-shop-cheapest-phone: FAIL 2.2s turns=0 contains one of ['Nova 5G']: False RateLimitError: Error code: 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+    rate-limited - waiting 90s, then re-running (retry 2)
+    rate-limited - waiting 90s, then re-running (retry 3)
+F09-shop-best-audio: FAIL 3.0s turns=0 contains one of ['StudioMax']: False RateLimitError: Error code: 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+    rate-limited - waiting 90s, then re-running (retry 2)
+    rate-limited - waiting 90s, then re-running (retry 3)
+F12-popup-articles: FAIL 2.8s turns=0 includes 0/3; excludes: 0 wrong item(s) RateLimitError: Error code: 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+    rate-limited - waiting 90s, then re-running (retry 2)
+    rate-limited - waiting 90s, then re-running (retry 3)
+F13-popup-latest: FAIL 2.6s turns=0 contains one of ['What Open-Source AI Means for Indian Startups']: False RateLimitError: Error code: 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+    rate-limited - waiting 90s, then re-running (retry 2)
+    rate-limited - waiting 90s, then re-running (retry 3)
+F14-list-instructor: FAIL 2.2s turns=0 includes 0/3; excludes: 0 wrong item(s) RateLimitError: Error code: 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+    rate-limited - waiting 90s, then re-running (retry 2)
+    rate-limited - waiting 90s, then re-running (retry 3)
+F15-list-credits: FAIL 2.5s turns=0 states 14: False RateLimitError: Error code: 429
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ed before 2026-09-12.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...eck its posting date.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...check the jobs there.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...istings on that page.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...e for 'MLOps Intern'.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...en proceed to page 3.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...k all remaining jobs.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...check all jobs there.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F06-paginated-old-posts: FAIL 258.3s turns=45 includes 1/5; excludes: 6 wrong item(s) ['Backend Engineer (Python)', 'Computer Vision Intern', 'Data Analyst'] 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ng with their prices.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...3 Laptop (₹45,990).')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F07-shop-under-budget: PASS 19.4s turns=5 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... one is the cheapest.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... priced at ₹18,999.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...her action is needed.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F08-shop-cheapest-phone: PASS 32.0s turns=7 contains one of ['Nova 5G']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...s the highest rating.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...with a rating of 4.7.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F09-shop-best-audio: PASS 19.5s turns=5 contains one of ['StudioMax']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ritten by Meera Nair.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... visible on the page.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ccessfully completed.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F12-popup-articles: PASS 27.6s turns=7 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...its title or details.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...lished on 2026-09-24.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F13-popup-latest: PASS 19.6s turns=5 contains one of ['What Open-Source AI Means for Indian Startups']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...se taught by Dr. Rao.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...es taught by Dr. Rao.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ngineering Economics.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F14-list-instructor: PASS 142.9s turns=21 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... of 4-credit courses.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...n navigate to page 2.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...f the course catalog.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...n navigate to page 3.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...n navigate to page 4.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...n navigate to page 5.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...tate the final count.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F15-list-credits: PASS 132.6s turns=21 states 14: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...emote or internships.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ion across all pages.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...maining job listings.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...The task is complete.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F01-remote-interns: PASS 38.5s turns=9 includes 5/5; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...time jobs are listed.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ent across all pages.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...Developer on page 3).')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F02-count-fulltime: PASS 59.7s turns=9 states 4: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...e its monthly salary.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...d its monthly salary.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...is ₹38,000 / month.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F03-salary-lookup: PASS 35.4s turns=7 contains one of ['38,000', '38000', '38k']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...bmit the application.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...Then submit the form.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...lly, submit the form.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...lete the application.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...nd then click submit.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...?', and click submit.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ck the submit button.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...n year dropdown menu.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F04-apply-cv: FAIL 261.5s turns=45 site received nothing 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ional pages to visit.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...t date it was posted.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ort its posting date.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...eck its posting date.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...the next set of jobs.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F06-paginated-old-posts: FAIL 227.2s turns=45 includes 1/5; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ng with their prices.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...h their exact prices.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...mpleted successfully.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F07-shop-under-budget: PASS 36.3s turns=7 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... one is the cheapest.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... priced at ₹18,999.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F08-shop-cheapest-phone: PASS 23.2s turns=5 contains one of ['Nova 5G']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...s the highest rating.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...is already satisfied.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F09-shop-best-audio: PASS 42.1s turns=5 contains one of ['StudioMax']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...g with their authors.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...Loop Approval Flows'.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F12-popup-articles: PASS 36.3s turns=5 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ch one is the newest.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...lished on 2026-09-24.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F13-popup-latest: PASS 15.4s turns=5 contains one of ['What Open-Source AI Means for Indian Startups']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...se taught by Dr. Rao.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ourses visible there.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...o navigate to page 2.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ourses visible there.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ngineering Economics.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F14-list-instructor: PASS 90.6s turns=21 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...redit courses listed.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...und across all pages.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...all 4-credit courses.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ses across all pages.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... pages (1 through 5).')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F15-list-credits: FAIL 136.6s turns=21 states 14: False 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...company and location.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...company and location.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...panies and locations.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... successfully listed.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F01-remote-interns: PASS 62.3s turns=11 includes 5/5; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...time jobs are listed.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...he same for page '3'.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...r any full-time jobs.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...isted on the website.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F02-count-fulltime: PASS 33.8s turns=9 states 4: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...e its monthly salary.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...n to find its salary.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...is ₹38,000 / month.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F03-salary-lookup: PASS 27.0s turns=7 contains one of ['38,000', '38000', '38k']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... and submit the form.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...Then submit the form.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...Then submit the form.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...then submit the form.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F04-apply-cv: FAIL 198.0s turns=45 site received nothing 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ed before 2026-09-12.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...g the remaining jobs.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...g the remaining jobs.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...eck its posting date.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ed before 2026-09-12.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...check the jobs there.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...obs on the next page.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... their posting dates.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...f the jobs on page 2.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...l remaining listings.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...Data Science Intern'.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...maining job listings.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F06-paginated-old-posts: FAIL 216.6s turns=45 includes 1/5; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ng with their prices.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...t has been satisfied.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F07-shop-under-budget: PASS 17.1s turns=5 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... one is the cheapest.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... priced at ₹18,999.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F08-shop-cheapest-phone: PASS 18.0s turns=5 contains one of ['Nova 5G']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...h the highest rating.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...g all audio products.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F09-shop-best-audio: PASS 15.2s turns=5 contains one of ['StudioMax']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ritten by Meera Nair.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...The task is complete.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F12-popup-articles: PASS 23.3s turns=7 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...t the newest article.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ewer articles listed.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...lished on 2026-09-24.")), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F13-popup-latest: PASS 24.0s turns=7 contains one of ['What Open-Source AI Means for Indian Startups']: True 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...se taught by Dr. Rao.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...and list all of them.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...to pages 3, 4, and 5.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...es taught by Dr. Rao.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...nue to pages 4 and 5.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...en proceed to page 5.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...Rao across all pages.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...ngineering Economics.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F14-list-instructor: PASS 90.8s turns=21 includes 3/3; excludes: 0 wrong item(s) 
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... courses are present.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...the 4-credit courses.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa... next set of courses.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...then click on page 3.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...then click on page 4.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...then click on page 5.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...final set of courses.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...he final total count.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+Model gemini-flash-lite-latest not found. Using cl100k_base encoding.
+C:\Users\HP\AppData\Local\Temp\claude\25c47ec3e338f915\9fec53ef-88dc-4f27-801d-70c30e0f2762\scratchpad\m1-venv\Lib\site-packages\pydantic\main.py:520: UserWarning: Pydantic serializer warnings:
+  PydanticSerializationUnexpectedValue(Expected `none` - serialized value may not be as expected [field_name='parsed', input_value=LedgerEntry(is_request_sa...dit courses in total.')), input_type=LedgerEntry])
+  return self.__pydantic_serializer__.to_python(
+F15-list-credits: PASS 98.8s turns=23 states 14: True 

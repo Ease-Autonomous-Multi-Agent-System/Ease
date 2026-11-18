@@ -1,0 +1,110 @@
+none           #00: first exit 0 OK, second n/a, site received 1  ok
+none           #01: first exit 0 OK, second n/a, site received 1  ok
+none           #02: first exit 0 OK, second n/a, site received 1  ok
+none           #03: first exit 0 OK, second n/a, site received 1  ok
+none           #04: first exit 0 OK, second n/a, site received 1  ok
+none           #05: first exit 0 OK, second n/a, site received 1  ok
+none           #06: first exit 0 OK, second n/a, site received 1  ok
+none           #07: first exit 0 OK, second n/a, site received 1  ok
+none           #08: first exit 0 OK, second n/a, site received 1  ok
+none           #09: first exit 0 OK, second n/a, site received 1  ok
+none           #10: first exit 0 OK, second n/a, site received 1  ok
+none           #11: first exit 0 OK, second n/a, site received 1  ok
+none           #12: first exit 0 OK, second n/a, site received 1  ok
+none           #13: first exit 0 OK, second n/a, site received 1  ok
+none           #14: first exit 0 OK, second n/a, site received 1  ok
+none           #15: first exit 0 OK, second n/a, site received 1  ok
+none           #16: first exit 0 OK, second n/a, site received 1  ok
+none           #17: first exit 0 OK, second n/a, site received 1  ok
+none           #18: first exit 0 OK, second n/a, site received 1  ok
+none           #19: first exit 0 OK, second n/a, site received 1  ok
+before_marker  #00: first exit 137 killed, second OK, site received 1  ok
+before_marker  #01: first exit 137 killed, second OK, site received 1  ok
+before_marker  #02: first exit 137 killed, second OK, site received 1  ok
+before_marker  #03: first exit 137 killed, second OK, site received 1  ok
+before_marker  #04: first exit 137 killed, second OK, site received 1  ok
+before_marker  #05: first exit 137 killed, second OK, site received 1  ok
+before_marker  #06: first exit 137 killed, second OK, site received 1  ok
+before_marker  #07: first exit 137 killed, second OK, site received 1  ok
+before_marker  #08: first exit 137 killed, second OK, site received 1  ok
+before_marker  #09: first exit 137 killed, second OK, site received 1  ok
+before_marker  #10: first exit 137 killed, second OK, site received 1  ok
+before_marker  #11: first exit 137 killed, second OK, site received 1  ok
+before_marker  #12: first exit 137 killed, second OK, site received 1  ok
+before_marker  #13: first exit 137 killed, second OK, site received 1  ok
+before_marker  #14: first exit 137 killed, second OK, site received 1  ok
+before_marker  #15: first exit 137 killed, second OK, site received 1  ok
+before_marker  #16: first exit 137 killed, second OK, site received 1  ok
+before_marker  #17: first exit 137 killed, second OK, site received 1  ok
+before_marker  #18: first exit 137 killed, second OK, site received 1  ok
+before_marker  #19: first exit 137 killed, second OK, site received 1  ok
+before_click   #00: first exit 137 killed, second refused, site received 0  ok
+before_click   #01: first exit 137 killed, second refused, site received 0  ok
+before_click   #02: first exit 137 killed, second refused, site received 0  ok
+before_click   #03: first exit 137 killed, second refused, site received 0  ok
+before_click   #04: first exit 137 killed, second refused, site received 0  ok
+before_click   #05: first exit 137 killed, second refused, site received 0  ok
+before_click   #06: first exit 137 killed, second refused, site received 0  ok
+before_click   #07: first exit 137 killed, second refused, site received 0  ok
+before_click   #08: first exit 137 killed, second refused, site received 0  ok
+before_click   #09: first exit 137 killed, second refused, site received 0  ok
+before_click   #10: first exit 137 killed, second refused, site received 0  ok
+before_click   #11: first exit 137 killed, second refused, site received 0  ok
+before_click   #12: first exit 137 killed, second refused, site received 0  ok
+before_click   #13: first exit 137 killed, second refused, site received 0  ok
+before_click   #14: first exit 137 killed, second refused, site received 0  ok
+before_click   #15: first exit 137 killed, second refused, site received 0  ok
+before_click   #16: first exit 137 killed, second refused, site received 0  ok
+before_click   #17: first exit 137 killed, second refused, site received 0  ok
+before_click   #18: first exit 137 killed, second refused, site received 0  ok
+before_click   #19: first exit 137 killed, second refused, site received 0  ok
+after_click    #00: first exit 137 killed, second refused, site received 1  ok
+after_click    #01: first exit 137 killed, second refused, site received 1  ok
+after_click    #02: first exit 137 killed, second refused, site received 1  ok
+after_click    #03: first exit 137 killed, second refused, site received 1  ok
+after_click    #04: first exit 137 killed, second refused, site received 1  ok
+after_click    #05: first exit 137 killed, second refused, site received 1  ok
+after_click    #06: first exit 137 killed, second refused, site received 1  ok
+after_click    #07: first exit 137 killed, second refused, site received 1  ok
+after_click    #08: first exit 137 killed, second refused, site received 1  ok
+after_click    #09: first exit 137 killed, second refused, site received 1  ok
+after_click    #10: first exit 137 killed, second refused, site received 1  ok
+after_click    #11: first exit 137 killed, second refused, site received 1  ok
+after_click    #12: first exit 137 killed, second refused, site received 1  ok
+after_click    #13: first exit 137 killed, second refused, site received 1  ok
+after_click    #14: first exit 137 killed, second refused, site received 1  ok
+after_click    #15: first exit 137 killed, second refused, site received 1  ok
+after_click    #16: first exit 137 killed, second refused, site received 1  ok
+after_click    #17: first exit 137 killed, second refused, site received 1  ok
+after_click    #18: first exit 137 killed, second refused, site received 1  ok
+after_click    #19: first exit 137 killed, second refused, site received 1  ok
+{
+ "none": {
+  "trials": 20,
+  "double_submissions": 0,
+  "submitted_once": 20,
+  "not_submitted": 0,
+  "as_expected": 20
+ },
+ "before_marker": {
+  "trials": 20,
+  "double_submissions": 0,
+  "submitted_once": 20,
+  "not_submitted": 0,
+  "as_expected": 20
+ },
+ "before_click": {
+  "trials": 20,
+  "double_submissions": 0,
+  "submitted_once": 0,
+  "not_submitted": 20,
+  "as_expected": 20
+ },
+ "after_click": {
+  "trials": 20,
+  "double_submissions": 0,
+  "submitted_once": 20,
+  "not_submitted": 0,
+  "as_expected": 20
+ }
+}

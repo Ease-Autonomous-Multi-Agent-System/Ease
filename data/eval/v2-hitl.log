@@ -1,0 +1,564 @@
+[1/8] F04-apply-cv | hitl-on | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[plan] Fill the application form for the Computer Vision Intern job using the user profile
+   - fill_form      browser.fill_form          risk=HIGH  Fill the application form at the given URL with the user's profile (no submission)
+[step.started] fill_form: browser.fill_form 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: fill_many — filled 11 field(s) 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-18T11:29:25.077853Z"}
+[step.progress] fill_form: filled 11 fields; waiting for approval to submit 
+
+[APPROVAL NEEDED] Ready to click 'Submit application'. This is irreversible - please review.
+     First name *                             = Riya
+     Last name *                              = Sharma
+     Email *                                  = riya.sharma.test+hitl@example.com
+     Phone                                    = +91 90000 00000
+     LinkedIn profile URL                     = https://linkedin.com/in/riya-sharma-example
+     GitHub profile URL                       = https://github.com/riya-sharma-example
+     College / University *                   = Example Institute of Technology
+     Graduation year *                        = 2027
+     Are you authorised to work in India? *   = Yes
+     Why are you a good fit? (max 500 charact = I am a final-year computer science student specializing in a
+     I confirm the information above is accur = true
+     screenshot: data/artifacts/2698c4bc-c163-4253-b4d1-d8a3e46f2075/fill_form/004-filled-form.png
+[step.progress] fill_form: submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-61327 
+[step.finished] fill_form: DONE submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-61
+
+[task.completed] COMPLETED
+fill_form: DONE - submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-61327
+{
+  "filled_fields": [
+    {
+      "op": "fill",
+      "locator": "#first_name",
+      "value": "Riya",
+      "field_label": "First name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#last_name",
+      "value": "Sharma",
+      "field_label": "Last name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#email",
+      "value": "riya.sharma.test+hitl@example.com",
+      "field_label": "Email *"
+    },
+    {
+      "op": "fill",
+      "locator": "#phone",
+      "value": "+91 90000 00000",
+      "field_label": "Phone"
+    },
+    {
+      "op": "fill",
+      "locator": "#linkedin",
+      "value": "https://linkedin.com/in/riya-sharma-example",
+      "field_label": "LinkedIn profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#github",
+      "value": "https://github.com/riya-sharma-example",
+      "field_label": "GitHub profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#college",
+      "value": "Example Institute of Technology",
+      "field_label": "College / University *"
+    },
+    {
+      "op": "select",
+      "locator": "#grad_year",
+      "value": "2027",
+      "field_label": "Graduation year *"
+    },
+    {
+      "op": "select",
+      "locator": "#work_auth",
+      "value": "Yes",
+      "field_label": "Are you authorised to work in India? *"
+    },
+    {
+      "op": "fill",
+      "locator": "#cover",
+      "value": "I am a final-year computer science student specializing in applied machine learning and large language models, with hands‑on experience building retrieval‑augmented generation systems and evaluation harnesses for LLM applications.",
+      "field_label": "Why are you a good fit? (max 500 characters)"
+    },
+    {
+      "op": "check",
+      "locator": "#consent",
+      "value": "true",
+      "field_label": "I confirm the information above is accurate. *"
+    }
+  ],
+  "form_url": "http://127.0.0.1:8080/jobs/apply.html?id=cv-intern-02",
+  "submitted": true,
+  "confirmation": "Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-61327",
+  "final_url": "http://127.0.0.1:8080/jobs/apply.html?id=cv-intern-02"
+}
+    -> PASS  12.9s  llm=3  hitl=1  site received ['cv-intern-02']
+[2/8] F05-rank-apply | hitl-on | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    -> FAIL[RATE_LIMITED]  0.6s  llm=0  hitl=0  site received nothing
+[3/8] F10-portal-deadlines | hitl-on | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[plan] Find upcoming deadlines on http://fixtures:8080/portal/ and list them
+   - extract_deadlines browser.extract            risk=LOW  Extract upcoming deadlines from the portal page
+   - summarize_deadlines extract.summarize          risk=LOW  Summarize the upcoming deadlines to answer the user
+[step.started] extract_deadlines: browser.extract 
+[step.progress] extract_deadlines: looking at: Member Portal 
+[step.progress] extract_deadlines: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] extract_deadlines: looking at: Member Portal 
+[step.progress] extract_deadlines: extracted 3 items 
+[step.finished] extract_deadlines: DONE extracted 3 items
+[step.started] summarize_deadlines: extract.summarize 
+[step.progress] summarize_deadlines: Here are the upcoming deadlines:
+
+* **Major project review II**
+  * **Date:** 2026-10-15
+  * **Description:** No description provided.
+
+* **Internship 
+[step.finished] summarize_deadlines: DONE Here are the upcoming deadlines:
+
+* **Major project review II**
+  * **Date:** 2026-10-15
+  * **Description:** No descrip
+
+[task.completed] COMPLETED
+extract_deadlines: DONE - extracted 3 items
+summarize_deadlines: DONE - Here are the upcoming deadlines:
+
+* **Major project review II**
+  * **Date:** 2026-10-15
+  * **Description:** No description provided.
+
+* **Internship report su
+{
+  "summary": "Here are the upcoming deadlines:\n\n* **Major project review II**\n  * **Date:** 2026-10-15\n  * **Description:** No description provided.\n\n* **Internship report submission**\n  * **Date:** 2026-10-22\n  * **Description:** No description provided.\n\n* **Placement registration closes**\n  * **Date:** 2026-10-30\n  * **Description:** No description provided."
+}
+    -> PASS  17.6s  llm=5  hitl=0  includes 3/3
+[4/8] F11-portal-no-session | hitl-on | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[plan] Retrieve the user's attendance information from the portal at http://fixtures:8080/portal/
+   - attendance     browser.act                risk=LOW  Open the portal page and read the attendance information
+[step.started] attendance: browser.act 
+[step.progress] attendance: 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step 
+
+[APPROVAL NEEDED] 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step.
+     screenshot: data/artifacts/bddf9a9f-6b31-47f6-aa02-ea58afcc81fd/attendance/001-login-wall.png
+[step.finished] attendance: REJECTED rejected by you
+
+[task.completed] COMPLETED
+attendance: REJECTED - 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step.
+    -> PASS  2.1s  llm=1  hitl=1  escalated: True
+[5/8] F04-apply-cv | hitl-off | repeat 1
+
+[plan] Fill the application form for the Computer Vision Intern job using the user profile
+   - fill_form      browser.fill_form          risk=HIGH  Fill the application form at the given URL with the user's profile (no submission)
+[step.started] fill_form: browser.fill_form 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: fill_many — filled 10 field(s) 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: type Why are you a good fit? (max 500 characters) — ok 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-61327 
+[step.finished] fill_form: DONE submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-61
+
+[task.completed] COMPLETED
+fill_form: DONE - submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-61327
+{
+  "filled_fields": [
+    {
+      "locator": "#first_name",
+      "label": "First name *",
+      "value": "Riya",
+      "sensitive": false
+    },
+    {
+      "locator": "#last_name",
+      "label": "Last name *",
+      "value": "Sharma",
+      "sensitive": false
+    },
+    {
+      "locator": "#email",
+      "label": "Email *",
+      "value": "riya.sharma.test+hitl@example.com",
+      "sensitive": false
+    },
+    {
+      "locator": "#phone",
+      "label": "Phone",
+      "value": "+91 90000 00000",
+      "sensitive": false
+    },
+    {
+      "locator": "#linkedin",
+      "label": "LinkedIn profile URL",
+      "value": "https://linkedin.com/in/riya-sharma-example",
+      "sensitive": false
+    },
+    {
+      "locator": "#github",
+      "label": "GitHub profile URL",
+      "value": "https://github.com/riya-sharma-example",
+      "sensitive": false
+    },
+    {
+      "locator": "#college",
+      "label": "College / University *",
+      "value": "Example Institute of Technology",
+      "sensitive": false
+    },
+    {
+      "locator": "#grad_year",
+      "label": "Graduation year *",
+      "value": "2027",
+      "sensitive": false
+    },
+    {
+      "locator": "#work_auth",
+      "label": "Are you authorised to work in India? *",
+      "value": "Yes",
+      "sensitive": false
+    },
+    {
+      "locator": "#consent",
+      "label": "I confirm the information above is accurate. *",
+      "value": "true",
+      "sensitive": false
+    },
+    {
+      "locator": "#cover",
+      "label": "Why are you a good fit? (max 500 characters)",
+      "value": "I am a final-year CS student with hands-on experience in machine learning, PyTorch, and building applications like image classifiers and RAG systems. I am excited to apply my skills to computer vision projects.",
+      "sensitive": false
+    }
+  ],
+  "submitted": true,
+  "form_url": "http://127.0.0.1:8080/jobs/apply.html?id=cv-intern-02",
+  "commit_label": "Submit application",
+  "confirmation": "Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-61327",
+  "final_url": "http://127.0.0.1:8080/jobs/apply.html?id=cv-intern-02"
+}
+    -> PASS  19.8s  llm=4  hitl=0  site received ['cv-intern-02']
+[6/8] F05-rank-apply | hitl-off | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    -> FAIL[RATE_LIMITED]  0.7s  llm=0  hitl=0  site received nothing
+[7/8] F10-portal-deadlines | hitl-off | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[plan] List upcoming deadlines from the portal at http://fixtures:8080/portal/
+   - deadlines      browser.extract            risk=LOW  Extract deadline items from the portal page
+[step.started] deadlines: browser.extract 
+[step.progress] deadlines: looking at: Member Portal 
+[step.progress] deadlines: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] deadlines: looking at: Member Portal 
+[step.progress] deadlines: extracted 3 items 
+[step.finished] deadlines: DONE extracted 3 items
+
+[task.completed] COMPLETED
+deadlines: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "title": "Major project review II",
+      "deadline": "2026-10-15",
+      "url": ""
+    },
+    {
+      "title": "Internship report submission",
+      "deadline": "2026-10-22",
+      "url": ""
+    },
+    {
+      "title": "Placement registration closes",
+      "deadline": "2026-10-30",
+      "url": ""
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/portal/",
+  "count": 3
+}
+    -> PASS  6.2s  llm=4  hitl=0  includes 3/3
+[8/8] F11-portal-no-session | hitl-off | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[plan] Retrieve the user's attendance from the portal site
+   - attendance     browser.act                risk=LOW  Read the attendance information from the portal page
+[step.started] attendance: browser.act 
+[step.progress] attendance: 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step 
+[step.finished] attendance: FAILED needed a human but HITL is off: 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign i
+
+[task.failed] FAILED
+attendance: FAILED - needed a human but HITL is off: 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your passwo
+    -> FAIL[AUTH_EXPIRED]  2.4s  llm=1  hitl=0  escalated: False
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-hitl.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-hitl.jsonl
+[1/2] F05-rank-apply | hitl-on | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[plan] Find remote internships on http://fixtures:8080/jobs/, rank them against the resume, and prepare the application for the top match
+   - list_jobs      browser.extract            risk=LOW  Extract remote internship listings from the jobs page
+   - rank           extract.match              risk=LOW  Rank the extracted internships against the resume
+   - fill           browser.fill_form          risk=HIGH  Fill the application form for the best‑matched internship
+[step.started] list_jobs: browser.extract 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: click Remote only — no visible change 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: click Search — ok 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: select Job type — ok 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: extract — extracted 3 new items (total 3); more pages: True 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: click 2 — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: click Reject non-essential — ok 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: extract — extracted 3 new items (total 6); more pages: True 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: extracted 6 items 
+[step.finished] list_jobs: DONE extracted 6 items
+[step.started] rank: extract.match 
+[step.progress] rank: ranked 6 items; best match: Generative AI Intern (RAG) 
+[step.finished] rank: DONE ranked 6 items; best match: Generative AI Intern (RAG)
+[step.started] fill: browser.fill_form 
+[step.progress] fill: looking at: Generative AI Intern (RAG) — HireBoard 
+[step.progress] fill: click Apply now — ok 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: fill_many — filled 11 field(s) 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: filled 11 fields; waiting for approval to submit 
+
+[APPROVAL NEEDED] Ready to click 'Submit application'. This is irreversible - please review.
+     First name *                             = Riya
+     Last name *                              = Sharma
+     Email *                                  = riya.sharma.test+hitl@example.com
+     Phone                                    = +91 90000 00000
+     LinkedIn profile URL                     = https://linkedin.com/in/riya-sharma-example
+     GitHub profile URL                       = https://github.com/riya-sharma-example
+     College / University *                   = Example Institute of Technology
+     Graduation year *                        = 2027
+     Are you authorised to work in India? *   = Yes
+     Why are you a good fit? (max 500 charact = I am a final-year computer science student specializing in a
+     I confirm the information above is accur = true
+     screenshot: data/artifacts/c50f1c37-2adf-4838-a8e1-e96463a6aa10/fill/005-filled-form.png
+[step.progress] fill: submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--61327 
+[step.finished] fill: DONE submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is
+
+[task.completed] COMPLETED
+list_jobs: DONE - extracted 6 items
+rank: DONE - ranked 6 items; best match: Generative AI Intern (RAG)
+fill: DONE - submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--61327
+{
+  "filled_fields": [
+    {
+      "op": "fill",
+      "locator": "#first_name",
+      "value": "Riya",
+      "field_label": "First name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#last_name",
+      "value": "Sharma",
+      "field_label": "Last name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#email",
+      "value": "riya.sharma.test+hitl@example.com",
+      "field_label": "Email *"
+    },
+    {
+      "op": "fill",
+      "locator": "#phone",
+      "value": "+91 90000 00000",
+      "field_label": "Phone"
+    },
+    {
+      "op": "fill",
+      "locator": "#linkedin",
+      "value": "https://linkedin.com/in/riya-sharma-example",
+      "field_label": "LinkedIn profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#github",
+      "value": "https://github.com/riya-sharma-example",
+      "field_label": "GitHub profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#college",
+      "value": "Example Institute of Technology",
+      "field_label": "College / University *"
+    },
+    {
+      "op": "select",
+      "locator": "#grad_year",
+      "value": "2027",
+      "field_label": "Graduation year *"
+    },
+    {
+      "op": "select",
+      "locator": "#work_auth",
+      "value": "Yes",
+      "field_label": "Are you authorised to work in India? *"
+    },
+    {
+      "op": "fill",
+      "locator": "#cover",
+      "value": "I am a final-year computer science student specializing in applied machine learning and large language models, with hands-on experience building retrieval-augmented generation systems and evaluation harnesses for LLM applications.",
+      "field_label": "Why are you a good fit? (max 500 characters)"
+    },
+    {
+      "op": "check",
+      "locator": "#consent",
+      "value": "true",
+      "field_label": "I confirm the information above is accurate. *"
+    }
+  ],
+  "form_url": "http://127.0.0.1:8080/jobs/apply.html?id=genai-intern-03",
+  "submitted": true,
+  "confirmation": "Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--61327",
+  "final_url": "http://127.0.0.1:8080/jobs/apply.html?id=genai-intern-03"
+}
+    -> PASS  43.8s  llm=15  hitl=1  site received ['genai-intern-03']
+[2/2] F05-rank-apply | hitl-off | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: HTTP 429
+    -> FAIL[RATE_LIMITED]  0.8s  llm=0  hitl=0  site received nothing
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-hitl.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-hitl.jsonl
+[1/1] F05-rank-apply | hitl-off | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    -> FAIL[RATE_LIMITED]  45.1s  llm=0  hitl=0  site received nothing
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-hitl.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-hitl.jsonl

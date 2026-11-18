@@ -1,0 +1,5 @@
+[1/8] F04-apply-cv | hitl-on | repeat 1
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 1)

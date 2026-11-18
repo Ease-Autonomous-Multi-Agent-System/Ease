@@ -1,0 +1,1387 @@
+[1/45] F01-remote-interns | hybrid+hitl | repeat 1
+
+[plan] List all remote internships from http://fixtures:8080/jobs with company and location
+   - remote_internships browser.extract            risk=LOW  Extract remote internship listings with company and location
+[step.started] remote_internships: browser.extract 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: select Job type — ok 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: click Remote only — no visible change 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: click Search — ok 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: extract — extracted 5 new items (total 5); more pages: False 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: extracted 5 items 
+[step.finished] remote_internships: DONE extracted 5 items
+
+[task.completed] COMPLETED
+remote_internships: DONE - extracted 5 items
+{
+  "items": [
+    {
+      "company": "Nimbus Labs",
+      "location": "Remote (India)",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=ml-intern-01"
+    },
+    {
+      "company": "Lexica Systems",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=genai-intern-03"
+    },
+    {
+      "company": "Nimbus Labs",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=mlops-intern-07"
+    },
+    {
+      "company": "Healthify Analytics",
+      "location": "Remote (India)",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=ds-intern-10"
+    },
+    {
+      "company": "Benchmark Co",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=ai-eval-intern-12"
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/jobs/",
+  "count": 5
+}
+    -> FAIL[WRONG_ANSWER]  16.7s  llm=7  hitl=0  includes 0/5; excludes: 0 wrong item(s)
+[2/45] F02-count-fulltime | hybrid+hitl | repeat 1
+
+[plan] Count the number of full-time job listings on http://fixtures:8080/jobs/
+   - extract_jobs   browser.extract            risk=LOW  Extract all job listings from the page
+   - count          extract.summarize          risk=LOW  Summarise the total number of jobs extracted
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: select Job type — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: select Job type — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Search — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — error: LlmUnavailable: no LLM provider succeeded: groq: HTTP 429; gemini: HTT 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — already extracted this page - nothing new here. Go to the next page if the go 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+{"attempt": 0, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:37:30.277665Z"}
+[step.progress] extract_jobs: click 1 — no visible change 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: stuck repeating extract on the same page 
+[step.progress] extract_jobs: retrying after GROUNDING_MISS (attempt 2/3) 
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: select Job type — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: select Job type — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: stuck repeating select on the same page 
+[step.progress] extract_jobs: retrying after GROUNDING_MISS (attempt 3/3) 
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: select Job type — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Search — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 4 new items (total 4); more pages: False 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extracted 4 items 
+[step.finished] extract_jobs: DONE extracted 4 items
+[step.started] count: extract.summarize 
+[step.progress] count: - Total job listings: **4** 
+[step.finished] count: DONE - Total job listings: **4**
+
+[task.completed] COMPLETED
+extract_jobs: DONE - extracted 4 items
+count: DONE - - Total job listings: **4**
+{
+  "summary": "- Total job listings: **4**"
+}
+    -> PASS  116.4s  llm=18  hitl=0  states 4: True
+[3/45] F03-salary-lookup | hybrid+hitl | repeat 1
+
+[plan] Find the monthly salary for the MLOps Intern role on http://fixtures:8080/jobs/
+   - salary_info    browser.extract            risk=LOW  Extract the MLOps Intern job details including salary
+[step.started] salary_info: browser.extract 
+[step.progress] salary_info: looking at: HireBoard — Jobs 
+[step.progress] salary_info: select Job type — ok 
+[step.progress] salary_info: looking at: HireBoard — Jobs 
+[step.progress] salary_info: type Search jobs — ok 
+[step.progress] salary_info: looking at: HireBoard — Jobs 
+[step.progress] salary_info: click Search — ok 
+[step.progress] salary_info: looking at: HireBoard — Jobs 
+[step.progress] salary_info: extract — error: LlmUnavailable: no LLM provider succeeded: gemini: HTTP 503 
+[step.progress] salary_info: looking at: HireBoard — Jobs 
+[step.progress] salary_info: extract — already extracted this page - nothing new here. Go to the next page if the go 
+[step.progress] salary_info: looking at: HireBoard — Jobs 
+[step.progress] salary_info: extracted 0 items 
+[step.finished] salary_info: DONE extracted 0 items
+
+[task.completed] COMPLETED
+salary_info: DONE - extracted 0 items
+{
+  "items": [],
+  "final_url": "http://127.0.0.1:8080/jobs/",
+  "count": 0
+}
+    -> FAIL[WRONG_ANSWER]  51.6s  llm=7  hitl=0  contains one of ['38,000', '38000', '38k']: False
+[4/45] F04-apply-cv | hybrid+hitl | repeat 1
+
+[plan] Fill the application form for the Computer Vision Intern job using the user profile
+   - fill_form      browser.fill_form          risk=HIGH  Fill the application form at the given URL with the user's profile (no submission)
+[step.started] fill_form: browser.fill_form 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: scroll down — no visible change 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: fill_many — filled 10 field(s) 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: check I confirm the information above is accurate. * — ok 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: fill_many — filled 1 field(s) 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: stuck repeating fill_many on the same page 
+[step.progress] fill_form: retrying after GROUNDING_MISS (attempt 2/3) 
+[step.started] fill_form: browser.fill_form 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: scroll down — no visible change 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: fill_many — filled 11 field(s) 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+{"attempt": 0, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:40:00.090710Z"}
+[step.progress] fill_form: fill_many — filled 4 field(s) 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: filled 11 fields; waiting for approval to submit 
+
+[APPROVAL NEEDED] Ready to click 'Submit application'. This is irreversible - please review.
+     First name *                             = Riya
+     Last name *                              = Sharma
+     Email *                                  = riya.sharma.test@example.com
+     Phone                                    = +91 90000 00000
+     LinkedIn profile URL                     = https://linkedin.com/in/riya-sharma-example
+     GitHub profile URL                       = https://github.com/riya-sharma-example
+     College / University *                   = Example Institute of Technology
+     Graduation year *                        = 2027
+     Are you authorised to work in India? *   = Yes
+     Why are you a good fit? (max 500 charact = I am a final-year student with strong background in computer
+     I confirm the information above is accur = true
+     screenshot: data/artifacts/96ff6282-a9c5-46f1-bc82-db0811b2fd08/fill_form/012-filled-form.png
+[step.progress] fill_form: submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-21732 
+[step.finished] fill_form: DONE submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-21
+
+[task.completed] COMPLETED
+fill_form: DONE - submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-21732
+{
+  "filled_fields": [
+    {
+      "op": "fill",
+      "locator": "#first_name",
+      "value": "Riya",
+      "field_label": "First name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#last_name",
+      "value": "Sharma",
+      "field_label": "Last name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#email",
+      "value": "riya.sharma.test@example.com",
+      "field_label": "Email *"
+    },
+    {
+      "op": "fill",
+      "locator": "#phone",
+      "value": "+91 90000 00000",
+      "field_label": "Phone"
+    },
+    {
+      "op": "fill",
+      "locator": "#linkedin",
+      "value": "https://linkedin.com/in/riya-sharma-example",
+      "field_label": "LinkedIn profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#github",
+      "value": "https://github.com/riya-sharma-example",
+      "field_label": "GitHub profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#college",
+      "value": "Example Institute of Technology",
+      "field_label": "College / University *"
+    },
+    {
+      "op": "select",
+      "locator": "#grad_year",
+      "value": "2027",
+      "field_label": "Graduation year *"
+    },
+    {
+      "op": "select",
+      "locator": "#work_auth",
+      "value": "Yes",
+      "field_label": "Are you authorised to work in India? *"
+    },
+    {
+      "op": "fill",
+      "locator": "#cover",
+      "value": "I am a final-year student with strong background in computer vision and deep learning, and I have hands-on experience building retrieval-augmented generation systems and evaluation harnesses for LLM applications.",
+      "field_label": "Why are you a good fit? (max 500 characters)"
+    },
+    {
+      "op": "check",
+      "locator": "#consent",
+      "value": "true",
+      "field_label": "I confirm the information above is accurate. *"
+    }
+  ],
+  "form_url": "http://127.0.0.1:8080/jobs/apply.html?id=cv-intern-02",
+  "submitted": true,
+  "confirmation": "Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-21732",
+  "final_url": "http://127.0.0.1:8080/jobs/apply.html?id=cv-intern-02"
+}
+    -> PASS  71.8s  llm=10  hitl=1  site received ['cv-intern-02']
+[5/45] F05-rank-apply | hybrid+hitl | repeat 1
+
+[plan] Find remote internships on http://fixtures:8080/jobs/, rank them against the resume, and fill the best application
+   - list_jobs      browser.extract            risk=LOW  Extract remote internship listings from the jobs page
+   - rank           extract.match              risk=LOW  Rank the extracted internships against the resume
+   - apply          browser.fill_form          risk=HIGH  Fill the application form for the top-ranked internship
+[step.started] list_jobs: browser.extract 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: click Remote only — no visible change 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: click Search — ok 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: select Job type — ok 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: extracted 3 items 
+[step.finished] list_jobs: DONE extracted 3 items
+[step.started] rank: extract.match 
+[step.progress] rank: ranked 3 items; best match: Generative AI Intern (RAG) 
+[step.finished] rank: DONE ranked 3 items; best match: Generative AI Intern (RAG)
+[step.started] apply: browser.fill_form 
+[step.progress] apply: looking at: Generative AI Intern (RAG) — HireBoard 
+[step.progress] apply: click Apply now — ok 
+[step.progress] apply: looking at: HireBoard — Apply 
+[step.progress] apply: fill_many — filled 11 field(s) 
+[step.progress] apply: looking at: HireBoard — Apply 
+[step.progress] apply: filled 11 fields; waiting for approval to submit 
+
+[APPROVAL NEEDED] Ready to click 'Submit application'. This is irreversible - please review.
+     First name *                             = Riya
+     Last name *                              = Sharma
+     Email *                                  = riya.sharma.test@example.com
+     Phone                                    = +91 90000 00000
+     LinkedIn profile URL                     = https://linkedin.com/in/riya-sharma-example
+     GitHub profile URL                       = https://github.com/riya-sharma-example
+     College / University *                   = Example Institute of Technology
+     Graduation year *                        = 2027
+     Are you authorised to work in India? *   = Yes
+     Why are you a good fit? (max 500 charact = I am a final‑year CS student with hands‑on experience buildi
+     I confirm the information above is accur = true
+     screenshot: data/artifacts/4e63a9a7-10ac-4a39-bd4a-73f535550a43/apply/005-filled-form.png
+[step.progress] apply: submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--21732 
+[step.finished] apply: DONE submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is
+
+[task.completed] COMPLETED
+list_jobs: DONE - extracted 3 items
+rank: DONE - ranked 3 items; best match: Generative AI Intern (RAG)
+apply: DONE - submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--21732
+{
+  "filled_fields": [
+    {
+      "op": "fill",
+      "locator": "#first_name",
+      "value": "Riya",
+      "field_label": "First name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#last_name",
+      "value": "Sharma",
+      "field_label": "Last name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#email",
+      "value": "riya.sharma.test@example.com",
+      "field_label": "Email *"
+    },
+    {
+      "op": "fill",
+      "locator": "#phone",
+      "value": "+91 90000 00000",
+      "field_label": "Phone"
+    },
+    {
+      "op": "fill",
+      "locator": "#linkedin",
+      "value": "https://linkedin.com/in/riya-sharma-example",
+      "field_label": "LinkedIn profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#github",
+      "value": "https://github.com/riya-sharma-example",
+      "field_label": "GitHub profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#college",
+      "value": "Example Institute of Technology",
+      "field_label": "College / University *"
+    },
+    {
+      "op": "select",
+      "locator": "#grad_year",
+      "value": "2027",
+      "field_label": "Graduation year *"
+    },
+    {
+      "op": "select",
+      "locator": "#work_auth",
+      "value": "Yes",
+      "field_label": "Are you authorised to work in India? *"
+    },
+    {
+      "op": "fill",
+      "locator": "#cover",
+      "value": "I am a final‑year CS student with hands‑on experience building LLM‑based retrieval systems and evaluation pipelines, making me a strong fit for this role.",
+      "field_label": "Why are you a good fit? (max 500 characters)"
+    },
+    {
+      "op": "check",
+      "locator": "#consent",
+      "value": "true",
+      "field_label": "I confirm the information above is accurate. *"
+    }
+  ],
+  "form_url": "http://127.0.0.1:8080/jobs/apply.html?id=genai-intern-03",
+  "submitted": true,
+  "confirmation": "Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--21732",
+  "final_url": "http://127.0.0.1:8080/jobs/apply.html?id=genai-intern-03"
+}
+    -> PASS  37.7s  llm=11  hitl=1  site received ['genai-intern-03']
+[6/45] F06-paginated-old-posts | hybrid+hitl | repeat 1
+
+[plan] List every job posted on http://fixtures:8080/jobs/ before 2026-09-12 across all pages
+   - extract_jobs   browser.extract            risk=LOW  Extract all job postings before 2026-09-12
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Machine Learning Intern — ok 
+[step.progress] extract_jobs: looking at: Machine Learning Intern — HireBoard 
+[step.progress] extract_jobs: click All jobs — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extracted 0 items 
+[step.finished] extract_jobs: DONE extracted 0 items
+
+[task.completed] COMPLETED
+extract_jobs: DONE - extracted 0 items
+{
+  "items": [],
+  "final_url": "http://127.0.0.1:8080/jobs/",
+  "count": 0
+}
+    -> FAIL[WRONG_ANSWER]  8.0s  llm=6  hitl=0  includes 0/5; excludes: 0 wrong item(s)
+[7/45] F07-shop-under-budget | hybrid+hitl | repeat 1
+
+[plan] List all laptops priced under 60000 rupees from http://fixtures:8080/shop/ with their prices
+   - laptops        browser.extract            risk=LOW  Extract laptops priced under 60000 rupees
+[step.started] laptops: browser.extract 
+[step.progress] laptops: looking at: Kart — Electronics 
+[step.progress] laptops: click Laptops — ok 
+[step.progress] laptops: looking at: Kart — Electronics 
+[step.progress] laptops: click Laptops — no visible change 
+[step.progress] laptops: looking at: Kart — Electronics 
+[step.progress] laptops: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] laptops: looking at: Kart — Electronics 
+[step.progress] laptops: extracted 3 items 
+[step.finished] laptops: DONE extracted 3 items
+
+[task.completed] COMPLETED
+laptops: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "name": "AeroBook 14 Laptop",
+      "price": "₹54,990",
+      "url": "http://127.0.0.1:8080/shop/item.html?id=1"
+    },
+    {
+      "name": "StudyMate 11 Laptop",
+      "price": "₹29,990",
+      "url": "http://127.0.0.1:8080/shop/item.html?id=3"
+    },
+    {
+      "name": "EcoBook 13 Laptop",
+      "price": "₹45,990",
+      "url": "http://127.0.0.1:8080/shop/item.html?id=9"
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/shop/",
+  "count": 3
+}
+    -> PASS  34.5s  llm=6  hitl=0  includes 3/3; excludes: 0 wrong item(s)
+[8/45] F08-shop-cheapest-phone | hybrid+hitl | repeat 1
+
+[plan] Find the cheapest phone on the fixtures shop site
+   - phones         browser.extract            risk=LOW  Extract phone items with their prices from the shop page
+   - cheapest       extract.summarize          risk=LOW  Select the phone with the lowest price and summarize the result
+[step.started] phones: browser.extract 
+[step.progress] phones: looking at: Kart — Electronics 
+[step.progress] phones: click Phones — ok 
+[step.progress] phones: looking at: Kart — Electronics 
+[step.progress] phones: extract — extracted 2 new items (total 2); more pages: False 
+[step.progress] phones: looking at: Kart — Electronics 
+[step.progress] phones: extracted 2 items 
+[step.finished] phones: DONE extracted 2 items
+[step.started] cheapest: extract.summarize 
+[step.progress] cheapest: - **Nova 5G Phone** – ₹18,999 – [View](http://127.0.0.1:8080/shop/item.html?id=5) 
+[step.finished] cheapest: DONE - **Nova 5G Phone** – ₹18,999 – [View](http://127.0.0.1:8080/shop/item.html?id=5)
+
+[task.completed] COMPLETED
+phones: DONE - extracted 2 items
+cheapest: DONE - - **Nova 5G Phone** – ₹18,999 – [View](http://127.0.0.1:8080/shop/item.html?id=5)
+{
+  "summary": "- **Nova 5G Phone** – ₹18,999 – [View](http://127.0.0.1:8080/shop/item.html?id=5)"
+}
+    -> PASS  6.2s  llm=6  hitl=0  contains one of ['Nova 5G']: True
+[9/45] F09-shop-best-audio | hybrid+hitl | repeat 1
+
+[plan] Identify the audio product with the highest rating on the shop site
+   - extract_products browser.extract            risk=LOW  Extract audio products with their ratings from the shop
+   - pick_best      extract.summarize          risk=LOW  Select the product with the highest rating
+[step.started] extract_products: browser.extract 
+[step.progress] extract_products: looking at: Kart — Electronics 
+[step.progress] extract_products: click Audio — ok 
+[step.progress] extract_products: looking at: Kart — Electronics 
+[step.progress] extract_products: extract — extracted 2 new items (total 2); more pages: False 
+[step.progress] extract_products: looking at: Kart — Electronics 
+[step.progress] extract_products: extracted 2 items 
+[step.finished] extract_products: DONE extracted 2 items
+[step.started] pick_best: extract.summarize 
+[step.progress] pick_best: - **StudioMax Headphones** – Rating: 4.7 – URL: http://127.0.0.1:8080/shop/item.html?id=8 
+[step.finished] pick_best: DONE - **StudioMax Headphones** – Rating: 4.7 – URL: http://127.0.0.1:8080/shop/item.html?id=8
+
+[task.completed] COMPLETED
+extract_products: DONE - extracted 2 items
+pick_best: DONE - - **StudioMax Headphones** – Rating: 4.7 – URL: http://127.0.0.1:8080/shop/item.html?id=8
+{
+  "summary": "- **StudioMax Headphones** – Rating: 4.7 – URL: http://127.0.0.1:8080/shop/item.html?id=8"
+}
+    -> PASS  15.6s  llm=6  hitl=0  contains one of ['StudioMax']: True
+[10/45] F10-portal-deadlines | hybrid+hitl | repeat 1
+
+[plan] List upcoming deadlines from the portal at http://fixtures:8080/portal/
+   - deadlines      browser.extract            risk=LOW  Extract deadline items from the portal page
+[step.started] deadlines: browser.extract 
+[step.progress] deadlines: looking at: Member Portal 
+[step.progress] deadlines: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] deadlines: looking at: Member Portal 
+[step.progress] deadlines: extracted 3 items 
+[step.finished] deadlines: DONE extracted 3 items
+
+[task.completed] COMPLETED
+deadlines: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "title": "Major project review II",
+      "deadline": "2026-10-15",
+      "url": ""
+    },
+    {
+      "title": "Internship report submission",
+      "deadline": "2026-10-22",
+      "url": ""
+    },
+    {
+      "title": "Placement registration closes",
+      "deadline": "2026-10-30",
+      "url": ""
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/portal/",
+  "count": 3
+}
+    -> PASS  12.5s  llm=4  hitl=0  includes 3/3
+[11/45] F11-portal-no-session | hybrid+hitl | repeat 1
+
+[plan] Retrieve the user's attendance information from the portal at http://fixtures:8080/portal/
+   - attendance     browser.act                risk=LOW  Open the portal page and read the attendance information
+[step.started] attendance: browser.act 
+[step.progress] attendance: 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step 
+
+[APPROVAL NEEDED] 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step.
+     screenshot: data/artifacts/d04504f1-bf66-4b21-9f15-d02c0662b7d6/attendance/001-login-wall.png
+[step.finished] attendance: REJECTED rejected by you
+
+[task.completed] COMPLETED
+attendance: REJECTED - 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step.
+    -> PASS  3.1s  llm=1  hitl=1  escalated: True
+[12/45] F12-popup-articles | hybrid+hitl | repeat 1
+
+[plan] List the titles of all articles by Meera Nair on http://fixtures:8080/popup/
+   - extract_articles browser.extract            risk=LOW  Extract article titles authored by Meera Nair
+[step.started] extract_articles: browser.extract 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: extracted 3 items 
+[step.finished] extract_articles: DONE extracted 3 items
+
+[task.completed] COMPLETED
+extract_articles: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "title": "The Hidden Cost of Cloud GPUs",
+      "url": "http://127.0.0.1:8080/popup/#a3"
+    },
+    {
+      "title": "How Browser Agents See a Web Page",
+      "url": "http://127.0.0.1:8080/popup/#a6"
+    },
+    {
+      "title": "Designing Human-in-the-Loop Approval Flows",
+      "url": "http://127.0.0.1:8080/popup/#a8"
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/popup/",
+  "count": 3
+}
+    -> PASS  33.9s  llm=5  hitl=0  includes 3/3; excludes: 0 wrong item(s)
+[13/45] F13-popup-latest | hybrid+hitl | repeat 1
+
+[plan] Find the newest article on http://fixtures:8080/popup/ and provide its title, URL and date
+   - extract_articles browser.extract            risk=LOW  Extract recent articles from the popup page
+   - newest_article extract.summarize          risk=LOW  Select the newest article from the extracted list
+[step.started] extract_articles: browser.extract 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: extract — extracted 9 new items (total 9); more pages: False 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: extracted 9 items 
+[step.finished] extract_articles: DONE extracted 9 items
+[step.started] newest_article: extract.summarize 
+[step.progress] newest_article: - **Title:** What Open-Source AI Means for Indian Startups
+- **Date:** 2026-09-24
+- **URL:** http://127.0.0.1:8080/popup/#a9 
+[step.finished] newest_article: DONE - **Title:** What Open-Source AI Means for Indian Startups
+- **Date:** 2026-09-24
+- **URL:** http://127.0.0.1:8080/popup
+
+[task.completed] COMPLETED
+extract_articles: DONE - extracted 9 items
+newest_article: DONE - - **Title:** What Open-Source AI Means for Indian Startups
+- **Date:** 2026-09-24
+- **URL:** http://127.0.0.1:8080/popup/#a9
+{
+  "summary": "- **Title:** What Open-Source AI Means for Indian Startups\n- **Date:** 2026-09-24\n- **URL:** http://127.0.0.1:8080/popup/#a9"
+}
+    -> PASS  14.8s  llm=6  hitl=0  contains one of ['What Open-Source AI Means for Indian Startups']: True
+[14/45] F14-list-instructor | hybrid+hitl | repeat 1
+
+[plan] List every course taught by Dr. Rao from all pages of http://fixtures:8080/list/
+   - courses        browser.extract            risk=LOW  Extract all courses taught by Dr. Rao across up to 5 pages
+[step.started] courses: browser.extract 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 1 new items (total 1); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429; gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:45:12.187678Z"}
+{"attempt": 1, "error": "no LLM provider succeeded: groq: empty response (finish_reason=stop)", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:45:20.301443Z"}
+[step.progress] courses: LLM gave no usable action 
+[step.progress] courses: retrying after TOOL_ERROR (attempt 2/3) 
+[step.started] courses: browser.extract 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:45:23.897864Z"}
+[step.progress] courses: click 2 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click Previous — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 1 new items (total 1); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 2 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429; gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:46:13.554961Z"}
+[step.progress] courses: click Next — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click Next — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click Next — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:46:16.865876Z"}
+{"attempt": 1, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:46:32.459541Z"}
+[step.progress] courses: LLM gave no usable action 
+[step.progress] courses: retrying after TOOL_ERROR (attempt 3/3) 
+[step.started] courses: browser.extract 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 1 new items (total 1); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:46:39.499594Z"}
+[step.progress] courses: click 2 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 2 — no visible change 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:47:04.229920Z"}
+[step.progress] courses: click Previous — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:47:05.246686Z"}
+[step.progress] courses: extract — already extracted this page - nothing new here. Go to the next page if the go 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 2 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:47:12.877920Z"}
+[step.progress] courses: back — ok 
+[step.progress] courses: looking at: about:blank 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:47:33.863709Z"}
+[step.progress] courses: extract — extracted 0 new items (total 1); more pages: False 
+[step.progress] courses: looking at: about:blank 
+[step.progress] courses: click — error: element 2 does not exist - use a number from the current list 
+[step.progress] courses: looking at: about:blank 
+[step.progress] courses: extracted 1 items 
+[step.finished] courses: DONE extracted 1 items
+
+[task.completed] COMPLETED
+courses: DONE - extracted 1 items
+{
+  "items": [
+    {
+      "title": "Data Structures",
+      "url": ""
+    }
+  ],
+  "final_url": "about:blank",
+  "count": 1
+}
+    -> FAIL[WRONG_ANSWER]  189.9s  llm=24  hitl=0  includes 1/3; excludes: 0 wrong item(s)
+[15/45] F15-list-credits | hybrid+hitl | repeat 1
+
+[plan] Count the number of 4-credit courses listed on http://fixtures:8080/list/ across all pages
+   - courses        browser.extract            risk=LOW  Extract course titles and credit values from all pages of the list
+   - count          extract.summarize          risk=LOW  Count how many extracted courses have 4 credits
+[step.started] courses: browser.extract 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 10 new items (total 10); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 2 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — error: LlmUnavailable: no LLM provider succeeded: groq: HTTP 429; gemini: HTT 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 3 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 10 new items (total 20); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click Next — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 10 new items (total 30); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click Next — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 5 new items (total 35); more pages: False 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 1 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429; gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:49:34.764391Z"}
+[step.progress] courses: click 2 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 1 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — already extracted this page - nothing new here. Go to the next page if the go 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:49:37.297633Z"}
+[step.progress] courses: extracted 35 items (stopped: agent was repeating itself) 
+[step.finished] courses: DONE extracted 35 items (stopped: agent was repeating itself)
+[step.started] count: extract.summarize 
+[step.progress] count: no LLM provider succeeded: groq: HTTP 429 
+[step.progress] count: retrying after TOOL_ERROR (attempt 2/3) 
+[step.started] count: extract.summarize 
+[step.progress] count: - 11 courses have 4 credits 
+[step.finished] count: DONE - 11 courses have 4 credits
+
+[task.completed] COMPLETED
+courses: DONE - extracted 35 items (stopped: agent was repeating itself)
+count: DONE - - 11 courses have 4 credits
+{
+  "summary": "- 11 courses have 4 credits"
+}
+    -> FAIL[WRONG_ANSWER]  107.4s  llm=21  hitl=0  states 14: False
+[16/45] F01-remote-interns | hybrid+hitl | repeat 2
+
+[plan] List all remote internships from http://fixtures:8080/jobs/ with company and location
+   - remote_internships browser.extract            risk=LOW  Extract remote internship listings with company and location
+[step.started] remote_internships: browser.extract 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: select Job type — ok 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: check Remote only — ok 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: click Search — ok 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: extract — extracted 5 new items (total 5); more pages: False 
+[step.progress] remote_internships: looking at: HireBoard — Jobs 
+[step.progress] remote_internships: extracted 5 items 
+[step.finished] remote_internships: DONE extracted 5 items
+
+[task.completed] COMPLETED
+remote_internships: DONE - extracted 5 items
+{
+  "items": [
+    {
+      "title": "Machine Learning Intern",
+      "company": "Nimbus Labs",
+      "location": "Remote (India)",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=ml-intern-01"
+    },
+    {
+      "title": "Generative AI Intern (RAG)",
+      "company": "Lexica Systems",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=genai-intern-03"
+    },
+    {
+      "title": "MLOps Intern",
+      "company": "Nimbus Labs",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=mlops-intern-07"
+    },
+    {
+      "title": "Infrastructure Data Science Intern",
+      "company": "Healthify Analytics",
+      "location": "Remote (India)",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=ds-intern-10"
+    },
+    {
+      "title": "Data Science AI Evaluation Intern",
+      "company": "Benchmark Co",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=ai-eval-intern-12"
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/jobs/",
+  "count": 5
+}
+    -> PASS  34.5s  llm=7  hitl=0  includes 5/5; excludes: 0 wrong item(s)
+[17/45] F02-count-fulltime | hybrid+hitl | repeat 2
+
+[plan] Count the number of full-time job listings on http://fixtures:8080/jobs/
+   - extract_jobs   browser.extract            risk=LOW  Extract job listings from the page
+   - count_fulltime extract.summarize          risk=LOW  Count how many extracted jobs are full-time positions
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 2 — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Reject non-essential — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 5 new items (total 5); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 2 — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 5 new items (total 10); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 3 — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 2 — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429; gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:51:38.985565Z"}
+[step.progress] extract_jobs: click 3 — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 3 — no visible change 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 2 new items (total 12); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extracted 12 items 
+[step.finished] extract_jobs: DONE extracted 12 items
+[step.started] count_fulltime: extract.summarize 
+[step.progress] count_fulltime: - Full‑time positions: 4
+  - Data Analyst
+  - Backend Engineer (Python)
+  - QA Automation Engineer
+  - Android Developer 
+[step.finished] count_fulltime: DONE - Full‑time positions: 4
+  - Data Analyst
+  - Backend Engineer (Python)
+  - QA Automation Engineer
+  - Android Developer
+
+[task.completed] COMPLETED
+extract_jobs: DONE - extracted 12 items
+count_fulltime: DONE - - Full‑time positions: 4
+  - Data Analyst
+  - Backend Engineer (Python)
+  - QA Automation Engineer
+  - Android Developer
+{
+  "summary": "- Full‑time positions: 4\n  - Data Analyst\n  - Backend Engineer (Python)\n  - QA Automation Engineer\n  - Android Developer"
+}
+    -> PASS  108.0s  llm=17  hitl=0  states 4: True
+[18/45] F03-salary-lookup | hybrid+hitl | repeat 2
+
+[plan] Find the monthly salary of the MLOps Intern role on http://fixtures:8080/jobs/
+   - salary         browser.extract            risk=LOW  Extract the monthly salary for the MLOps Intern role
+[step.started] salary: browser.extract 
+[step.progress] salary: looking at: HireBoard — Jobs 
+[step.progress] salary: fail — extracted 0 new items (total 0); more pages: False (extracted instead of givi 
+[step.progress] salary: looking at: HireBoard — Jobs 
+[step.progress] salary: The page does not contain an MLOps Intern listing, so the goal cannot be achieved. 
+[step.finished] salary: FAILED The page does not contain an MLOps Intern listing, so the goal cannot be achieved.
+
+[task.failed] FAILED
+salary: FAILED - The page does not contain an MLOps Intern listing, so the goal cannot be achieved.
+    -> FAIL[PLAN_WRONG]  5.2s  llm=4  hitl=0  contains one of ['38,000', '38000', '38k']: False
+[19/45] F04-apply-cv | hybrid+hitl | repeat 2
+
+[plan] Fill the application form for the Computer Vision Intern job using the user profile
+   - fill_form      browser.fill_form          risk=HIGH  Fill the application form at the given URL with the user's profile (no submission)
+[step.started] fill_form: browser.fill_form 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: scroll down — no visible change 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: fill_many — filled 11 field(s) 
+[step.progress] fill_form: looking at: HireBoard — Apply 
+[step.progress] fill_form: filled 11 fields; waiting for approval to submit 
+
+[APPROVAL NEEDED] Ready to click 'Submit application'. This is irreversible - please review.
+     First name *                             = Riya
+     Last name *                              = Sharma
+     Email *                                  = riya.sharma.test@example.com
+     Phone                                    = +91 90000 00000
+     LinkedIn profile URL                     = https://linkedin.com/in/riya-sharma-example
+     GitHub profile URL                       = https://github.com/riya-sharma-example
+     College / University *                   = Example Institute of Technology
+     Graduation year *                        = 2027
+     Are you authorised to work in India? *   = Yes
+     Why are you a good fit? (max 500 charact = I am a final-year computer science student specializing in a
+     I confirm the information above is accur = true
+     screenshot: data/artifacts/aeb59a32-e7fc-4e21-91fc-fbaf43f9e7f9/fill_form/005-filled-form.png
+[step.progress] fill_form: submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-21732 
+[step.finished] fill_form: DONE submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-21
+
+[task.completed] COMPLETED
+fill_form: DONE - submitted: Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-21732
+{
+  "filled_fields": [
+    {
+      "op": "fill",
+      "locator": "#first_name",
+      "value": "Riya",
+      "field_label": "First name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#last_name",
+      "value": "Sharma",
+      "field_label": "Last name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#email",
+      "value": "riya.sharma.test@example.com",
+      "field_label": "Email *"
+    },
+    {
+      "op": "fill",
+      "locator": "#phone",
+      "value": "+91 90000 00000",
+      "field_label": "Phone"
+    },
+    {
+      "op": "fill",
+      "locator": "#linkedin",
+      "value": "https://linkedin.com/in/riya-sharma-example",
+      "field_label": "LinkedIn profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#github",
+      "value": "https://github.com/riya-sharma-example",
+      "field_label": "GitHub profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#college",
+      "value": "Example Institute of Technology",
+      "field_label": "College / University *"
+    },
+    {
+      "op": "select",
+      "locator": "#grad_year",
+      "value": "2027",
+      "field_label": "Graduation year *"
+    },
+    {
+      "op": "select",
+      "locator": "#work_auth",
+      "value": "Yes",
+      "field_label": "Are you authorised to work in India? *"
+    },
+    {
+      "op": "fill",
+      "locator": "#cover",
+      "value": "I am a final-year computer science student specializing in applied machine learning and computer vision, with hands-on experience fine-tuning models like ResNet-18 in PyTorch with high accuracy.",
+      "field_label": "Why are you a good fit? (max 500 characters)"
+    },
+    {
+      "op": "check",
+      "locator": "#consent",
+      "value": "true",
+      "field_label": "I confirm the information above is accurate. *"
+    }
+  ],
+  "form_url": "http://127.0.0.1:8080/jobs/apply.html?id=cv-intern-02",
+  "submitted": true,
+  "confirmation": "Apply — Computer Vision Intern at Optiq Application received Thank you! Your reference number is HB-CV-INT-21732",
+  "final_url": "http://127.0.0.1:8080/jobs/apply.html?id=cv-intern-02"
+}
+    -> PASS  22.0s  llm=4  hitl=1  site received ['cv-intern-02']
+[20/45] F05-rank-apply | hybrid+hitl | repeat 2
+
+[plan] Find remote internships on http://fixtures:8080/jobs/, rank them against the resume, and prepare the application for the top match
+   - list_jobs      browser.extract            risk=LOW  Extract remote internship listings from the jobs page
+   - rank           extract.match              risk=LOW  Rank the extracted internships against the resume
+   - fill           browser.fill_form          risk=HIGH  Fill the application form for the best‑matched internship
+[step.started] list_jobs: browser.extract 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: click Remote only — no visible change 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: select Job type — ok 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: extract — extracted 2 new items (total 2); more pages: True 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: click 1 — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] list_jobs: looking at: HireBoard — Jobs 
+[step.progress] list_jobs: extracted 2 items 
+[step.finished] list_jobs: DONE extracted 2 items
+[step.started] rank: extract.match 
+[step.progress] rank: ranked 2 items; best match: Generative AI Intern (RAG) 
+[step.finished] rank: DONE ranked 2 items; best match: Generative AI Intern (RAG)
+[step.started] fill: browser.fill_form 
+[step.progress] fill: looking at: Generative AI Intern (RAG) — HireBoard 
+[step.progress] fill: click Apply now — ok 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: fill_many — filled 11 field(s) 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: fill_many — filled 4 field(s) 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: stuck repeating fill_many on the same page 
+[step.progress] fill: retrying after GROUNDING_MISS (attempt 2/3) 
+[step.started] fill: browser.fill_form 
+[step.progress] fill: looking at: Generative AI Intern (RAG) — HireBoard 
+[step.progress] fill: click Apply now — ok 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: fill_many — filled 9 field(s) 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: fill_many — filled 2 field(s) 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: stuck repeating fill_many on the same page 
+[step.progress] fill: retrying after GROUNDING_MISS (attempt 3/3) 
+[step.started] fill: browser.fill_form 
+[step.progress] fill: looking at: Generative AI Intern (RAG) — HireBoard 
+[step.progress] fill: click Apply now — ok 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: fill_many — filled 11 field(s) 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: fill_many — filled 4 field(s) 
+[step.progress] fill: looking at: HireBoard — Apply 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429; gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:55:08.681436Z"}
+[step.progress] fill: stuck repeating fill_many on the same page 
+
+[APPROVAL NEEDED] Step 'fill' failed 3 times (GROUNDING_MISS): stuck repeating fill_many on the same page. Approve to try again, or reject to skip it.
+     screenshot: data/artifacts/f59ac6a5-a8da-4229-bbc2-e21a5459e372/fill/015-stuck.png
+[step.progress] fill: looking at: Generative AI Intern (RAG) — HireBoard 
+[step.progress] fill: click Apply now — ok 
+[step.progress] fill: looking at: HireBoard — Apply 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:55:13.546071Z"}
+{"attempt": 1, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:55:21.132557Z"}
+[step.progress] fill: LLM gave no usable action 
+[step.progress] fill: retrying after TOOL_ERROR (attempt 2/3) 
+[step.started] fill: browser.fill_form 
+[step.progress] fill: looking at: Generative AI Intern (RAG) — HireBoard 
+[step.progress] fill: click Apply now — ok 
+[step.progress] fill: looking at: HireBoard — Apply 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:55:30.202458Z"}
+[step.progress] fill: scroll down — no visible change 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: fill_many — filled 11 field(s) 
+[step.progress] fill: looking at: HireBoard — Apply 
+[step.progress] fill: filled 11 fields; waiting for approval to submit 
+
+[APPROVAL NEEDED] Ready to click 'Submit application'. This is irreversible - please review.
+     First name *                             = Riya
+     Last name *                              = Sharma
+     Email *                                  = riya.sharma.test@example.com
+     Phone                                    = +91 90000 00000
+     LinkedIn profile URL                     = https://linkedin.com/in/riya-sharma-example
+     GitHub profile URL                       = https://github.com/riya-sharma-example
+     College / University *                   = Example Institute of Technology
+     Graduation year *                        = 2027
+     Are you authorised to work in India? *   = Yes
+     Why are you a good fit? (max 500 charact = I am a final-year computer science student specializing in a
+     I confirm the information above is accur = true
+     screenshot: data/artifacts/f59ac6a5-a8da-4229-bbc2-e21a5459e372/fill/023-filled-form.png
+[step.progress] fill: submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--21732 
+[step.finished] fill: DONE submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is
+
+[task.completed] COMPLETED
+list_jobs: DONE - extracted 2 items
+rank: DONE - ranked 2 items; best match: Generative AI Intern (RAG)
+fill: DONE - submitted: Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--21732
+{
+  "filled_fields": [
+    {
+      "op": "fill",
+      "locator": "#first_name",
+      "value": "Riya",
+      "field_label": "First name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#last_name",
+      "value": "Sharma",
+      "field_label": "Last name *"
+    },
+    {
+      "op": "fill",
+      "locator": "#email",
+      "value": "riya.sharma.test@example.com",
+      "field_label": "Email *"
+    },
+    {
+      "op": "fill",
+      "locator": "#phone",
+      "value": "+91 90000 00000",
+      "field_label": "Phone"
+    },
+    {
+      "op": "fill",
+      "locator": "#linkedin",
+      "value": "https://linkedin.com/in/riya-sharma-example",
+      "field_label": "LinkedIn profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#github",
+      "value": "https://github.com/riya-sharma-example",
+      "field_label": "GitHub profile URL"
+    },
+    {
+      "op": "fill",
+      "locator": "#college",
+      "value": "Example Institute of Technology",
+      "field_label": "College / University *"
+    },
+    {
+      "op": "select",
+      "locator": "#grad_year",
+      "value": "2027",
+      "field_label": "Graduation year *"
+    },
+    {
+      "op": "select",
+      "locator": "#work_auth",
+      "value": "Yes",
+      "field_label": "Are you authorised to work in India? *"
+    },
+    {
+      "op": "fill",
+      "locator": "#cover",
+      "value": "I am a final-year computer science student specializing in applied machine learning and large language models, with hands-on experience building retrieval-augmented generation systems.",
+      "field_label": "Why are you a good fit? (max 500 characters)"
+    },
+    {
+      "op": "check",
+      "locator": "#consent",
+      "value": "true",
+      "field_label": "I confirm the information above is accurate. *"
+    }
+  ],
+  "form_url": "http://127.0.0.1:8080/jobs/apply.html?id=genai-intern-03",
+  "submitted": true,
+  "confirmation": "Apply — Generative AI Intern (RAG) at Lexica Systems Application received Thank you! Your reference number is HB-GENAI--21732",
+  "final_url": "http://127.0.0.1:8080/jobs/apply.html?id=genai-intern-03"
+}
+    -> PASS  153.4s  llm=25  hitl=2  site received ['genai-intern-03']
+[21/45] F06-paginated-old-posts | hybrid+hitl | repeat 2
+
+[plan] List every job posted before 2026-09-12 from http://fixtures:8080/jobs/ across all pages
+   - extract_jobs   browser.extract            risk=LOW  Extract job postings with title, date, and URL, filtering to dates before 2026-09-12
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Machine Learning Intern — ok 
+[step.progress] extract_jobs: looking at: Machine Learning Intern — HireBoard 
+[step.progress] extract_jobs: click All jobs — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: fail — error: LlmUnavailable: no LLM provider succeeded: groq: HTTP 429; gemini: HTT 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Machine Learning Intern — ok 
+[step.progress] extract_jobs: looking at: Machine Learning Intern — HireBoard 
+[step.progress] extract_jobs: click All jobs — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: No date information available to filter jobs posted before 2026-09-12. 
+[step.finished] extract_jobs: FAILED No date information available to filter jobs posted before 2026-09-12.
+
+[task.failed] FAILED
+extract_jobs: FAILED - No date information available to filter jobs posted before 2026-09-12.
+    -> FAIL[PLAN_WRONG]  56.8s  llm=8  hitl=0  includes 0/5; excludes: 0 wrong item(s)
+[22/45] F07-shop-under-budget | hybrid+hitl | repeat 2
+
+[plan] List all laptops priced under 60000 rupees from http://fixtures:8080/shop/ with their prices
+   - laptops        browser.extract            risk=LOW  Extract laptop items priced under 60000 rupees
+[step.started] laptops: browser.extract 
+[step.progress] laptops: looking at: Kart — Electronics 
+[step.progress] laptops: click Laptops — ok 
+[step.progress] laptops: looking at: Kart — Electronics 
+[step.progress] laptops: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] laptops: looking at: Kart — Electronics 
+[step.progress] laptops: extracted 3 items 
+[step.finished] laptops: DONE extracted 3 items
+
+[task.completed] COMPLETED
+laptops: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "name": "AeroBook 14 Laptop",
+      "price": "₹54,990",
+      "url": "http://127.0.0.1:8080/shop/item.html?id=1"
+    },
+    {
+      "name": "StudyMate 11 Laptop",
+      "price": "₹29,990",
+      "url": "http://127.0.0.1:8080/shop/item.html?id=3"
+    },
+    {
+      "name": "EcoBook 13 Laptop",
+      "price": "₹45,990",
+      "url": "http://127.0.0.1:8080/shop/item.html?id=9"
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/shop/",
+  "count": 3
+}
+    -> PASS  17.3s  llm=5  hitl=0  includes 3/3; excludes: 0 wrong item(s)
+[23/45] F08-shop-cheapest-phone | hybrid+hitl | repeat 2
+
+[plan] Find the cheapest phone on the fixtures shop site
+   - phones         browser.extract            risk=LOW  Extract phone items with their prices from the shop page
+   - cheapest       extract.summarize          risk=LOW  Select the phone with the lowest price and summarize the result
+[step.started] phones: browser.extract 
+[step.progress] phones: looking at: Kart — Electronics 
+[step.progress] phones: click Phones — ok 
+[step.progress] phones: looking at: Kart — Electronics 
+[step.progress] phones: extract — extracted 2 new items (total 2); more pages: False 
+[step.progress] phones: looking at: Kart — Electronics 
+[step.progress] phones: extracted 2 items 
+[step.finished] phones: DONE extracted 2 items
+[step.started] cheapest: extract.summarize 
+[step.progress] cheapest: - **Nova 5G Phone** – ₹18,999 – [View](http://127.0.0.1:8080/shop/item.html?id=5) 
+[step.finished] cheapest: DONE - **Nova 5G Phone** – ₹18,999 – [View](http://127.0.0.1:8080/shop/item.html?id=5)
+
+[task.completed] COMPLETED
+phones: DONE - extracted 2 items
+cheapest: DONE - - **Nova 5G Phone** – ₹18,999 – [View](http://127.0.0.1:8080/shop/item.html?id=5)
+{
+  "summary": "- **Nova 5G Phone** – ₹18,999 – [View](http://127.0.0.1:8080/shop/item.html?id=5)"
+}
+    -> PASS  5.2s  llm=6  hitl=0  contains one of ['Nova 5G']: True
+[24/45] F09-shop-best-audio | hybrid+hitl | repeat 2
+
+[plan] Identify the audio product with the highest rating on the fixtures shop site
+   - extract_items  browser.extract            risk=LOW  Extract audio products with their ratings from the shop page
+   - pick_best      extract.summarize          risk=LOW  Select the audio product with the highest rating
+[step.started] extract_items: browser.extract 
+[step.progress] extract_items: looking at: Kart — Electronics 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:57:56.853328Z"}
+[step.progress] extract_items: click Audio — ok 
+[step.progress] extract_items: looking at: Kart — Electronics 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T13:58:07.416036Z"}
+[step.progress] extract_items: extract — extracted 2 new items (total 2); more pages: False 
+[step.progress] extract_items: looking at: Kart — Electronics 
+[step.progress] extract_items: extracted 2 items 
+[step.finished] extract_items: DONE extracted 2 items
+[step.started] pick_best: extract.summarize 
+[step.progress] pick_best: * **Title:** StudioMax Headphones
+* **Rating:** 4.7
+* **URL:** http://127.0.0.1:8080/shop/item.html?id=8 
+[step.finished] pick_best: DONE * **Title:** StudioMax Headphones
+* **Rating:** 4.7
+* **URL:** http://127.0.0.1:8080/shop/item.html?id=8
+
+[task.completed] COMPLETED
+extract_items: DONE - extracted 2 items
+pick_best: DONE - * **Title:** StudioMax Headphones
+* **Rating:** 4.7
+* **URL:** http://127.0.0.1:8080/shop/item.html?id=8
+{
+  "summary": "* **Title:** StudioMax Headphones\n* **Rating:** 4.7\n* **URL:** http://127.0.0.1:8080/shop/item.html?id=8"
+}
+    -> PASS  25.0s  llm=6  hitl=0  contains one of ['StudioMax']: True
+[25/45] F10-portal-deadlines | hybrid+hitl | repeat 2
+
+[plan] List upcoming deadlines from the portal at http://fixtures:8080/portal/
+   - deadlines      browser.extract            risk=LOW  Extract deadline items with their dates from the portal page
+[step.started] deadlines: browser.extract 
+[step.progress] deadlines: looking at: Member Portal 
+[step.progress] deadlines: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] deadlines: looking at: Member Portal 
+[step.progress] deadlines: extracted 3 items 
+[step.finished] deadlines: DONE extracted 3 items
+
+[task.completed] COMPLETED
+deadlines: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "title": "Major project review II",
+      "date": "2026-10-15",
+      "url": ""
+    },
+    {
+      "title": "Internship report submission",
+      "date": "2026-10-22",
+      "url": ""
+    },
+    {
+      "title": "Placement registration closes",
+      "date": "2026-10-30",
+      "url": ""
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/portal/",
+  "count": 3
+}
+    -> PASS  4.8s  llm=4  hitl=0  includes 3/3
+[26/45] F11-portal-no-session | hybrid+hitl | repeat 2
+
+[plan] Retrieve the user's attendance from the portal at http://fixtures:8080/portal/
+   - attendance     browser.act                risk=LOW  Read the attendance information from the portal page
+[step.started] attendance: browser.act 
+[step.progress] attendance: 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step 
+
+[APPROVAL NEEDED] 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step.
+     screenshot: data/artifacts/8ea1b83f-9e6b-4065-a859-8f94a1fb6591/attendance/001-login-wall.png
+[step.finished] attendance: REJECTED rejected by you
+
+[task.completed] COMPLETED
+attendance: REJECTED - 127.0.0.1 needs you to be signed in. Enter your login for 127.0.0.1 and Ease will sign in for you (the AI never sees your password), or skip this step.
+    -> PASS  2.3s  llm=1  hitl=1  escalated: True
+[27/45] F12-popup-articles | hybrid+hitl | repeat 2
+
+[plan] List the titles of all articles by Meera Nair on http://fixtures:8080/popup/
+   - extract_articles browser.extract            risk=LOW  Extract article titles authored by Meera Nair
+[step.started] extract_articles: browser.extract 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: extract — error: LlmUnavailable: no LLM provider succeeded: groq: HTTP 429 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: click × — ok 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: extract — already extracted this page - nothing new here. Go to the next page if the go 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: stuck repeating extract on the same page 
+[step.progress] extract_articles: retrying after GROUNDING_MISS (attempt 2/3) 
+[step.started] extract_articles: browser.extract 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: extract — extracted 3 new items (total 3); more pages: False 
+[step.progress] extract_articles: looking at: The Daily Byte — Articles 
+[step.progress] extract_articles: extracted 6 items 
+[step.finished] extract_articles: DONE extracted 6 items
+
+[task.completed] COMPLETED
+extract_articles: DONE - extracted 6 items
+{
+  "items": [
+    {
+      "title": "The Hidden Cost of Cloud GPUs"
+    },
+    {
+      "title": "How Browser Agents See a Web Page"
+    },
+    {
+      "title": "Designing Human-in-the-Loop Approval Flows"
+    },
+    {
+      "title": "The Hidden Cost of Cloud GPUs",
+      "url": "http://127.0.0.1:8080/popup/#a3"
+    },
+    {
+      "title": "How Browser Agents See a Web Page",
+      "url": "http://127.0.0.1:8080/popup/#a6"
+    },
+    {
+      "title": "Designing Human-in-the-Loop Approval Flows",
+      "url": "http://127.0.0.1:8080/popup/#a8"
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/popup/",
+  "count": 6
+}
+    -> PASS  42.6s  llm=10  hitl=0  includes 3/3; excludes: 0 wrong item(s)
+[28/45] F13-popup-latest | hybrid+hitl | repeat 2
+
+[plan] Find the newest article on http://fixtures:8080/popup/ and provide its title, date and URL
+   - extract        browser.extract            risk=LOW  Extract recent articles from the page with their title, date and URL
+   - newest         extract.summarize          risk=LOW  Select the newest article from the extracted list
+[step.started] extract: browser.extract 
+[step.progress] extract: looking at: The Daily Byte — Articles 
+[step.progress] extract: extract — extracted 9 new items (total 9); more pages: False 
+[step.progress] extract: looking at: The Daily Byte — Articles 
+[step.progress] extract: extracted 9 items 
+[step.finished] extract: DONE extracted 9 items
+[step.started] newest: extract.summarize 
+[step.progress] newest: Here is the newest article:
+* Title: What Open-Source AI Means for Indian Startups
+* Date: 2026-09-24
+* URL: http://127.0.0.1:8080/popup/#a9 
+[step.finished] newest: DONE Here is the newest article:
+* Title: What Open-Source AI Means for Indian Startups
+* Date: 2026-09-24
+* URL: http://127.
+
+[task.completed] COMPLETED
+extract: DONE - extracted 9 items
+newest: DONE - Here is the newest article:
+* Title: What Open-Source AI Means for Indian Startups
+* Date: 2026-09-24
+* URL: http://127.0.0.1:8080/popup/#a9
+{
+  "summary": "Here is the newest article:\n* Title: What Open-Source AI Means for Indian Startups\n* Date: 2026-09-24\n* URL: http://127.0.0.1:8080/popup/#a9"
+}
+    -> PASS  25.7s  llm=6  hitl=0  contains one of ['What Open-Source AI Means for Indian Startups']: True
+[29/45] F14-list-instructor | hybrid+hitl | repeat 2
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 2)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 3)
+
+[task.failed] FAILED
+no LLM provider succeeded: gemini: network error ReadTimeout
+    -> FAIL[RATE_LIMITED]  60.6s  llm=0  hitl=0  includes 0/3; excludes: 0 wrong item(s)
+[30/45] F15-list-credits | hybrid+hitl | repeat 2
+
+[plan] Count the number of 4-credit courses listed on http://fixtures:8080/list/ across all pages
+   - list_courses   browser.extract            risk=LOW  Extract course titles and credit values from the course list pages
+   - count          extract.summarize          risk=LOW  Count how many extracted courses have 4 credits
+[step.started] list_courses: browser.extract 
+[step.progress] list_courses: looking at: CourseHub — Course catalogue 
+[step.progress] list_courses: extract — extracted 10 new items (total 10); more pages: True 
+[step.progress] list_courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: groq: HTTP 429", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T14:08:33.494471Z"}
+[step.progress] list_courses: click 2 — ok 
+[step.progress] list_courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-17T14:09:06.644312Z"}

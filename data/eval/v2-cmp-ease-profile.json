@@ -1,0 +1,38 @@
+{
+ "full_name": "Riya Sharma",
+ "first_name": "Riya",
+ "last_name": "Sharma",
+ "email": "riya.sharma.test+ease-cmp@example.com",
+ "phone": "+91 90000 00000",
+ "location": "Noida, Uttar Pradesh, India",
+ "linkedin": "https://linkedin.com/in/riya-sharma-example",
+ "github": "https://github.com/riya-sharma-example",
+ "portfolio": "",
+ "college": "Example Institute of Technology",
+ "degree": "B.Tech in Computer Science and Engineering",
+ "graduation_year": "2027",
+ "skills": [
+  "Python",
+  "PyTorch",
+  "scikit-learn",
+  "LangChain",
+  "LangGraph",
+  "pgvector",
+  "FAISS",
+  "prompt engineering",
+  "LLM evaluation",
+  "FastAPI",
+  "SQL",
+  "Docker",
+  "Git"
+ ],
+ "experience": [
+  "Machine Learning Intern, Example Analytics Pvt. Ltd. (remote), May 2026 - July 2026: Built an LLM-based document summariser and an automatic evaluation pipeline for it."
+ ],
+ "projects": [
+  "Course Assistant (RAG): question answering over lecture notes with LangChain and pgvector; built an evaluation set of 200 questions and measured answer accuracy and citation precision.",
+  "Resume Matcher: ranks job postings against a resume using sentence embeddings and cosine similarity.",
+  "Image Classifier: fine-tuned a ResNet-18 on a 10-class dataset with PyTorch (91% test accuracy)."
+ ],
+ "summary": "I am a final-year computer science student specializing in applied machine learning and large language models, with hands\u2011on experience building retrieval\u2011augmented generation systems and evaluation harnesses for LLM applications."
+}

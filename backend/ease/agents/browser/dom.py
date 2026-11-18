@@ -71,7 +71,7 @@ INDEX_JS = r"""
       checked: el.type === 'checkbox' || el.type === 'radio' ? !!el.checked : null,
       required: !!el.required, href: tag === 'a' ? el.getAttribute('href') : null,
       options: tag === 'select' ? [...el.options].map(o => clean(o.text)).slice(0, 25) : null,
-      in_form: !!form, form_submit: submits,
+      in_form: !!form, form_submit: submits, form_key: form ? [...document.forms].indexOf(form) : -1,
       in_viewport: r.bottom > 0 && r.top < innerHeight, box: [Math.round(r.x), Math.round(r.y), Math.round(r.width), Math.round(r.height)],
       locator: locator(el), sensitive: el.type === 'password' || /card|cvv|iban|otp|ssn|aadhaar|pan/i.test(el.name + ' ' + el.id + ' ' + el.autocomplete),
     });
@@ -104,6 +104,7 @@ class Element:
     box: list[int]
     locator: str
     sensitive: bool
+    form_key: int = -1  # index of the element's form in document.forms (-1: not in a form)
 
     def kind(self) -> str:
         if self.role:

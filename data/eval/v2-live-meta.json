@@ -1,0 +1,41 @@
+{
+ "started_utc": "2026-11-18T10:55:48.666752+00:00",
+ "argv": [
+  "--suite",
+  "live",
+  "--cases",
+  "R01-arxiv-recent,R02-arxiv-topic-summary,R03-openalex-cited,R04-arxiv-cv,L01-greenhouse-jobs,L02-books-under-20,L03-quotes-einstein,L04-quotes-tags,L05-books-category",
+  "--repeats",
+  "1",
+  "--run-id",
+  "v2-live",
+  "--profile-json",
+  "../data/eval/v2-synthetic-profile.json",
+  "--pause",
+  "5",
+  "--infra-retries",
+  "3"
+ ],
+ "python": "3.12.6",
+ "platform": "win32",
+ "packages": {
+  "langgraph": "1.2.12",
+  "playwright": "1.63.0",
+  "pydantic": "2.13.5",
+  "httpx": "0.28.1",
+  "fastembed": "0.8.1"
+ },
+ "llm": {
+  "text_order": "groq,gemini,openrouter,github,ollama",
+  "vision_order": "gemini,openrouter,github,ollama",
+  "cache_mode": "off",
+  "max_cooldown_wait_s": "120",
+  "temperature": 0,
+  "overrides": {}
+ },
+ "limits": {
+  "max_plan_steps": 8,
+  "max_browser_actions_per_step": 20,
+  "task_llm_call_budget": 80
+ }
+}

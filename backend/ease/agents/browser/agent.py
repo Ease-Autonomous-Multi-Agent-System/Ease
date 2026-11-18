@@ -20,10 +20,12 @@ Safety properties enforced in code, not by the model:
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 import uuid
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Literal
 from urllib.parse import urlsplit, urlunsplit
 
@@ -33,7 +35,7 @@ from ease.agents.browser.dom import Observation
 from ease.agents.browser.session import ArtifactWriter, BrowserSession, log_blocked
 from ease.agents.browser.som import som_screenshot
 from ease.config import get_settings
-from ease.llm.router import LlmRouter, image_part
+from ease.llm.router import LlmRouter, LlmUnavailable, image_part
 from ease.logs import log
 from ease.schemas.contracts import (
     ActionScript,
@@ -59,6 +61,8 @@ INJECTION = re.compile(
 )
 SAFE_SUBMIT = re.compile(r"\b(search|filter|filters|find|go|sort|next|previous|prev|load more|show more)\b", re.I)
 SUCCESS = re.compile(r"application received|thank you|successfully|submitted|confirmation|reference number", re.I)
+ALREADY_SUBMITTED = ("A submission was already attempted with this approval. Ease never submits twice, so it stopped; "
+                     "check the site to see whether it went through.")
 
 
 class FieldFill(BaseModel):
@@ -159,6 +163,28 @@ def irreversible(el) -> bool:
     if SAFE_SUBMIT.search(name):
         return False
     return el.form_submit or (el.tag != "a" and RISKY.search(name) is not None)
+
+
+def _fault(point: str) -> None:
+    """Failure injection for the evaluation (scripts/crash_injection.py): with EASE_FAULT=<point> the process dies
+    here, as a worker killed mid-commit would. No effect unless that variable is set."""
+    if os.environ.get("EASE_FAULT") == point:
+        os._exit(137)
+
+
+def enter_submits_irreversibly(obs: Observation, el) -> Any:
+    """The element whose irreversible submit pressing Enter in `el` would trigger, or None. Enter in a field submits
+    its form; a form with an irreversible-looking submit button (or none at all, which is not a search box) is
+    treated as irreversible."""
+    if el.form_key < 0:
+        return None
+    submits = [e for e in obs.elements if e.form_key == el.form_key and e.form_submit]
+    risky = next((e for e in submits if irreversible(e)), None)
+    if risky is not None:
+        return risky
+    if not submits and el.type not in ("search",) and not SAFE_SUBMIT.search(el.name or ""):
+        return el  # unknown form with no visible button: hold it rather than guess
+    return None
 
 
 def _explain_block(url: str, reason: str) -> str:
@@ -328,6 +354,7 @@ class BrowserAgent:
         if use_vision:
             content = [{"type": "text", "text": user_text}, image_part(som_screenshot(s.page))]
         run.want_look = False
+        last_error: Exception | None = None
         for attempt in range(2):
             if attempt == 1 and use_vision and mode == "hybrid":
                 # In hybrid mode vision is only a tiebreaker: if no vision model answers, decide from the
@@ -346,6 +373,11 @@ class BrowserAgent:
                 log.warning("browser.decide_failed", attempt=attempt, error=str(exc)[:200])
                 if "Budget" in type(exc).__name__:
                     raise
+                last_error = exc
+        if isinstance(last_error, LlmUnavailable):
+            # every provider refused: fail the step (retried by recovery, reported as rate-limited) instead of
+            # letting the run carry on as if the agent had chosen to stop
+            raise last_error
         return None
 
     def _execute(self, s: BrowserSession, run: _Run, obs: Observation, a: AgentAction) -> str | StepResult:
@@ -384,6 +416,13 @@ class BrowserAgent:
             elif a.action == "fill_many":
                 return self._fill_many(s, run, obs, a.fields or [])
             elif a.action == "press_enter":
+                # Enter in a form field submits the form (HTML implicit submission), so it gets the same rule as
+                # clicking that form's submit button. The write hold in the session catches what this misses.
+                submit_el = enter_submits_irreversibly(obs, el)
+                if submit_el is not None:
+                    if call.tool == "browser.fill_form":
+                        return self._prepare_commit(s, run, s.start_url, obs, commit_el=submit_el)
+                    return "refused: pressing Enter here would submit a form that looks irreversible"
                 s.el(el.id).press("Enter")
             elif a.action == "scroll":
                 page.mouse.wheel(0, -650 if (a.text or "").lower() == "up" else 650)
@@ -422,6 +461,8 @@ class BrowserAgent:
                 return self._fail(call, FailureLabel.PLAN_WRONG, a.answer or a.thought or "agent gave up", run)
         except BlockedURL as exc:
             return f"refused: {exc}"
+        except LlmUnavailable:
+            raise  # an extraction the model could not run must not become "extracted 0 items"
         except Exception as exc:
             run.last_no_effect = True
             return f"error: {type(exc).__name__}: {str(exc).splitlines()[0][:160]}"
@@ -529,8 +570,9 @@ class BrowserAgent:
                   "form_url": s.page.url, "commit_label": commit_el.name}
         if not call.hitl:  # ablation: HITL off -> commit immediately in this same session
             try:
-                s.el(commit_el.id).click(timeout=6000)
-                s.settle()
+                with s.writes_allowed():
+                    s.el(commit_el.id).click(timeout=6000)
+                    s.settle(4000)
                 return self._verify_submitted(s, run, output)
             except Exception as exc:
                 return self._fail(call, FailureLabel.TOOL_ERROR, f"submit failed: {exc}", run)
@@ -546,30 +588,85 @@ class BrowserAgent:
 
     def _commit(self, call: ToolCall, writer: ArtifactWriter, cookies: list) -> StepResult:
         """Runs after approval, possibly on a different worker hours later: replay the approved script in a
-        fresh browser, apply the human's edits, then perform the held-back irreversible action."""
+        fresh browser, apply the human's edits, then perform the held-back irreversible action.
+
+        Exactly-once: before the click a marker keyed by the approval id is created atomically; a second attempt with
+        the same approval (a retry, or a resume after a crash) finds it and refuses. Nothing after the click is
+        retried automatically, and nothing is clicked unless the page still matches what the human approved."""
         run = _Run(call)
         decision = call.approval
         script = ActionScript.model_validate(call.inputs["_action_script"])
         edits = decision.edited_fields if decision else {}
-        with BrowserSession(writer, start_url=script.start_url, cookies=cookies) as s:
-            s.goto(script.start_url)
-            for act in script.actions:
-                loc = s.page.locator(act.locator).first
-                value = edits.get(act.locator or "", act.value or "")
-                if act.op == "fill":
-                    loc.fill(value, timeout=6000)
-                elif act.op == "select":
-                    try:
-                        loc.select_option(label=value, timeout=4000)
-                    except Exception:
-                        loc.select_option(value, timeout=4000)
-                elif act.op == "check":
-                    loc.set_checked(value.lower() != "false", timeout=4000)
-            run.artifacts.append(s.screenshot("before-submit", full_page=True))
-            s.page.locator(script.commit.locator).first.click(timeout=6000)
-            s.settle(4000)
-            return self._verify_submitted(s, run, {"filled_fields": [a.model_dump() for a in script.actions],
-                                                   "form_url": script.start_url})
+        key = re.sub(r"[^A-Za-z0-9_-]", "", decision.approval_id if decision else f"{call.task_id}-{call.step_key}")
+        marker = Path(self.artifacts_root) / "_commits" / f"{key}.json"
+        if marker.exists():
+            return self._fail(call, FailureLabel.TOOL_ERROR, ALREADY_SUBMITTED, run)
+        try:
+            with BrowserSession(writer, start_url=script.start_url, cookies=cookies) as s:
+                s.goto(script.start_url)
+                problem = self._replay(s, script, edits)
+                if problem:
+                    run.artifacts.append(s.screenshot("replay-mismatch", full_page=True))
+                    return self._fail(call, FailureLabel.GROUNDING_MISS,
+                                      f"The form no longer matches what you approved ({problem}); nothing was "
+                                      "submitted.", run)
+                run.artifacts.append(s.screenshot("before-submit", full_page=True))
+                _fault("before_marker")
+                marker.parent.mkdir(parents=True, exist_ok=True)
+                try:
+                    with marker.open("x", encoding="utf-8") as f:  # atomic: only one attempt ever gets here
+                        json.dump({"task_id": call.task_id, "step_key": call.step_key, "at": time.time(),
+                                   "form_url": script.start_url}, f)
+                except FileExistsError:
+                    return self._fail(call, FailureLabel.TOOL_ERROR, ALREADY_SUBMITTED, run)
+                _fault("before_click")
+                try:
+                    with s.writes_allowed():
+                        s.page.locator(script.commit.locator).click(timeout=6000)
+                        s.settle(4000)
+                    _fault("after_click")
+                    return self._verify_submitted(s, run, {
+                        "filled_fields": [a.model_dump() for a in script.actions], "form_url": script.start_url})
+                except Exception as exc:
+                    return self._fail(call, FailureLabel.TOOL_ERROR,
+                                      f"Clicked '{script.commit.field_label or 'Submit'}' but could not confirm the "
+                                      f"result ({type(exc).__name__}). Ease will not submit again; check the site.",
+                                      run)
+        except Exception as exc:  # before the click: browser start-up, navigation. Safe to retry unless clicked.
+            if marker.exists():
+                return self._fail(call, FailureLabel.TOOL_ERROR, ALREADY_SUBMITTED, run)
+            return self._fail(call, FailureLabel.TOOL_ERROR, f"{type(exc).__name__}: {str(exc)[:300]}", run,
+                              retryable=True)
+
+    def _replay(self, s: BrowserSession, script: ActionScript, edits: dict[str, str]) -> str | None:
+        """Re-apply the approved field values. Returns why the page no longer matches the approval, or None."""
+        want, got = urlsplit(script.start_url), urlsplit(s.page.url)
+        if (want.netloc, want.path, want.query) != (got.netloc, got.path, got.query):
+            return f"the page is now {s.page.url[:120]}"
+        for act in script.actions:
+            loc = s.page.locator(act.locator)
+            n = loc.count()
+            if n != 1:
+                return f"field '{act.field_label or act.locator}' found {n} times"
+            value = edits.get(act.locator or "", act.value or "")
+            if act.op == "fill":
+                loc.fill(value, timeout=6000)
+            elif act.op == "select":
+                try:
+                    loc.select_option(label=value, timeout=4000)
+                except Exception:
+                    loc.select_option(value, timeout=4000)
+            elif act.op == "check":
+                loc.set_checked(value.lower() != "false", timeout=4000)
+        commit = s.page.locator(script.commit.locator)
+        if commit.count() != 1:
+            return f"the '{script.commit.field_label or 'submit'}' button found {commit.count()} times"
+        label = " ".join((commit.evaluate("e => e.innerText || e.value || e.getAttribute('aria-label') || ''")
+                          or "").lower().split())
+        approved = " ".join((script.commit.field_label or "").lower().split())
+        if approved and label != approved:
+            return f"the submit button now reads '{label[:60]}'"
+        return None
 
     def _verify_submitted(self, s: BrowserSession, run: _Run, output: dict) -> StepResult:
         obs = s.observe()
@@ -619,8 +716,9 @@ class BrowserAgent:
             if user_el is not None:
                 s.el(user_el.id).fill(creds["username"], timeout=5000)
             s.el(pw_el.id).fill(creds["password"], timeout=5000)
-            s.el(pw_el.id).press("Enter", timeout=5000)
-            s.settle(2500)
+            with s.writes_allowed():  # the sign-in post is chosen by code, on the host the login was given for
+                s.el(pw_el.id).press("Enter", timeout=5000)
+                s.settle(2500)
         except Exception as exc:
             return f"not signed in: {type(exc).__name__}"
         return "submitted the sign-in form"

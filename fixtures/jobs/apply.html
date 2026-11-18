@@ -56,10 +56,18 @@
       }
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.value)) { document.getElementById("error").textContent = "Please enter a valid email."; return; }
       const ref = "HB-" + (id || "x").toUpperCase().slice(0, 6) + "-" + String(f.email.value.length * 7919 % 100000).padStart(5, "0");
-      f.hidden = true;
-      document.getElementById("ref").textContent = ref;
-      document.getElementById("done").hidden = false;
-      document.title = "Application received — HireBoard";
+      // The application only counts once the server has it: POST a receipt (logged by the fixture server, which is
+      // the benchmark's record of what was submitted), and confirm only when that request succeeds.
+      const q = new URLSearchParams({ job: id || "", ref, email: f.email.value.trim() });
+      fetch("/jobs/receipt?" + q.toString(), { method: "POST" }).then(r => {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        f.hidden = true;
+        document.getElementById("ref").textContent = ref;
+        document.getElementById("done").hidden = false;
+        document.title = "Application received — HireBoard";
+      }).catch(err => {
+        document.getElementById("error").textContent = "Could not submit the application (" + err.message + "). Please try again.";
+      });
     });
   </script>
 </body>
