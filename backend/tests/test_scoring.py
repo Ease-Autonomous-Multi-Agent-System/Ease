@@ -6,7 +6,7 @@ import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from ease.eval.scoring import listed_items, receipts_between, render_answer, score, states_count
+from ease.eval.scoring import answer_items, listed_items, receipts_between, render_answer, score, states_count
 
 _FILE = Path(__file__).resolve().parents[1] / "ease" / "eval" / "benchmark.json"
 BENCH = {c["id"]: c for c in json.loads(_FILE.read_text("utf-8"))["cases"]}
@@ -52,9 +52,30 @@ def test_f06_needs_all_five_jobs():
     assert ok("F06-paginated-old-posts", four + ", AI Evaluation Intern")
 
 
+L02_FULL = ("The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull 17.93, "
+            "Starving Hearts (Triangular Trade Trilogy, #1) 13.99, Set Me Free 17.46")
+
+
 def test_word_boundaries():
-    assert ok("L02-books-under-20", "The Coming Woman 17.93, Starving Hearts 13.99, Set Me Free 17.46, my portfolio")
-    assert not ok("L02-books-under-20", "The Coming Woman, Starving Hearts, Set Me Free, Olio")
+    assert ok("L02-books-under-20", L02_FULL + ", my portfolio")
+    assert not ok("L02-books-under-20", L02_FULL + ", Olio")
+
+
+def test_truncated_titles_do_not_count_as_the_full_title():
+    assert not ok("L02-books-under-20", "The Coming Woman: A ..., Starving Hearts (Triangular Trade ..., Set Me Free")
+
+
+def test_max_items_fails_an_answer_that_lists_too_many():
+    titles = ["The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull",
+              "Starving Hearts (Triangular Trade Trilogy, #1)", "Set Me Free"]
+    three = "\n".join(f"title: {t}" for t in titles)
+    assert ok("L02-books-under-20", three)
+    assert not ok("L02-books-under-20", three + "\ntitle: In Her Wake\ntitle: Thirst")
+    assert answer_items("* A\n  * Authors: x\n* B\ntitle: C\nplain sentence") == 3
+
+
+def test_a_second_receipt_fails_the_submission():
+    assert not ok("F04-apply-cv", "", submitted_jobs=["cv-intern-02", "cv-intern-02"])
 
 
 def test_submission_comes_from_the_site_not_the_answer():

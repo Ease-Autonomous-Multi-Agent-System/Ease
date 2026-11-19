@@ -38,8 +38,11 @@ class ArxivConnector(Connector):
 
     def op_search(self, q: ArxivSearch, ctx: ConnectorContext) -> dict[str, Any]:
         terms = []
-        if q.query.strip():
-            terms.append(f"all:{q.query.strip()}")
+        query = " ".join(q.query.replace('"', " ").split())
+        if query:
+            # a multi-word query is sent as one quoted phrase: unquoted, arXiv matches any of the words, and with
+            # sort=recent the newest papers containing a common word ("generation") come first
+            terms.append(f'all:"{query}"' if " " in query else f"all:{query}")
         if q.category:
             terms.append(f"cat:{q.category}")
         params = {

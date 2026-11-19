@@ -118,6 +118,9 @@ class ActionScript(BaseModel):
     start_url: str
     actions: list[ScriptedAction] = Field(default_factory=list)
     commit: ScriptedAction | None = None  # the irreversible action held back for approval
+    # method and resolved action URL of the commit button's form when it was approved ("post https://.../apply");
+    # the replay refuses to click if the form would now send its data elsewhere
+    form_target: str | None = None
 
 
 class ApprovalRequest(BaseModel):

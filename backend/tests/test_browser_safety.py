@@ -1,5 +1,5 @@
 """The browser agent's safety rules: what counts as irreversible, Enter-key submission, the network write hold, and
-exactly-once commits. The `browser` tests drive real Chromium against the local fixture sites."""
+at-most-once commits. The `browser` tests drive real Chromium against the local fixture sites."""
 
 from __future__ import annotations
 
@@ -37,6 +37,13 @@ def test_risky_buttons_are_irreversible(name):
 
 @pytest.mark.parametrize("name", ["Search", "Filter", "Next", "Previous", "Load more", "Show more", "Sort by price"])
 def test_navigation_buttons_are_not(name):
+    assert not irreversible(el(1, name=name))
+
+
+@pytest.mark.parametrize("name", ["Continue", "Save", "Reserve"])
+def test_known_gaps_outside_a_form_submit_are_not_caught(name):
+    # Pinned on purpose: the label rule does not treat these as irreversible unless they submit a real form
+    # (Section V of the article). The network write hold still stops any non-GET request they would send.
     assert not irreversible(el(1, name=name))
 
 
@@ -126,7 +133,15 @@ def test_write_window_opens_only_inside_the_block(session):
     assert inside.outcome == "continued" and after.outcome.startswith("aborted")
 
 
-# ------------------------------------------------------------------ exactly-once commit
+def test_a_scoped_write_window_holds_writes_to_other_hosts(session):
+    with session.writes_allowed(host="fixtures"):
+        own, third = _Route(), _Route()
+        session._guard(own, _Req("POST", "http://fixtures:8080/jobs/receipt"))
+        session._guard(third, _Req("POST", "https://tracker.example.com/collect"))
+    assert own.outcome == "continued" and third.outcome.startswith("aborted")
+
+
+# ------------------------------------------------------------------ at-most-once commit
 def _commit_call(approval_id: str) -> ToolCall:
     script = ActionScript(start_url="http://fixtures:8080/jobs/apply.html?id=cv-intern-02", actions=[],
                           commit=ScriptedAction(op="click", locator="#submit-application",
@@ -206,7 +221,7 @@ def test_script_initiated_submit_is_held(tmp_path):
 
 @pytest.mark.browser
 @pytest.mark.skipif(not _fixtures_up(), reason="fixture sites not running (docker compose up -d fixtures)")
-def test_commit_submits_exactly_once_and_refuses_a_changed_form(tmp_path):
+def test_commit_submits_at_most_once_and_refuses_a_changed_form(tmp_path):
     email = f"commit-{int(time.time() * 1000)}@example.com"
     url = FIXTURES + "/jobs/apply.html?id=cv-intern-02"
     fields = [ScriptedAction(op="fill", locator="#first_name", value="Test", field_label="First name"),
@@ -236,6 +251,11 @@ def test_commit_submits_exactly_once_and_refuses_a_changed_form(tmp_path):
                                                                  field_label="Withdraw application")})
     other = agent._commit(call("a-2", changed), ArtifactWriter(tmp_path, "t1", "fill"), [])
     assert other.status == "FATAL" and other.error.label == "GROUNDING_MISS"
+    assert _receipts(email) == 1
+
+    retargeted = script.model_copy(update={"form_target": "post https://elsewhere.example.com/collect"})
+    moved = agent._commit(call("a-3", retargeted), ArtifactWriter(tmp_path, "t1", "fill"), [])
+    assert moved.status == "FATAL" and moved.error.label == "GROUNDING_MISS" and "sends to" in moved.error.message
     assert _receipts(email) == 1
 
 

@@ -61,6 +61,7 @@ class BrowserSession:
         # submits, Enter in a text field) are held unless code opened a window for them - the approved commit or
         # the code-driven sign-in. This catches what the click classifier cannot see.
         self.writes_open = False
+        self.writes_host: str | None = None
         self.held_writes: list[str] = []
         self._pw = self._browser = self._context = self.page = None
 
@@ -72,7 +73,8 @@ class BrowserSession:
         self._pw = sync_playwright().start()
         if s.browser_cdp_url:  # host mode: drive the user's real Chrome
             self._browser = self._pw.chromium.connect_over_cdp(s.browser_cdp_url)
-            self._context = self._browser.new_context(viewport=VIEWPORT)
+            # service workers blocked here too: a request a service worker answers never reaches the write hold
+            self._context = self._browser.new_context(viewport=VIEWPORT, service_workers="block")
         else:
             self._browser = self._pw.chromium.launch(
                 headless=s.browser_headless, args=["--disable-dev-shm-usage", "--no-first-run"]
@@ -110,7 +112,8 @@ class BrowserSession:
             self.blocked.append(f"{url[:100]} ({exc})")
             route.abort("blockedbyclient")
             return
-        if request.method.upper() not in SAFE_METHODS and not self.writes_open:
+        if request.method.upper() not in SAFE_METHODS and not (
+                self.writes_open and (self.writes_host is None or urlsplit(url).hostname == self.writes_host)):
             self.held_writes.append(f"{request.method} {url[:100]}")
             log.info("browser.write_held", method=request.method, url=url[:100])
             route.abort("blockedbyclient")
@@ -118,13 +121,14 @@ class BrowserSession:
         route.continue_()
 
     @contextmanager
-    def writes_allowed(self) -> Iterator[None]:
-        """Open the write window for one code-chosen action (approved commit, sign-in), then close it."""
-        self.writes_open = True
+    def writes_allowed(self, host: str | None = None) -> Iterator[None]:
+        """Open the write window for one code-chosen action (approved commit, sign-in), then close it. With a host,
+        only non-GET requests to that host pass; a third-party POST fired in the same window is still held."""
+        self.writes_open, self.writes_host = True, host
         try:
             yield
         finally:
-            self.writes_open = False
+            self.writes_open, self.writes_host = False, None
 
     # -------- navigation --------
     def resolve(self, href: str) -> str:

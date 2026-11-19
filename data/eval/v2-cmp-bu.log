@@ -3137,3 +3137,589 @@ INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True
 INFO     [BrowserSession] ✅ Browser session reset complete
 INFO     [BrowserSession] ✅ Browser session reset complete
 F15-list-credits: PASS 36.2s steps=7 states 14: True 
+INFO     [Agent] 🔗 Found URL in task: http://127.0.0.1:8080/jobs/, adding as initial action...
+INFO     [Agent] [34m🎯 Task: On http://127.0.0.1:8080/jobs/ list every job posted before 2026-09-12 (check all pages).[0m
+INFO     [Agent] 📦 Newer version available: 1.0.6 (current: 0.13.11). Upgrade with: uv add browser-use==1.0.6
+INFO     [Agent] Starting a browser-use agent with version 0.13.11, with provider=google and model=gemini-flash-lite-latest
+INFO     [BrowserSession] Setting viewport to 1920x1080 with device scale factor 1.0 whereas original device scale factor was 1.0
+INFO     [Agent]   ▶️   [34mnavigate[0m: [35murl[0m: http://127.0.0.1:8080/jobs/, [35mnew_tab[0m: False
+INFO     [tools] 🔗 Navigated to http://127.0.0.1:8080/jobs/
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 1:
+INFO     [Agent]   [32m👍 Eval: Successfully loaded the job board page. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Loaded http://127.0.0.1:8080/jobs/. Found 12 jobs across 3 pages. Need to accept cookies, initialize tracking files, and check job posting dates.
+INFO     [Agent]   [34m🎯 Next goal: Accept cookies and initialize todo.md and results.md for tracking.[0m
+INFO     [Agent]   ▶️  [1/3] [34mclick[0m: [35mindex[0m: 13
+INFO     [tools] 🖱️ Clicked button "Accept all" id=cookie-accept
+INFO     [Agent]   ▶️  [2/3] [34mwrite_file[0m: [35mfile_name[0m: todo.md, [35mcontent[0m: # Job Collection Task
+
+- [ ] Accept cookies
+- [ ] Initialize todo.md and results.md
+- [ ] Check Page 1 jobs
+- [ ] Check Page 2 jobs
+- [ ] Check Page 3..., [35mappend[0m: False, [35mtrailing_newline[0m: True, [35mleading_newline[0m: False
+INFO     [tools] 💾 Data written to file todo.md successfully. File location: C:\Users\HP\AppData\Local\Temp\browser_use_agent_06afeb20-2883-755f-8000-bd2aa9a769c6_1795076610\browseruse_agent_data\todo.md
+INFO     [Agent]   ▶️  [3/3] [34mwrite_file[0m: [35mfile_name[0m: results.md, [35mcontent[0m: # Jobs Posted Before 2026-09-12
+
+, [35mappend[0m: False, [35mtrailing_newline[0m: True, [35mleading_newline[0m: False
+INFO     [tools] 💾 Data written to file results.md successfully. File location: C:\Users\HP\AppData\Local\Temp\browser_use_agent_06afeb20-2883-755f-8000-bd2aa9a769c6_1795076610\browseruse_agent_data\results.md
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 2:
+INFO     [Agent]   [32m👍 Eval: Accepted cookies and initialized todo.md and results.md successfully. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Cookies accepted. Files todo.md and results.md created. Now extracting jobs on page 1 to check posting dates.
+INFO     [Agent]   [34m🎯 Next goal: Extract job listings and posting dates from Page 1[0m
+INFO     [Agent]   ▶️  [1/2] [34mreplace_file[0m: [35mfile_name[0m: todo.md, [35mold_str[0m: - [ ] Accept cookies
+- [ ] Initialize todo.md and results.md, [35mnew_str[0m: - [x] Accept cookies
+- [x] Initialize todo.md and results.md
+INFO     [tools] 💾 Successfully replaced all occurrences of "- [ ] Accept cookies
+- [ ] Initialize todo.md and results.md" with "- [x] Accept cookies
+- [x] Initialize todo.md and results.md" in file todo.md
+INFO     [Agent]   ▶️  [2/2] [34mextract[0m: [35mquery[0m: Extract all job titles, links, companies, locations, salaries, types, and posting dates on this page., [35mextract_links[0m: True, [35mextract_images[0m: False, [35mstart_from_char[0m: 0, [35malready_collected[0m: []
+INFO     [tools] 📄 <url>
+http://127.0.0.1:8080/jobs/
+</url>
+<query>
+Extract all job titles, links, companies, locations, salaries, types, and posting dates on this page.
+</query>
+<result>
+- **Job Title**: Machine Learning Intern
+  - **Link**: /jobs/job.html?id=ml-intern-01
+  - **Company**: Nimbus Labs
+  - **Location**: Remote (India)
+  - **Salary**: ₹40,000 / month
+  - **Type**: Internship
+  - **Posting Date**: Not available
+
+- **Job Title**: Computer Vision Intern
+  - **Link**: /jobs/job.html?id=cv-intern-02
+  - **Company**: Optiq
+  - **Location**: Bengaluru
+  - **Salary**: ₹35,000 / month
+  - **Type**: Internship
+  - **Posting Date**: Not available
+
+- **Job Title**: Generative AI Intern (RAG)
+  - **Link**: /jobs/job.html?id=genai-intern-03
+  - **Company**: Lexica Systems
+  - **Location**: Remote
+  - **Salary**: ₹45,000 / month
+  - **Type**: Internship
+  - **Posting Date**: Not available
+
+- **Job Title**: Frontend Engineering Intern
+  - **Link**: /jobs/job.html?id=fe-intern-04
+  - **Company**: Pixelcraft
+  - **Location**: Pune
+  - **Salary**: ₹25,000 / month
+  - **Type**: Internship
+  - **Posting Date**: Not available
+
+- **Job Title**: Data Analyst
+  - **Link**: /jobs/job.html?id=data-analyst-05
+  - **Company**: Northwind Retail
+  - **Location**: Remote
+  - **Salary**: ₹9 LPA
+  - **Type**: Full-time
+  - **Posting Date**: Not available
+</result>
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 3:
+INFO     [Agent]   [32m👍 Eval: Successfully extracted job listings from Page 1. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Extracted 5 jobs from Page 1. Posting dates are not shown in the summary view, so we need to click into each job detail page to check the posting date.
+INFO     [Agent]   [34m🎯 Next goal: Click on the first job link (Machine Learning Intern, index 68) to view its details and posting date.[0m
+INFO     [Agent]   ▶️  [1/2] [34mreplace_file[0m: [35mfile_name[0m: todo.md, [35mold_str[0m: - [ ] Check Page 1 jobs, [35mnew_str[0m: - [>] Check Page 1 jobs
+INFO     [tools] 💾 Successfully replaced all occurrences of "- [ ] Check Page 1 jobs" with "- [>] Check Page 1 jobs" in file todo.md
+INFO     [Agent]   ▶️  [2/2] [34mclick[0m: [35mindex[0m: 68
+INFO     [tools] 🖱️ Clicked a "Machine Learning Intern"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 4:
+INFO     [Agent]   [32m👍 Eval: Successfully clicked the first job link and viewed its details. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Inspected Machine Learning Intern (posted 2026-09-18, excluded). Returning to jobs list to inspect other jobs on Page 1.
+INFO     [Agent]   [34m🎯 Next goal: Click 'All jobs' to return to the main jobs list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 234
+INFO     [tools] 🖱️ Clicked a "All jobs"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 5:
+INFO     [Agent]   [32m👍 Eval: Successfully returned to the main jobs list after inspecting the first job. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Inspected Machine Learning Intern (posted 2026-09-18, excluded). Now checking Computer Vision Intern on Page 1.
+INFO     [Agent]   [34m🎯 Next goal: Click on Computer Vision Intern (index 349) to check its posting date.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 349
+INFO     [tools] 🖱️ Clicked a "Computer Vision Intern"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 6:
+INFO     [Agent]   [32m👍 Eval: Successfully viewed Computer Vision Intern details (posted 2026-09-17, excluded). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Inspected Machine Learning Intern (2026-09-18) and Computer Vision Intern (2026-09-17). Both are after 2026-09-12. Returning to main jobs list to use an efficient JavaScript approach to check all remaining jobs across all pages.
+INFO     [Agent]   [34m🎯 Next goal: Click 'All jobs' to return to the jobs list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 491
+INFO     [tools] 🖱️ Clicked a "All jobs"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 7:
+INFO     [Agent]   [32m👍 Eval: Successfully returned to main jobs list after inspecting Computer Vision Intern. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Inspected Machine Learning Intern (2026-09-18) and Computer Vision Intern (2026-09-17). Both are after 2026-09-12. Now checking Generative AI Intern (RAG) on Page 1.
+INFO     [Agent]   [34m🎯 Next goal: Click on Generative AI Intern (RAG) to check its posting date.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 621
+INFO     [tools] 🖱️ Clicked a "Generative AI Intern (RAG)"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 8:
+INFO     [Agent]   [32m👍 Eval: Successfully viewed Generative AI Intern (RAG) details (posted 2026-09-16, excluded). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Inspected Machine Learning Intern (2026-09-18), Computer Vision Intern (2026-09-17), and Generative AI Intern (2026-09-16). All are after 2026-09-12. Now returning to jobs list to use an efficient JavaScript script to fetch all job details across pages.
+INFO     [Agent]   [34m🎯 Next goal: Click 'All jobs' to return to the jobs list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 748
+INFO     [tools] 🖱️ Clicked a "All jobs"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 9:
+INFO     [Agent]   [32m👍 Eval: Successfully returned to the main jobs list after inspecting Generative AI Intern (RAG). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 3 jobs on Page 1 (all posted after 2026-09-12). Now inspecting Frontend Engineering Intern.
+INFO     [Agent]   [34m🎯 Next goal: Click Frontend Engineering Intern to check its posting date.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 896
+INFO     [tools] 🖱️ Clicked a "Frontend Engineering Intern"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 10:
+INFO     [Agent]   [32m👍 Eval: Successfully viewed Frontend Engineering Intern details (posted 2026-09-15, excluded). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 4 jobs so far: ML Intern (2026-09-18), CV Intern (2026-09-17), GenAI Intern (2026-09-16), Frontend Engineering Intern (2026-09-15). All are after 2026-09-12. Now returning to jobs list.
+INFO     [Agent]   [34m🎯 Next goal: Click 'All jobs' to return to the main jobs list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 1005
+INFO     [tools] 🖱️ Clicked a "All jobs"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 11:
+INFO     [Agent]   [32m👍 Eval: Successfully returned to the main jobs list after inspecting Frontend Engineering Intern. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 4 jobs on Page 1 (ML Intern: 2026-09-18, CV Intern: 2026-09-17, GenAI Intern: 2026-09-16, Frontend Engineering Intern: 2026-09-15). All are after 2026-09-12. Now checking the 5th job on Page 1 (Data Analyst).
+INFO     [Agent]   [34m🎯 Next goal: Click on Data Analyst to check its posting date.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 1169
+INFO     [tools] 🖱️ Clicked a "Data Analyst"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 12:
+INFO     [Agent]   [32m👍 Eval: Successfully viewed Data Analyst details (posted 2026-09-14, excluded). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked all 5 jobs on Page 1: ML Intern (2026-09-18), CV Intern (2026-09-17), GenAI Intern (2026-09-16), Frontend Engineering Intern (2026-09-15), Data Analyst (2026-09-14). All are after 2026-09-12. Returning to main list to check Page 2 and Page 3.
+INFO     [Agent]   [34m🎯 Next goal: Click 'All jobs' to return to the main jobs list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 1262
+INFO     [tools] 🖱️ Clicked a "All jobs"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 13:
+INFO     [Agent]   [32m👍 Eval: Successfully returned to the main jobs list after inspecting Data Analyst on Page 1. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 5 jobs on Page 1: ML Intern (2026-09-18), CV Intern (2026-09-17), GenAI Intern (2026-09-16), Frontend Engineering Intern (2026-09-15), Data Analyst (2026-09-14). All are after 2026-09-12. Now navigating to Page 2.
+INFO     [Agent]   [34m🎯 Next goal: Click on page 2 button to check jobs on Page 2.[0m
+INFO     [Agent]   ▶️  [1/2] [34mreplace_file[0m: [35mfile_name[0m: todo.md, [35mold_str[0m: - [>] Check Page 1 jobs
+- [ ] Check Page 2 jobs, [35mnew_str[0m: - [x] Check Page 1 jobs
+- [>] Check Page 2 jobs
+INFO     [tools] 💾 Successfully replaced all occurrences of "- [>] Check Page 1 jobs
+- [ ] Check Page 2 jobs" with "- [x] Check Page 1 jobs
+- [>] Check Page 2 jobs" in file todo.md
+INFO     [Agent]   ▶️  [2/2] [34mclick[0m: [35mindex[0m: 1299
+INFO     [tools] 🖱️ Clicked button "2"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 14:
+INFO     [Agent]   [32m👍 Eval: Successfully navigated to Page 2. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 5 jobs on Page 1 (all posted after 2026-09-12). Now checking jobs on Page 2, starting with Backend Engineer (Python).
+INFO     [Agent]   [34m🎯 Next goal: Click Backend Engineer (Python) to check its posting date.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 1503
+INFO     [tools] 🖱️ Clicked a "Backend Engineer (Python)"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 15:
+INFO     [Agent]   [32m👍 Eval: Successfully viewed Backend Engineer (Python) details (posted 2026-09-13, excluded). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked Page 1 (all 5 jobs posted after 2026-09-12) and first job on Page 2 (Backend Engineer posted 2026-09-13, excluded). Returning to jobs list to check remaining jobs.
+INFO     [Agent]   [34m🎯 Next goal: Click 'All jobs' to return to the main jobs list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 1621
+INFO     [tools] 🖱️ Clicked a "All jobs"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 16:
+INFO     [Agent]   [32m👍 Eval: Successfully returned to the main jobs list after inspecting Backend Engineer (Python). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 6 jobs so far: 5 on Page 1 (all post-2026-09-12) and 1 on Page 2 (Backend Engineer (Python) posted 2026-09-13, which is also after 2026-09-12). Now returning to Page 2 to check remaining jobs.
+INFO     [Agent]   [34m🎯 Next goal: Click on page 2 button to view jobs on Page 2.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 1658
+INFO     [tools] 🖱️ Clicked button "2"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 17:
+INFO     [Agent]   [32m👍 Eval: Successfully navigated back to Page 2. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked Page 1 (all 5 jobs post-2026-09-12) and Backend Engineer on Page 2 (2026-09-13). Now checking MLOps Intern on Page 2.
+INFO     [Agent]   [34m🎯 Next goal: Click on MLOps Intern to check its posting date.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 1869
+INFO     [tools] 🖱️ Clicked a "MLOps Intern"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 18:
+INFO     [Agent]   [32m👍 Eval: Successfully viewed MLOps Intern details (posted 2026-09-12, which is not before 2026-09-12). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked MLOps Intern (2026-09-12). Returning to main list to use JavaScript for rapid inspection of remaining jobs before step limit.
+INFO     [Agent]   [34m🎯 Next goal: Click 'All jobs' to return to the jobs list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 1980
+INFO     [tools] 🖱️ Clicked a "All jobs"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 19:
+INFO     [Agent] Step budget warning: 19/25 (76%)
+INFO     [Agent]   [32m👍 Eval: Successfully returned to the main jobs list after inspecting MLOps Intern. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 7 jobs so far: 5 on Page 1 (all post-2026-09-12) and 2 on Page 2 (Backend Engineer on 2026-09-13, MLOps Intern on 2026-09-12). Now using JavaScript to fetch all remaining jobs across all pages to quickly finalize the task.
+INFO     [Agent]   [34m🎯 Next goal: Run JS snippet to fetch all job pages and detail pages, extracting all job titles, links, and posting dates.[0m
+INFO     [Agent]   ▶️   [34mevaluate[0m: [35mcode[0m: (async function() {
+    try {
+        let jobLinks = new Set();
+        for (let i = 1; i <= 3; i++) {
+            let res = await fetch('/jobs/?page=...
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 20:
+INFO     [Agent] Step budget warning: 20/25 (80%)
+INFO     [Agent]   ❔ Eval: Attempted JS fetch but got empty result due to scope/async handling. Now navigating back to Page 2 to check remaining jobs.
+INFO     [Agent]   🧠 Memory: Checked Page 1 (5 jobs, all post-2026-09-12) and 2 jobs on Page 2 (Backend Engineer: 2026-09-13, MLOps Intern: 2026-09-12). Proceeding to check remaining jobs on Page 2 and Page 3.
+INFO     [Agent]   [34m🎯 Next goal: Click button 2 to view Page 2 and check remaining jobs on Page 2.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 2017
+INFO     [tools] 🖱️ Clicked button "2"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 21:
+INFO     [Agent] Step budget warning: 21/25 (84%)
+INFO     [Agent]   [32m👍 Eval: Returned to Page 2 successfully. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 7 jobs so far: 5 on Page 1 (all post-2026-09-12) and 2 on Page 2 (Backend Engineer: 2026-09-13, MLOps Intern: 2026-09-12). Now inspecting NLP Research Intern on Page 2.
+INFO     [Agent]   [34m🎯 Next goal: Click NLP Research Intern to check its posting date.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 2236
+INFO     [tools] 🖱️ Clicked a "NLP Research Intern"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 22:
+INFO     [Agent] Step budget warning: 22/25 (88%)
+INFO     [Agent]   [32m👍 Eval: Successfully viewed NLP Research Intern details (posted 2026-09-11). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: NLP Research Intern posted on 2026-09-11 (before 2026-09-12). Running script to fetch all jobs across all pages to ensure complete and accurate results before finalizing.
+INFO     [Agent]   [34m🎯 Next goal: Run JavaScript to fetch all job posting details across all pages.[0m
+INFO     [Agent]   ▶️   [34mevaluate[0m: [35mcode[0m: (async function() {try {const results = [];for (let page = 1; page <= 3; page++) {const res = await fetch('/jobs/?page=' + page);const text = await re...
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 23:
+INFO     [Agent] Step budget warning: 23/25 (92%)
+INFO     [Agent]   [32m👍 Eval: Successfully viewed NLP Research Intern details and confirmed it was posted on 2026-09-11 (before 2026-09-12). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Found 1 matching job so far: NLP Research Intern (2026-09-11). Returning to the jobs list to check remaining jobs on Page 2 and Page 3 before step limit.
+INFO     [Agent]   [34m🎯 Next goal: Click 'All jobs' to return to the jobs list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 2339
+INFO     [tools] 🖱️ Clicked a "All jobs"
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 24:
+INFO     [Agent] Step budget warning: 24/25 (96%)
+INFO     [Agent]   [32m👍 Eval: Successfully viewed NLP Research Intern details and confirmed it was posted on 2026-09-11 (before 2026-09-12). Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked 8 jobs so far. NLP Research Intern was posted on 2026-09-11 (before 2026-09-12). Running script to inspect all remaining jobs across all pages in one final step.
+INFO     [Agent]   [34m🎯 Next goal: Run JS script to fetch all job details and posting dates across all pages.[0m
+INFO     [Agent]   ▶️   [34mevaluate[0m: [35mcode[0m: (async () => {
+  try {
+    const parser = new DOMParser();
+    const jobUrls = [];
+    for (let p = 1; p <= 3; p++) {
+      const res = await fetch(`/...
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 25:
+INFO     [Agent]   ❔ Eval: Reached max_steps and terminating with partial findings. Verdict: Incomplete
+INFO     [Agent]   🧠 Memory: Checked Page 1 (5 jobs, all post-2026-09-12) and part of Page 2 (Backend Engineer on 2026-09-13, MLOps Intern on 2026-09-12, NLP Research Intern on 2026-09-11). NLP Research Intern is posted before 2026-09-12. Remaining jobs unverified due to step limit.
+INFO     [Agent]   [34m🎯 Next goal: Complete the task and report partial results via done action.[0m
+INFO     [Agent]   ▶️   [34mdone[0m: [35mtext[0m: Reached the maximum step limit (25 steps) before checking all pages and jobs.
+
+Partial Findings:
+- **NLP Research Intern**: Posted on 2026-09-11 (Befo..., [35msuccess[0m: False, [35mfiles_to_display[0m: ['results.md', 'todo.md']
+INFO     [Agent] 📋 Plan updated with 7 steps
+INFO     [Agent] 
+📄 [31m Final Result:[0m 
+Reached the maximum step limit (25 steps) before checking all pages and jobs.
+
+Partial Findings:
+- **NLP Research Intern**: Posted on 2026-09-11 (Before 2026-09-12)
+
+Checked and Excluded (Posted on or after 2026-09-12):
+- Machine Learning Intern (2026-09-18)
+- Computer Vision Intern (2026-09-17)
+- Generative AI Intern (RAG) (2026-09-16)
+- Frontend Engineering Intern (2026-09-15)
+- Data Analyst (2026-09-14)
+- Backend Engineer (Python) (2026-09-13)
+- MLOps Intern (2026-09-12)
+
+Remaining jobs on Page 2 and Page 3 were not fully checked due to reaching the step limit.
+
+Attachments:
+
+results.md:
+# Jobs Posted Before 2026-09-12
+
+
+
+
+todo.md:
+# Job Collection Task
+
+- [x] Accept cookies
+- [x] Initialize todo.md and results.md
+- [x] Check Page 1 jobs
+- [>] Check Page 2 jobs
+- [ ] Check Page 3 jobs
+- [ ] Filter jobs posted before 2026-09-12
+- [ ] Finalize results
+
+
+
+INFO     [Agent] 👉 Attachment 1: C:\Users\HP\AppData\Local\Temp\browser_use_agent_06afeb20-2883-755f-8000-bd2aa9a769c6_1795076610\browseruse_agent_data\results.md
+INFO     [Agent] 👉 Attachment 2: C:\Users\HP\AppData\Local\Temp\browser_use_agent_06afeb20-2883-755f-8000-bd2aa9a769c6_1795076610\browseruse_agent_data\todo.md
+INFO     [Agent] 
+INFO     [Agent] Did the Agent not work as expected? Let us fix this!
+INFO     [Agent]    Open a short issue on GitHub: https://github.com/browser-use/browser-use/issues
+INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True, keep_alive=None)
+INFO     [BrowserSession] [SessionManager] Cleared all owned data (targets, sessions, mappings)
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True, keep_alive=None)
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] ✅ Browser session reset complete
+F06-paginated-old-posts: FAIL 300.1s steps=26 includes 1/5; excludes: 7 wrong item(s) ['Backend Engineer (Python)', 'Computer Vision Intern', 'Data Analyst'] 
+INFO     [Agent] 🔗 Found URL in task: http://127.0.0.1:8080/shop/, adding as initial action...
+INFO     [Agent] [34m🎯 Task: On http://127.0.0.1:8080/shop/ list all laptops priced under 60000 rupees with their prices.[0m
+INFO     [Agent] 📦 Newer version available: 1.0.6 (current: 0.13.11). Upgrade with: uv add browser-use==1.0.6
+INFO     [Agent] Starting a browser-use agent with version 0.13.11, with provider=google and model=gemini-flash-lite-latest
+INFO     [BrowserSession] Setting viewport to 1920x1080 with device scale factor 1.0 whereas original device scale factor was 1.0
+INFO     [Agent]   ▶️   [34mnavigate[0m: [35murl[0m: http://127.0.0.1:8080/shop/, [35mnew_tab[0m: False
+INFO     [tools] 🔗 Navigated to http://127.0.0.1:8080/shop/
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 1:
+ERROR    [gemini-flash-lite-latest] 💥 API call failed after 5.43s: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+WARNING  [Agent] ⚠️ LLM error (ModelProviderError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}) but no fallback_llm configured
+WARNING  [Agent] ❌ Result failed 1/6 times: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 2:
+INFO     [Agent]   [32m👍 Eval: Successfully loaded the shop page.[0m
+INFO     [Agent]   🧠 Memory: Loaded shop page. Identified category tabs. Need to filter by Laptops and check prices under 60,000 rupees.
+INFO     [Agent]   [34m🎯 Next goal: Click the Laptops tab to filter the product list.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 5
+INFO     [tools] 🖱️ Clicked button role=tab "Laptops"
+INFO     [Agent] 📋 Plan updated with 3 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 3:
+ERROR    [gemini-flash-lite-latest] 💥 API call failed after 4.96s: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+WARNING  [Agent] ⚠️ LLM error (ModelProviderError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}) but no fallback_llm configured
+WARNING  [Agent] ❌ Result failed 1/6 times: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 4:
+INFO     [Agent]   [32m👍 Eval: Successfully clicked the Laptops tab and viewed the laptop products.[0m
+INFO     [Agent]   🧠 Memory: Laptops tab is selected. Visible laptops: AeroBook 14 (₹54,990), ProBook X15 (₹78,990), StudyMate 11 (₹29,990), Creator 16 (₹1,24,990), EcoBook 13 (₹45,990). Need to extract all to ensure none are missed.
+INFO     [Agent]   [34m🎯 Next goal: Extract all laptops and their prices from the page.[0m
+INFO     [Agent]   ▶️   [34mextract[0m: [35mquery[0m: List all laptops and their prices, [35mextract_links[0m: False, [35mextract_images[0m: False, [35mstart_from_char[0m: 0, [35malready_collected[0m: []
+INFO     [tools] 📄 <url>
+http://127.0.0.1:8080/shop/
+</url>
+<query>
+List all laptops and their prices
+</query>
+<result>
+- AeroBook 14 Laptop: ₹54,990
+- ProBook X15 Laptop: ₹78,990
+- StudyMate 11 Laptop: ₹29,990
+- Creator 16 Laptop: ₹1,24,990
+- EcoBook 13 Laptop: ₹45,990
+</result>
+INFO     [Agent] 📋 Plan updated with 3 steps
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 5:
+INFO     [Agent]   [32m👍 Eval: Successfully extracted all laptops and their prices from the page.[0m
+INFO     [Agent]   🧠 Memory: Identified all laptops under 60,000 rupees: StudyMate 11 Laptop (₹29,990), EcoBook 13 Laptop (₹45,990), AeroBook 14 Laptop (₹54,990).
+INFO     [Agent]   [34m🎯 Next goal: Finish the task and provide the filtered list of laptops to the user.[0m
+INFO     [Agent]   ▶️   [34mdone[0m: [35mtext[0m: Here are the laptops priced under 60,000 rupees found on the shop page:
+1. StudyMate 11 Laptop: ₹29,990
+2. EcoBook 13 Laptop: ₹45,990
+3. AeroBook 14 L..., [35msuccess[0m: True, [35mfiles_to_display[0m: []
+INFO     [Agent] 📋 Plan updated with 3 steps
+INFO     [Agent] 
+📄 [32m Final Result:[0m 
+Here are the laptops priced under 60,000 rupees found on the shop page:
+1. StudyMate 11 Laptop: ₹29,990
+2. EcoBook 13 Laptop: ₹45,990
+3. AeroBook 14 Laptop: ₹54,990
+
+
+INFO     [Agent] ✅ Task completed successfully
+INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True, keep_alive=None)
+INFO     [BrowserSession] [SessionManager] Cleared all owned data (targets, sessions, mappings)
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True, keep_alive=None)
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] ✅ Browser session reset complete
+F07-shop-under-budget: PASS 65.5s steps=6 includes 3/3; excludes: 0 wrong item(s) 
+INFO     [Agent] 🔗 Found URL in task: http://127.0.0.1:8080/popup/, adding as initial action...
+INFO     [Agent] [34m🎯 Task: On http://127.0.0.1:8080/popup/ list the titles of all articles by Meera Nair.[0m
+INFO     [Agent] 📦 Newer version available: 1.0.6 (current: 0.13.11). Upgrade with: uv add browser-use==1.0.6
+INFO     [Agent] Starting a browser-use agent with version 0.13.11, with provider=google and model=gemini-flash-lite-latest
+INFO     [BrowserSession] Setting viewport to 1920x1080 with device scale factor 1.0 whereas original device scale factor was 1.0
+INFO     [Agent]   ▶️   [34mnavigate[0m: [35murl[0m: http://127.0.0.1:8080/popup/, [35mnew_tab[0m: False
+INFO     [tools] 🔗 Navigated to http://127.0.0.1:8080/popup/
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 1:
+INFO     [Agent]   [32m👍 Eval: Initial page loaded successfully. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Identified 3 articles by Meera Nair on the currently visible part of the page. Scrolling down to check for more articles.
+INFO     [Agent]   [34m🎯 Next goal: Scroll down to check for additional articles on the page.[0m
+INFO     [Agent]   ▶️   [34mscroll[0m: [35mdown[0m: True, [35mpages[0m: 1.0, [35mindex[0m: None
+INFO     [tools] 🔍 Scrolled down 1080px
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 2:
+INFO     [Agent]   [32m👍 Eval: Scrolled down the page to check for articles. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Scrolled down and encountered a newsletter popup. Will extract all articles using the extract tool to get all titles by Meera Nair.
+INFO     [Agent]   [34m🎯 Next goal: Extract all article titles and authors from the page to find those by Meera Nair.[0m
+INFO     [Agent]   ▶️   [34mextract[0m: [35mquery[0m: List all articles on the page with their titles and authors., [35mextract_links[0m: True, [35mextract_images[0m: False, [35mstart_from_char[0m: 0, [35malready_collected[0m: []
+INFO     [tools] 📄 <url>
+http://127.0.0.1:8080/popup/
+</url>
+<query>
+List all articles on the page with their titles and authors.
+</query>
+<result>
+- Why Small Language Models Are Winning on the Edge by Ananya Kapoor
+- A Practical Guide to Vector Databases by Rohan Verma
+- The Hidden Cost of Cloud GPUs by Meera Nair
+- Prompt Injection Explained for Beginners by Ananya Kapoor
+- Rust vs Go for Backend Services in 2026 by Rohan Verma
+- How Browser Agents See a Web Page by Meera Nair
+- Five Datasets Every ML Student Should Know by Rohan Verma
+- Designing Human-in-the-Loop Approval Flows by Meera Nair
+- What Open-Source AI Means for Indian Startups by Ananya Kapoor
+</result>
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 3:
+INFO     [Agent]   [32m👍 Eval: Successfully extracted all article titles and authors from the page. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Identified all 3 articles by Meera Nair: 'The Hidden Cost of Cloud GPUs', 'How Browser Agents See a Web Page', and 'Designing Human-in-the-Loop Approval Flows'.
+INFO     [Agent]   [34m🎯 Next goal: Call done and present the titles of all articles by Meera Nair.[0m
+INFO     [Agent]   ▶️   [34mdone[0m: [35mtext[0m: The articles by Meera Nair found on http://127.0.0.1:8080/popup/ are:
+1. The Hidden Cost of Cloud GPUs
+2. How Browser Agents See a Web Page
+3. Designi..., [35msuccess[0m: True, [35mfiles_to_display[0m: None
+INFO     [Agent] 
+📄 [32m Final Result:[0m 
+The articles by Meera Nair found on http://127.0.0.1:8080/popup/ are:
+1. The Hidden Cost of Cloud GPUs
+2. How Browser Agents See a Web Page
+3. Designing Human-in-the-Loop Approval Flows
+
+
+INFO     [Agent] ✅ Task completed successfully
+INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True, keep_alive=None)
+INFO     [BrowserSession] [SessionManager] Cleared all owned data (targets, sessions, mappings)
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True, keep_alive=None)
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] ✅ Browser session reset complete
+F12-popup-articles: PASS 45.1s steps=4 includes 3/3; excludes: 0 wrong item(s) 
+INFO     [Agent] 🔗 Found URL in task: http://127.0.0.1:8080/list/, adding as initial action...
+INFO     [Agent] [34m🎯 Task: On http://127.0.0.1:8080/list/ list every course taught by Dr. Rao (check all pages).[0m
+INFO     [Agent] 📦 Newer version available: 1.0.6 (current: 0.13.11). Upgrade with: uv add browser-use==1.0.6
+INFO     [Agent] Starting a browser-use agent with version 0.13.11, with provider=google and model=gemini-flash-lite-latest
+INFO     [BrowserSession] Setting viewport to 1920x1080 with device scale factor 1.0 whereas original device scale factor was 1.0
+INFO     [Agent]   ▶️   [34mnavigate[0m: [35murl[0m: http://127.0.0.1:8080/list/, [35mnew_tab[0m: False
+INFO     [tools] 🔗 Navigated to http://127.0.0.1:8080/list/
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 1:
+INFO     [Agent]   [32m👍 Eval: Successfully loaded the course catalogue page 1 and identified CS103 as taught by Dr. Rao.[0m
+INFO     [Agent]   🧠 Memory: Found CS103 · Data Structures by Dr. Rao on page 1. Proceeding to page 2.
+INFO     [Agent]   [34m🎯 Next goal: Click on page 2 button to check the next set of courses.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 5
+INFO     [tools] 🖱️ Clicked button "2"
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 2:
+INFO     [Agent]   [32m👍 Eval: Successfully navigated to page 2 and verified that none of the listed courses (CS111-CS120) are taught by Dr. Rao.[0m
+INFO     [Agent]   🧠 Memory: Found 1 course by Dr. Rao so far: CS103 · Data Structures (Page 1). Checked Page 2 (no Dr. Rao courses). Moving to Page 3.
+INFO     [Agent]   [34m🎯 Next goal: Click Next to go to page 3 and check for courses taught by Dr. Rao.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 186
+INFO     [tools] 🖱️ Clicked button "Next"
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 3:
+ERROR    [gemini-flash-lite-latest] 💥 API call failed after 5.98s: ServerError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+WARNING  [Agent] ⚠️ LLM error (ModelProviderError: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}) but no fallback_llm configured
+WARNING  [Agent] ❌ Result failed 1/6 times: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 4:
+INFO     [Agent]   [32m👍 Eval: Successfully navigated to page 3, identified CS125 · Data Mining as taught by Dr. Rao.[0m
+INFO     [Agent]   🧠 Memory: Found Dr. Rao courses so far: CS103 (Page 1), CS125 (Page 3). Currently on page 3 of 5. Moving to page 4.
+INFO     [Agent]   [34m🎯 Next goal: Click on page 4 button to check courses on page 4.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 294
+INFO     [tools] 🖱️ Clicked button "4"
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 5:
+INFO     [Agent] 📋 Exploration nudge injected after 5 steps without a plan
+INFO     [Agent]   [32m👍 Eval: Successfully navigated to page 4, inspected courses, and confirmed no courses by Dr. Rao are present on page 4.[0m
+INFO     [Agent]   🧠 Memory: Found Dr. Rao courses so far: CS103 (Page 1) and CS125 (Page 3). Checked pages 1, 2, 3, and 4. Now going to page 5.
+INFO     [Agent]   [34m🎯 Next goal: Click on page 5 button to check the final page of courses.[0m
+INFO     [Agent]   ▶️   [34mclick[0m: [35mindex[0m: 405
+INFO     [tools] 🖱️ Clicked button "5"
+INFO     [Agent] 
+
+INFO     [Agent] 📍 Step 6:
+INFO     [Agent] 📋 Exploration nudge injected after 6 steps without a plan
+INFO     [Agent]   [32m👍 Eval: Successfully inspected page 5 and found CS142 · Engineering Economics taught by Dr. Rao. Verdict: Success[0m
+INFO     [Agent]   🧠 Memory: Checked all 5 pages. Found 3 courses taught by Dr. Rao: CS103 (Page 1), CS125 (Page 3), and CS142 (Page 5).
+INFO     [Agent]   [34m🎯 Next goal: Complete the task and report the list of courses taught by Dr. Rao.[0m
+INFO     [Agent]   ▶️   [34mdone[0m: [35mtext[0m: Here are all the courses taught by Dr. Rao across all pages of the course catalogue:
+1. CS103 · Data Structures (Page 1)
+2. CS125 · Data Mining (Page ..., [35msuccess[0m: True, [35mfiles_to_display[0m: None
+INFO     [Agent] 
+📄 [32m Final Result:[0m 
+Here are all the courses taught by Dr. Rao across all pages of the course catalogue:
+1. CS103 · Data Structures (Page 1)
+2. CS125 · Data Mining (Page 3)
+3. CS142 · Engineering Economics (Page 5)
+
+
+INFO     [Agent] ✅ Task completed successfully
+INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True, keep_alive=None)
+INFO     [BrowserSession] [SessionManager] Cleared all owned data (targets, sessions, mappings)
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] 📢 on_BrowserStopEvent - Calling reset() (force=True, keep_alive=None)
+INFO     [BrowserSession] ✅ Browser session reset complete
+INFO     [BrowserSession] ✅ Browser session reset complete
+F14-list-instructor: PASS 73.3s steps=7 includes 3/3; excludes: 0 wrong item(s) 

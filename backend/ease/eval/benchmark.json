@@ -346,6 +346,10 @@
     {
      "type": "min_items",
      "n": 5
+    },
+    {
+     "type": "max_items",
+     "n": 5
     }
    ],
    "expected_route": "api.arxiv.search",
@@ -376,6 +380,10 @@
     {
      "type": "min_items",
      "n": 3
+    },
+    {
+     "type": "max_items",
+     "n": 3
     }
    ],
    "expected_route": "api.openalex.search",
@@ -390,6 +398,10 @@
     {
      "type": "min_items",
      "n": 3
+    },
+    {
+     "type": "max_items",
+     "n": 3
     }
    ],
    "expected_route": "api.arxiv.search",
@@ -403,6 +415,10 @@
    "checks": [
     {
      "type": "min_items",
+     "n": 5
+    },
+    {
+     "type": "max_items",
      "n": 5
     }
    ],
@@ -419,8 +435,8 @@
     {
      "type": "includes",
      "items": [
-      "The Coming Woman",
-      "Starving Hearts",
+      "The Coming Woman: A Novel Based on the Life of the Infamous Feminist, Victoria Woodhull",
+      "Starving Hearts (Triangular Trade Trilogy, #1)",
       "Set Me Free"
      ],
      "min_recall": 1.0
@@ -446,6 +462,10 @@
       "Libertarianism for Beginners",
       "It's Only the Himalayas"
      ]
+    },
+    {
+     "type": "max_items",
+     "n": 3
     }
    ]
   },
@@ -520,7 +540,7 @@
      "items": [
       "It's Only the Himalayas",
       "Full Moon over Noah's Ark",
-      "See America"
+      "See America: A Celebration of Our National Parks & Treasured Sites"
      ],
      "min_recall": 1.0
     },
@@ -530,8 +550,19 @@
       "Vagabonding",
       "Under the Tuscan Sun"
      ]
+    },
+    {
+     "type": "max_items",
+     "n": 3
     }
    ]
+  }
+ ],
+ "revisions": [
+  {
+   "date": "2026-11-18",
+   "after_runs": true,
+   "change": "live suite: max_items added to R01, R03, R04, L01, L02, L05; L02's expected titles changed from prefixes to the full titles, as L05's already were, so both require the full title. Applied by re-scoring the stored answers; the verdicts as run are reported too."
   }
  ]
 }

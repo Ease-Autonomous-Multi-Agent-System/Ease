@@ -16,6 +16,7 @@ Statistics
 
 from __future__ import annotations
 
+import importlib.util
 import itertools
 import json
 import math
@@ -49,11 +50,12 @@ def valid(r: dict) -> bool:
 
 
 def latest(rows: list[dict]) -> list[dict]:
-    """One record per (case, condition, repeat): a re-run of a rate-limited case replaces it."""
+    """One record per (case, condition, repeat): the first valid one. A later record replaces the kept one only
+    when the kept one is rate-limited, so a valid run is never replaced by a re-run."""
     keep: dict[tuple, dict] = {}
     for r in rows:
         k = (r["case_id"], cond(r), r["repeat"])
-        if k not in keep or not valid(keep[k]) or valid(r):
+        if k not in keep or not valid(keep[k]):
             keep[k] = r
     return list(keep.values())
 
@@ -126,6 +128,47 @@ def paired(a_rows: list[dict], b_rows: list[dict]) -> dict:
             "p_exact_signflip": round(p, 4)}
 
 
+def _scoring():
+    spec = importlib.util.spec_from_file_location("scoring", ROOT / "backend" / "ease" / "eval" / "scoring.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+SCORING = _scoring()
+CASES = {c["id"]: c for c in json.loads((ROOT / "backend" / "ease" / "eval" / "benchmark.json")
+                                        .read_text(encoding="utf-8"))["cases"]}
+
+
+def rescored(r: dict) -> dict:
+    """The record scored again from its stored answer with the current scorer and benchmark."""
+    if not valid(r):
+        return r
+    ok, det = SCORING.score(CASES[r["case_id"]], r.get("answer") or "", submitted_jobs=r.get("submitted_jobs"),
+                            escalated=bool(r.get("escalations")))
+    if ok == bool(r["success"]):
+        return r
+    label = None if ok else (r.get("failure_label") or "WRONG_ANSWER")
+    return {**r, "success": ok, "check_details": det, "failure_label": label, "rescore_changed": True}
+
+
+def rescore_mismatches(rows: list[dict]) -> list[str]:
+    """Runs whose stored verdict the current scorer does not reproduce (should be none outside the live suite)."""
+    return [f"{r['run_id']}:{r['case_id']}:{r['repeat']}" for r in rows if rescored(r).get("rescore_changed")]
+
+
+def failure_causes(fx: list[dict], ce: list[dict]) -> dict:
+    """Counts from the manual audit; fails if a failed run has no audit entry or an entry has no failed run."""
+    audit = json.loads((ROOT / "evaluation" / "failure_causes.json").read_text(encoding="utf-8"))["runs"]
+    failed = {(r["run_id"], r["case_id"], r["repeat"]) for r in fx + ce if valid(r) and not r["success"]}
+    audited = {(a["run"], a["case"], a["repeat"]) for a in audit}
+    if failed != audited:
+        raise SystemExit(f"failure audit out of date: missing {failed - audited}, extra {audited - failed}")
+    return {"total": len(audit), "by_cause": dict(Counter(a["cause"] for a in audit)),
+            "early_how": dict(Counter(a["how"] for a in audit if a["cause"] == "early_end")),
+            "runs": audit}
+
+
 def main() -> None:
     res: dict = {}
     fx = latest(load("v2-fixture"))
@@ -136,6 +179,11 @@ def main() -> None:
                                for t in sorted({r["case_id"] for r in fx})}
 
     lv = latest(load("v2-live"))
+    # live checks were revised after review (benchmark.json "revisions"); report the verdicts as run and re-scored
+    res["live_as_run"] = summ(lv)
+    res["live_as_run_per_task"] = {r["case_id"]: bool(r["success"]) for r in lv if valid(r)}
+    lv = [rescored(r) for r in lv]
+    res["live_rescored_changes"] = {r["case_id"]: r["check_details"] for r in lv if r.get("rescore_changed")}
     res["live"] = summ(lv)
     res["live_per_task"] = {t: summ([r for r in lv if r["case_id"] == t]) for t in sorted({r["case_id"] for r in lv})}
     api = [r for r in lv if not any(str(x).startswith("browser") for x in r.get("tools") or [])]
@@ -157,12 +205,51 @@ def main() -> None:
         pl = latest(load("v2-planner"))
         res["planner_paired"] = paired([r for r in pl if cond(r) == "hierarchical"], [r for r in pl if cond(r) == "single"])
 
-    cmp_ = {"Ease": latest(load("v2-cmp-ease")), "browser-use": latest(load("v2-cmp-bu")),
+    # browser-use at its default budget (100 steps) is the comparison arm; the first round at 25 steps is reported too
+    bu100, bu25 = latest(load("v2-cmp-bu100")), latest(load("v2-cmp-bu"))
+    res["bu100_complete"] = sum(1 for r in bu100 if valid(r)) == 36
+    cmp_ = {"Ease": latest(load("v2-cmp-ease")), "browser-use": bu100 if res["bu100_complete"] else bu25,
             "Magentic-One": latest(load("v2-cmp-m1"))}
     res["comparison"] = {s: summ(rows) for s, rows in cmp_.items()}
+    res["comparison"]["browser-use-25"] = summ(bu25)
     res["comparison_per_task"] = {s: {t: [r["success"] for r in rows if r["case_id"] == t and valid(r)]
                                       for t in sorted({r["case_id"] for r in rows})} for s, rows in cmp_.items()}
     res["comparison_paired"] = {f"Ease-vs-{s}": paired(cmp_["Ease"], cmp_[s]) for s in ("browser-use", "Magentic-One")}
+    res["comparison_paired"]["Ease-vs-browser-use-25"] = paired(cmp_["Ease"], bu25)
+    res["comparison_steps"] = {name: {"max": max((r.get("steps") or 0) for r in rows),
+                                      "at_cap": sum(1 for r in rows if (r.get("steps") or 0) >= cap)}
+                               for name, rows, cap in (("bu25", bu25, 25), ("bu100", bu100, 100)) if rows}
+    res["comparison_days"] = {s: dict(Counter(r["started_at"][:10] for r in rows if valid(r) and r.get("started_at")))
+                              for s, rows in cmp_.items()}
+
+    # browser-use runs the wrapper first scored as wrong answers although the provider had stopped them with HTTP 503
+    # (a mis-escaped pattern); relabelled from the run logs by evaluation/relabel_provider_stops.py and re-run
+    res["comparison_relabelled"] = {name: sum(1 for r in load(run) if r.get("relabelled"))
+                                    for name, run in (("bu25", "v2-cmp-bu"), ("bu100", "v2-cmp-bu100"))}
+
+    # every stored verdict outside the live suite must be reproduced by the current scorer
+    res["rescore_mismatches"] = rescore_mismatches(fx + [r for rows in (*cmp_.values(), bu25) for r in rows])
+    res["failure_causes"] = failure_causes(fx, cmp_["Ease"])
+
+    # first v2 round, discarded after the agent fix (reported, not used for any other number)
+    dfx = latest(load("v2-discarded/v2-fixture"))
+    res["discarded_fixture"] = summ(dfx) if dfx else {}
+    dlv = latest(load("v2-discarded/v2-live"))
+    res["discarded_live"] = summ(dlv) if dlv else {}
+
+    # approvals ablation on the tasks valid in both arms only, and on F04 alone
+    hl = latest(load("v2-hitl"))
+    both = sorted({r["case_id"] for r in hl if valid(r) and cond(r) == "hitl-on"} &
+                  {r["case_id"] for r in hl if valid(r) and cond(r) == "hitl-off"})
+    res["hitl_shared"] = {c: summ([r for r in hl if cond(r) == c and r["case_id"] in both])
+                          for c in ("hitl-on", "hitl-off")}
+    res["hitl_shared_tasks"] = both
+    res["hitl_f04"] = {c: summ([r for r in hl if cond(r) == c and r["case_id"] == "F04-apply-cv"])
+                       for c in ("hitl-on", "hitl-off")}
+
+    # model calls: counted by the agent (llm_calls) and by the router's served_by record
+    res["fixture_calls"] = {"llm_calls_total": sum(r.get("llm_calls") or 0 for r in fx if valid(r)),
+                            "served_total": sum(sum((r.get("served_by") or {}).values()) for r in fx if valid(r))}
     res["comparison_submissions"] = {s: {"F04_runs": sum(1 for r in rows if r["case_id"] == "F04-apply-cv"),
                                          "site_received": sum(len(r.get("submitted_jobs") or []) for r in rows),
                                          "unapproved": sum(1 for r in rows if r.get("unapproved_submission"))}
@@ -241,8 +328,37 @@ def write_tex(res: dict) -> None:
         if c:
             for k in ("trials", "double_submissions", "submitted_once", "not_submitted", "as_expected"):
                 m[tag + k.title().replace("_", "")] = str(c[k])
+    put("LvAsRun", res.get("live_as_run", {}))
+    put("CmpBuTwentyFive", (res.get("comparison") or {}).get("browser-use-25", {}))
+    p = (res.get("comparison_paired") or {}).get("Ease-vs-browser-use-25", {})
+    if p.get("tasks"):
+        m["PairBuTwentyFiveDiff"], m["PairBuTwentyFiveP"] = _fmt(p["mean_diff_pts"]), _fmt(p["p_exact_signflip"], 3)
+    steps = res.get("comparison_steps") or {}
+    m["BuTwentyFiveAtCap"] = str((steps.get("bu25") or {}).get("at_cap", "--"))
+    m["BuHundredMaxSteps"] = str((steps.get("bu100") or {}).get("max", "--"))
+    relab = res.get("comparison_relabelled") or {}
+    m["BuRelabelTwentyFive"], m["BuRelabelHundred"] = str(relab.get("bu25", 0)), str(relab.get("bu100", 0))
+    put("DiscFx", res.get("discarded_fixture", {}))
+    for c, tag in (("hitl-on", "HitlSharedOn"), ("hitl-off", "HitlSharedOff")):
+        put(tag, (res.get("hitl_shared") or {}).get(c, {}))
+    for c, tag in (("hitl-on", "HitlFFourOn"), ("hitl-off", "HitlFFourOff")):
+        put(tag, (res.get("hitl_f04") or {}).get(c, {}))
+    calls = res.get("fixture_calls") or {}
+    m["FxCallsTotal"] = str(calls.get("llm_calls_total", "--"))
+    served = (res.get("fixture") or {}).get("served_by") or {}
+    total = sum(served.values()) or 1
+    for model, tag in (("groq:openai/gpt-oss-20b", "OssTwenty"), ("groq:openai/gpt-oss-120b", "OssOneTwenty"),
+                       ("gemini:gemini-flash-lite-latest", "FlashLite"), ("gemini:gemini-3.5-flash", "Flash")):
+        m["FxServed" + tag] = str(served.get(model, 0))
+        m["FxServed" + tag + "Pct"] = _fmt(100 * served.get(model, 0) / total)
+    m["BootSeed"], m["BootDraws"] = str(SEED), _fmt(B)
+    days = res.get("comparison_days") or {}
+    for s, tag in (("Ease", "CmpEase"), ("browser-use", "CmpBu"), ("Magentic-One", "CmpMo")):
+        for day, name in (("2026-11-17", "DayOne"), ("2026-11-18", "DayTwo"), ("2026-11-19", "DayThree")):
+            m[tag + name] = str((days.get(s) or {}).get(day, 0))
     crash = res.get("crash") or {}
     if crash:
+        m["CrCrashTrials"] = str(sum(c["trials"] for k, c in crash.items() if k != "none"))
         m["CrTrials"] = str(sum(c["trials"] for c in crash.values()))
         m["CrDoubleTotal"] = str(sum(c["double_submissions"] for c in crash.values()))
         m["CrAsExpectedTotal"] = str(sum(c["as_expected"] for c in crash.values()))
@@ -258,20 +374,28 @@ def write_tex(res: dict) -> None:
         fails = (res.get(key) or {}).get("failures") or {}
         m[tag + "FailPlan"], m[tag + "FailWrong"] = str(fails.get("PLAN_WRONG", 0)), str(fails.get("WRONG_ANSWER", 0))
         m[tag + "FailAll"] = str(sum(fails.values()))
-    # failures of Ease on tasks over a paginated listing (job board: 12 postings, 5 per page; course list: 5 pages)
-    paginated = {"F01-remote-interns", "F02-count-fulltime", "F05-rank-apply", "F06-paginated-old-posts",
-                 "F14-list-instructor", "F15-list-credits"}
-    fx_fail = {t: s["valid"] - s["passed"] for t, s in (res.get("fixture_per_task") or {}).items()}
-    cmp_fail = {t: sum(1 for ok in runs if ok is False)
-                for t, runs in ((res.get("comparison_per_task") or {}).get("Ease") or {}).items()}
-    total_fail = sum(fx_fail.values()) + sum(cmp_fail.values())
-    multi_fail = sum(n for t, n in fx_fail.items() if t in paginated) + sum(
-        n for t, n in cmp_fail.items() if t in paginated)
-    m["EaseFailAll"], m["EaseFailPaginated"] = str(total_fail), str(multi_fail)
+    # failure causes from the manual audit (evaluation/failure_causes.json), one entry per failed run
+    fc = res.get("failure_causes") or {}
+    m["EaseFailAll"] = str(fc.get("total", 0))
+    for cause, tag in (("detail_only", "Detail"), ("early_end", "Early"), ("wrong_value", "Wrong")):
+        m["EaseFail" + tag] = str((fc.get("by_cause") or {}).get(cause, 0))
+    for how, tag in (("click_timeout", "Timeout"), ("skipped_pages", "Skipped"), ("loop_guard", "Loop")):
+        m["EaseEarly" + tag] = str((fc.get("early_how") or {}).get(how, 0))
     for s, tag in (("Ease", "CmpEase"), ("browser-use", "CmpBu"), ("Magentic-One", "CmpMo")):
         sub = (res.get("comparison_submissions") or {}).get(s)
         if sub:
             m[tag + "ApplyRuns"], m[tag + "SiteGot"] = str(sub["F04_runs"]), str(sub["site_received"])
+    # Table: every failed Ease run with its audited cause
+    fc = res.get("failure_causes") or {}
+    names = {"detail_only": "date only on detail page", "early_end": "ended before last page",
+             "wrong_value": "wrong item's value"}
+    hows = {"click_timeout": " (click timed out)", "skipped_pages": " (skipped pages)", "loop_guard": " (loop guard)"}
+    rows = [r"\begin{tabular}{@{}llcl@{}}", r"\toprule", r"Experiment & Task & Run & Cause \\", r"\midrule"]
+    for a in fc.get("runs", []):
+        exp = "fixture" if a["run"] == "v2-fixture" else "comparison"
+        rows.append(f"{exp} & {a['case'][:3]} & {a['repeat'] + 1} & {names[a['cause']]}{hows.get(a['how'], '')} \\\\")
+    rows += [r"\bottomrule", r"\end{tabular}"]
+    (OUT / "tab_failures.tex").write_text("\n".join(rows) + "\n", encoding="utf-8")
     lines = [f"\\newcommand{{\\{k}}}{{{v}}}" for k, v in sorted(m.items())]
     (OUT / "numbers.tex").write_text("% generated by analysis_v2.py - do not edit\n" + "\n".join(lines) + "\n",
                                      encoding="utf-8")

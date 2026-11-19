@@ -165,6 +165,15 @@ def irreversible(el) -> bool:
     return el.form_submit or (el.tag != "a" and RISKY.search(name) is not None)
 
 
+def _form_target(loc: Any) -> str:
+    """Method and resolved action URL of the form an element submits ("post https://site/apply"), or ""."""
+    try:
+        return loc.evaluate("e => { const f = e.form || e.closest('form'); "
+                            "return f ? (f.method || 'get').toLowerCase() + ' ' + f.action : ''; }") or ""
+    except Exception:
+        return ""
+
+
 def _fault(point: str) -> None:
     """Failure injection for the evaluation (scripts/crash_injection.py): with EASE_FAULT=<point> the process dies
     here, as a worker killed mid-commit would. No effect unless that variable is set."""
@@ -563,14 +572,15 @@ class BrowserAgent:
         # URL (job page -> "Apply now" -> form).
         script = ActionScript(start_url=s.page.url, actions=list(last.values()),
                               commit=ScriptedAction(op="click", locator=commit_el.locator,
-                                                    field_label=commit_el.name))
+                                                    field_label=commit_el.name),
+                              form_target=_form_target(s.page.locator(commit_el.locator)))
         fields = [FieldPreview(locator=act.locator or "", label=act.field_label or act.locator or "",
                                value=act.value or "") for act in last.values()]
         output = {"filled_fields": [f.model_dump() for f in fields], "submitted": False,
                   "form_url": s.page.url, "commit_label": commit_el.name}
         if not call.hitl:  # ablation: HITL off -> commit immediately in this same session
             try:
-                with s.writes_allowed():
+                with s.writes_allowed(host=urlsplit(s.page.url).hostname):
                     s.el(commit_el.id).click(timeout=6000)
                     s.settle(4000)
                 return self._verify_submitted(s, run, output)
@@ -590,9 +600,12 @@ class BrowserAgent:
         """Runs after approval, possibly on a different worker hours later: replay the approved script in a
         fresh browser, apply the human's edits, then perform the held-back irreversible action.
 
-        Exactly-once: before the click a marker keyed by the approval id is created atomically; a second attempt with
-        the same approval (a retry, or a resume after a crash) finds it and refuses. Nothing after the click is
-        retried automatically, and nothing is clicked unless the page still matches what the human approved."""
+        At most once (not exactly once): before the click a marker keyed by the approval id is created atomically
+        and flushed to disk; a second attempt with the same approval (a retry, or a resume after a crash) finds it
+        and refuses, so a crash between the marker and the click loses the submission rather than repeating it.
+        The marker lives under artifacts_root, so every worker that can resume a task must share that directory.
+        Nothing after the click is retried automatically, and nothing is clicked unless the page still matches
+        what the human approved."""
         run = _Run(call)
         decision = call.approval
         script = ActionScript.model_validate(call.inputs["_action_script"])
@@ -617,11 +630,13 @@ class BrowserAgent:
                     with marker.open("x", encoding="utf-8") as f:  # atomic: only one attempt ever gets here
                         json.dump({"task_id": call.task_id, "step_key": call.step_key, "at": time.time(),
                                    "form_url": script.start_url}, f)
+                        f.flush()
+                        os.fsync(f.fileno())  # durable before the click
                 except FileExistsError:
                     return self._fail(call, FailureLabel.TOOL_ERROR, ALREADY_SUBMITTED, run)
                 _fault("before_click")
                 try:
-                    with s.writes_allowed():
+                    with s.writes_allowed(host=urlsplit(s.page.url).hostname):
                         s.page.locator(script.commit.locator).click(timeout=6000)
                         s.settle(4000)
                     _fault("after_click")
@@ -666,6 +681,10 @@ class BrowserAgent:
         approved = " ".join((script.commit.field_label or "").lower().split())
         if approved and label != approved:
             return f"the submit button now reads '{label[:60]}'"
+        if script.form_target is not None:
+            target = _form_target(commit)
+            if target != script.form_target:
+                return f"the form now sends to '{target[:100] or 'nowhere'}'"
         return None
 
     def _verify_submitted(self, s: BrowserSession, run: _Run, output: dict) -> StepResult:
@@ -716,7 +735,7 @@ class BrowserAgent:
             if user_el is not None:
                 s.el(user_el.id).fill(creds["username"], timeout=5000)
             s.el(pw_el.id).fill(creds["password"], timeout=5000)
-            with s.writes_allowed():  # the sign-in post is chosen by code, on the host the login was given for
+            with s.writes_allowed(host=host):  # the sign-in post is chosen by code, to the login's own host
                 s.el(pw_el.id).press("Enter", timeout=5000)
                 s.settle(2500)
         except Exception as exc:

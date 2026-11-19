@@ -68,6 +68,11 @@ class Connector:
             raise ConnectorError(f"{self.service} has no operation {op!r}")
         spec = self.operations[op]
         parsed = spec.input_model.model_validate(inputs)
+        if self.credential_ref is None:
+            # public read connectors only: record the tool inputs so a run's queries can be audited afterwards
+            # (connectors with a credential may carry personal content and are not logged)
+            log.info("connector.call", service=self.service, op=op,
+                     inputs={k: str(v)[:200] for k, v in parsed.model_dump().items()})
         return getattr(self, f"op_{op}")(parsed, ctx)
 
     # ---- guarded HTTP with retry + jitter ----

@@ -55,6 +55,13 @@ def listed_items(answer: str) -> int:
     return sum(1 for line in (answer or "").splitlines() if re.match(r"\s*(?:[-*•]|\d+[.)])\s+\S", line))
 
 
+def answer_items(answer: str) -> int:
+    """Top-level items of an answer: unindented bulleted or numbered lines, or Ease's item lines ("title: ...").
+    Indented sub-bullets (an item's fields) are not counted."""
+    return sum(1 for line in (answer or "").splitlines()
+               if re.match(r"(?:[-*•]|\d+[.)])\s+\S", line) or re.match(r"(?:title|name):\s*\S", line, re.I))
+
+
 def score(case: dict[str, Any], answer: str, *, items: list[dict] | None = None,
           submitted_jobs: list[str] | None = None, escalated: bool | None = None) -> tuple[bool, list[str]]:
     text = normalise(answer)
@@ -80,7 +87,8 @@ def score(case: dict[str, Any], answer: str, *, items: list[dict] | None = None,
         elif t == "submitted":
             jobs = submitted_jobs or []
             want = chk.get("job")
-            passed = bool(jobs) and (want is None or want in jobs)
+            # exactly one receipt: a second submission fails the task, so the scorer itself enforces at most once
+            passed = len(jobs) == 1 and (want is None or want in jobs)
             details.append(f"site received {jobs or 'nothing'}")
         elif t == "escalated":
             passed = bool(escalated)
@@ -89,6 +97,10 @@ def score(case: dict[str, Any], answer: str, *, items: list[dict] | None = None,
             n = len(items) if items else listed_items(answer)
             passed = n >= chk["n"]
             details.append(f"items {n} >= {chk['n']}")
+        elif t == "max_items":
+            n = answer_items(answer)
+            passed = n <= chk["n"]
+            details.append(f"items {n} <= {chk['n']}")
         else:
             raise ValueError(f"unknown check type {t}")
         ok = ok and passed

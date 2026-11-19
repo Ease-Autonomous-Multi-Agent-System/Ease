@@ -1,0 +1,31 @@
+{
+  "_about": "Audit of the live-suite answers whose checks count items only (R01, R03, R04, L01), done on 18 November 2026 by the first author (not blind) against the sources: arXiv API (title search, categories, first-version date), OpenAlex API and the Greenhouse board API for Stripe. The tool inputs of these runs were not logged, so the audit checks the answers, not the queries.",
+  "R01-arxiv-recent": {
+    "verdict": "supported",
+    "note": "All five papers are listed in cs.AI (two primary in cs.LG, one in hep-th, cs.SE and cs.CV, each cross-listed in cs.AI) and were first published on 17 November 2026, the day of the run. Whether they were the five newest at run time cannot be checked afterwards."
+  },
+  "R03-openalex-cited": {
+    "verdict": "not verifiable",
+    "note": "The answer lists three on-topic papers with 1,339, 510 and 326 citations. 'Most cited papers about LLM agents' has no single answer: an OpenAlex full-text search sorted by citations returns off-topic papers (CLIP, the GPT-4 report). The answer shows the most cited among the connector's relevance-ranked results."
+  },
+  "R04-arxiv-cv": {
+    "verdict": "supported",
+    "note": "All three papers are in cs.CV (one cross-listed in cs.LG), first published 17 November 2026; authors match arXiv."
+  },
+  "L01-greenhouse-jobs": {
+    "verdict": "supported, one wrong link",
+    "note": "All five titles are open engineering jobs on Stripe's board (checked 18 November 2026). The fifth job's link carries the department number (8546) instead of the job id (6176758)."
+  },
+  "R02-arxiv-topic-summary": {
+    "verdict": "failed (as scored)",
+    "note": "Two of the three papers are not about retrieval-augmented generation. The connector sends an unquoted multi-word query (all:retrieval augmented generation) sorted by date, which arXiv matches on any of the words, so the newest papers containing 'generation' come first. The same papers appear in R01 and R04 for this reason. Fixed in the connector after the runs (phrase quoted); not re-run."
+  },
+  "L02-books-under-20": {
+    "verdict": "wrong answer, passed by the original check",
+    "note": "The task asks for books under 20 pounds on the first page; the answer lists 20 books from five pages (the log shows four clicks on next). Three are on the first page. The original check had distractors only from the first page. Failed by the revised check (at most three items)."
+  },
+  "L05-books-category": {
+    "verdict": "failed (as scored)",
+    "note": "The answer gives the three titles as the Travel page shows them; the page truncates the second ('Full Moon over Noah's ...') and the answer does not open the book's page. L02's keys were prefixes that survive truncation while L05's was the full title; the revised checks require the full title in both, which keeps L05 failed. With prefix keys L05 would pass."
+  }
+}

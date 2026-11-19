@@ -16,6 +16,7 @@ it cannot actually resolve (CAPTCHA / login walls) - so HITL cost is measured, n
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -197,7 +198,14 @@ def run_metadata(argv: list[str] | None) -> dict[str, Any]:
                 "overrides": {k: val for k, val in os.environ.items() if k.startswith("LLM_MODEL_")}},
         "limits": {"max_plan_steps": s.max_plan_steps, "max_browser_actions_per_step": s.max_browser_actions_per_step,
                    "task_llm_call_budget": s.task_llm_call_budget},
+        # what the run was scored against: changes to the benchmark or scorer after a run show up as a new hash
+        "sha256": file_hashes(),
     }
+
+
+def file_hashes() -> dict[str, str]:
+    here = Path(__file__).resolve().parent
+    return {name: hashlib.sha256((here / name).read_bytes()).hexdigest() for name in ("benchmark.json", "scoring.py")}
 
 
 def main(argv: list[str] | None = None) -> int:

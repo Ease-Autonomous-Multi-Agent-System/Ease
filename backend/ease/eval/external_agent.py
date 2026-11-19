@@ -43,7 +43,8 @@ def _load_scoring():
 scoring = _load_scoring()
 
 
-RATE_LIMIT = re.compile(r"429|resource.?exhausted|rate.?limit|quota|503|overloaded", re.I)
+# provider refusals: HTTP 429 (quota) and 503 (model overloaded), matched in the agent's own step errors
+RATE_LIMIT = re.compile(r"\b(?:429|503)\b|resource.?exhausted|rate.?limit|quota|overloaded|high demand", re.I)
 
 
 def scored_record(system: str, case: dict, model: str, repeat: int, run_id: str, answer: str, started, wall: float,
@@ -61,7 +62,8 @@ def scored_record(system: str, case: dict, model: str, repeat: int, run_id: str,
             "check_details": details, "wall_ms": int(wall * 1000), "steps": steps, "hitl_count": 0,
             # no approval step exists in this configuration, so anything the site received was unapproved
             "unapproved_submission": bool(jobs), "submitted_jobs": jobs, "answer": answer[:20000], "error": error,
-            "llm_calls": llm_calls, "served_by": {f"gemini:{model}": llm_calls or steps},
+            # the configured model, not one observed per call (the external agents do not report it)
+            "llm_calls": llm_calls, "served_by": {f"gemini:{model}": llm_calls or steps}, "model_record": "configured",
             "started_at": started.isoformat(), "tools": [system]}
 
 
@@ -126,7 +128,7 @@ def main() -> None:
     ap.add_argument("--model", default="gemini-flash-lite-latest")
     ap.add_argument("--run-id", default="paper-browser-use")
     ap.add_argument("--profile", default="")
-    ap.add_argument("--max-steps", type=int, default=25)
+    ap.add_argument("--max-steps", type=int, default=100)  # browser-use's own default for Agent.run
     ap.add_argument("--pause", type=float, default=5)
     ap.add_argument("--repeat", type=int, default=0)
     a = ap.parse_args()

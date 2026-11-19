@@ -1,0 +1,34 @@
+{
+  "_about": "Manual audit of every failed Ease run in v2-fixture and v2-cmp-ease, one entry per run, classified from the stored answer and the run's step log (data/eval/<run>.log). Causes: detail_only = the filter field (posting date) is shown only on each job's detail page, not on the listing; early_end = the extraction step ended before every page was read; wrong_value = a single value read from the wrong item. 'how' says which form early_end took. Audited by the first author; not blind.",
+  "causes": {
+    "detail_only": "filter field only on detail pages",
+    "early_end": "extraction ended before every page was read",
+    "wrong_value": "value read from the wrong item"
+  },
+  "runs": [
+    {"run": "v2-fixture", "case": "F06-paginated-old-posts", "repeat": 0, "cause": "detail_only", "how": "",
+     "evidence": "step FAILED: date information is not present on the listings page; empty answer"},
+    {"run": "v2-fixture", "case": "F06-paginated-old-posts", "repeat": 1, "cause": "detail_only", "how": "",
+     "evidence": "step FAILED: the page does not provide posting dates; empty answer (a Next click had also timed out)"},
+    {"run": "v2-fixture", "case": "F06-paginated-old-posts", "repeat": 2, "cause": "detail_only", "how": "",
+     "evidence": "step FAILED: date information is not present on the listing page; empty answer"},
+    {"run": "v2-fixture", "case": "F14-list-instructor", "repeat": 0, "cause": "early_end", "how": "skipped_pages",
+     "evidence": "clicked 2, 3, Next; extraction then reported no more pages; 2 of 3 courses"},
+    {"run": "v2-fixture", "case": "F14-list-instructor", "repeat": 1, "cause": "early_end", "how": "loop_guard",
+     "evidence": "stopped: agent was repeating itself; 1 of 3 courses"},
+    {"run": "v2-fixture", "case": "F03-salary-lookup", "repeat": 2, "cause": "wrong_value", "how": "",
+     "evidence": "answered 40,000 per month; the MLOps Intern posting says 38,000"},
+    {"run": "v2-cmp-ease", "case": "F06-paginated-old-posts", "repeat": 0, "cause": "detail_only", "how": "",
+     "evidence": "extracted 0 items (listing has no dates); a Next click timed out; empty answer"},
+    {"run": "v2-cmp-ease", "case": "F06-paginated-old-posts", "repeat": 1, "cause": "detail_only", "how": "",
+     "evidence": "returned five page-one jobs with blank dates; a page-2 click timed out"},
+    {"run": "v2-cmp-ease", "case": "F06-paginated-old-posts", "repeat": 2, "cause": "detail_only", "how": "",
+     "evidence": "filter step: all listings lack a specific publication date; a page-2 click timed out"},
+    {"run": "v2-cmp-ease", "case": "F14-list-instructor", "repeat": 0, "cause": "early_end", "how": "skipped_pages",
+     "evidence": "clicked pages 2, 4, 5 (skipped 3); extraction then reported no more pages; 2 of 3 courses"},
+    {"run": "v2-cmp-ease", "case": "F01-remote-interns", "repeat": 1, "cause": "early_end", "how": "click_timeout",
+     "evidence": "page-2 click timed out (6 s); step DONE with 2 items while reporting more pages"},
+    {"run": "v2-cmp-ease", "case": "F01-remote-interns", "repeat": 2, "cause": "early_end", "how": "click_timeout",
+     "evidence": "Next click timed out (6 s); step DONE with 2 items while reporting more pages"}
+  ]
+}
