@@ -21,6 +21,7 @@ import itertools
 import json
 import math
 import random
+import re
 import statistics
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -169,6 +170,24 @@ def failure_causes(fx: list[dict], ce: list[dict]) -> dict:
             "runs": audit}
 
 
+def recovered_refusals(run_id: str) -> dict[tuple[str, int], tuple[str, int]]:
+    """Per Ease run, from the harness log: (verdict, refused calls in the scored attempt). Only the last attempt of a
+    run is scored, so lines before a "rate-limited - waiting" notice are dropped. The log's repeat is 1-based."""
+    head = re.compile(r"^\[\d+/\d+\] (\S+) \| \S+ \| repeat (\d+)")
+    result = re.compile(r"^\s+-> (PASS|FAIL\[(\w+)\])")
+    out, key, refused = {}, None, 0
+    for line in (EVAL / f"{run_id}.log").read_text(encoding="utf-8", errors="replace").splitlines():
+        if m := head.match(line):
+            key, refused = (m.group(1), int(m.group(2)) - 1), 0
+        elif key and "rate-limited - waiting" in line:
+            refused = 0
+        elif key and (m := result.match(line)):
+            out[key], key = (m.group(2) or "PASS", refused), None
+        elif key and "no LLM provider succeeded" in line and ("decide_failed" in line or "[step.progress]" in line):
+            refused += 1
+    return out
+
+
 def main() -> None:
     res: dict = {}
     fx = latest(load("v2-fixture"))
@@ -226,6 +245,40 @@ def main() -> None:
     # (a mis-escaped pattern); relabelled from the run logs by evaluation/relabel_provider_stops.py and re-run
     res["comparison_relabelled"] = {name: sum(1 for r in load(run) if r.get("relabelled"))
                                     for name, run in (("bu25", "v2-cmp-bu"), ("bu100", "v2-cmp-bu100"))}
+
+    # Sensitivity check (third referee report, M1). These failed Ease runs logged one refused model call that a retry
+    # answered, so the provider did not end them and they stand. Under a broader rule (re-run any failed run with a
+    # refusal in its scored attempt) they would have been repeated; they were re-run with the same configuration under
+    # separate run ids, and replace the originals only here.
+    sens_runs = {"v2-cmp-ease": [("F06-paginated-old-posts", 0), ("F14-list-instructor", 0), ("F01-remote-interns", 1)],
+                 "v2-fixture": [("F06-paginated-old-posts", 0), ("F06-paginated-old-posts", 2)]}
+    sens: dict = {}
+    res["recovered_refusals"] = {}
+    for base, rows in (("v2-cmp-ease", cmp_["Ease"]), ("v2-fixture", fx)):
+        orig = {(r["case_id"], r["repeat"]): r for r in rows}
+        assert all(not orig[k]["success"] and valid(orig[k]) for k in sens_runs[base]), base
+        # the list above is exactly the failed runs whose logs show a refusal the agent recovered from
+        rr = recovered_refusals(base)
+        failed = {k for k, (v, n) in rr.items() if v not in ("PASS", "RATE_LIMITED") and n}
+        assert failed == set(sens_runs[base]), (base, failed)
+        res["recovered_refusals"][base] = {"failed": len(failed), "passed": sum(1 for v, n in rr.values() if v == "PASS" and n),
+                                           "passed_total": sum(1 for v, _ in rr.values() if v == "PASS")}
+        sens_log = recovered_refusals(base.replace("v2-", "v2-sens-")) if load(base.replace("v2-", "v2-sens-")) else {}
+        res["recovered_refusals"][base]["sens_reruns_with_refusal"] = sum(1 for _, n in sens_log.values() if n)
+        new = {(r["case_id"], r["repeat"]): r for r in latest(load(base.replace("v2-", "v2-sens-"))) if valid(r)}
+        if set(new) != set(sens_runs[base]):
+            print(f"sensitivity: {base} re-runs incomplete ({len(new)} of {len(sens_runs[base])})")
+            continue
+        sens[base] = {"reruns": {f"{c} r{rep}": bool(new[(c, rep)]["success"]) for c, rep in sens_runs[base]},
+                      "swapped": [new.get((r["case_id"], r["repeat"]), r) for r in rows]}
+    if len(sens) == 2:
+        sw = sens["v2-cmp-ease"]["swapped"]
+        res["sensitivity"] = {"comparison_reruns": sens["v2-cmp-ease"]["reruns"],
+                              "fixture_reruns": sens["v2-fixture"]["reruns"],
+                              "Ease": summ(sw), "Ease-vs-browser-use": paired(sw, cmp_["browser-use"]),
+                              "Ease-vs-Magentic-One": paired(sw, cmp_["Magentic-One"]),
+                              "fixture": summ(sens["v2-fixture"]["swapped"])}
+        assert not rescore_mismatches([r for v in sens.values() for r in v["swapped"]])
 
     # every stored verdict outside the live suite must be reproduced by the current scorer
     res["rescore_mismatches"] = rescore_mismatches(fx + [r for rows in (*cmp_.values(), bu25) for r in rows])
@@ -338,6 +391,24 @@ def write_tex(res: dict) -> None:
     m["BuHundredMaxSteps"] = str((steps.get("bu100") or {}).get("max", "--"))
     relab = res.get("comparison_relabelled") or {}
     m["BuRelabelTwentyFive"], m["BuRelabelHundred"] = str(relab.get("bu25", 0)), str(relab.get("bu100", 0))
+    rec = res.get("recovered_refusals") or {}
+    if rec:  # runs that logged a refused call the agent recovered from (they stand under the rule)
+        m["CmpEaseRecoveredPass"] = str(rec["v2-cmp-ease"]["passed"])
+        m["FxRecoveredPass"] = str(rec["v2-fixture"]["passed"])
+        m["CmpSensRerunRefused"] = str(rec["v2-cmp-ease"]["sens_reruns_with_refusal"])
+    sens = res.get("sensitivity") or {}
+    if sens:  # the five Ease runs with a recovered refusal, re-run (broader rule)
+        put("CmpSensEase", sens["Ease"])
+        put("FxSens", sens["fixture"])
+        m["CmpSensRerunPass"] = str(sum(sens["comparison_reruns"].values()))
+        m["CmpSensRerunRuns"] = str(len(sens["comparison_reruns"]))
+        m["FxSensRerunPass"] = str(sum(sens["fixture_reruns"].values()))
+        m["FxSensRerunRuns"] = str(len(sens["fixture_reruns"]))
+        for k, tag in (("Ease-vs-browser-use", "PairSensBu"), ("Ease-vs-Magentic-One", "PairSensMo")):
+            p = sens[k]
+            m[tag + "Diff"], m[tag + "P"] = _fmt(p["mean_diff_pts"]), _fmt(p["p_exact_signflip"], 3)
+            m[tag + "CIlo"], m[tag + "CIhi"] = _fmt(p["ci95_pts"][0]), _fmt(p["ci95_pts"][1])
+            m[tag + "Better"], m[tag + "Worse"] = str(p["tasks_a_better"]), str(p["tasks_b_better"])
     put("DiscFx", res.get("discarded_fixture", {}))
     for c, tag in (("hitl-on", "HitlSharedOn"), ("hitl-off", "HitlSharedOff")):
         put(tag, (res.get("hitl_shared") or {}).get(c, {}))

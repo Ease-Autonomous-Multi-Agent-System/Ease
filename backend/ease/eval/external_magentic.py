@@ -16,7 +16,16 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from external_agent import BENCH, FIXTURES, OUT, PROFILE_HINT, scored_record, scoring, with_retries  # noqa: E402
+from external_agent import (  # noqa: E402
+    BENCH,
+    FIXTURES,
+    OUT,
+    PROFILE_HINT,
+    RATE_LIMIT,
+    scored_record,
+    scoring,
+    with_retries,
+)
 
 GEMINI_OPENAI = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
@@ -51,8 +60,9 @@ async def run_case(case: dict, model: str, profile: dict, max_turns: int, repeat
             await surfer.close()
         except Exception:  # noqa: S110
             pass
+    # the provider ended the run if the call that raised was refused (error) or the team's last message is the refusal
     return scored_record("magentic-one", case, model, repeat, run_id, answer, started, time.monotonic() - t0, turns,
-                         error, None, profile.get("email"), answer[-2000:])
+                         error, None, profile.get("email"), bool(RATE_LIMIT.search(answer[-2000:])))
 
 
 async def main_async(a: argparse.Namespace, cases: dict, profile: dict) -> None:

@@ -45,16 +45,31 @@ scoring = _load_scoring()
 
 # provider refusals: HTTP 429 (quota) and 503 (model overloaded), matched in the agent's own step errors
 RATE_LIMIT = re.compile(r"\b(?:429|503)\b|resource.?exhausted|rate.?limit|quota|overloaded|high demand", re.I)
+# browser-use 0.13.11 default (AgentSettings.max_failures): after this many consecutive failed steps it stops the run,
+# or makes one final answer call
+BU_MAX_FAILURES = 5
+
+
+def provider_stopped(step_errors: list[str | None], limit: int = BU_MAX_FAILURES) -> bool:
+    """True if the provider ended the run: `limit` consecutive failed steps, every one a provider refusal, which is
+    what makes browser-use stop. A refusal the agent recovered from (the next step succeeded) does not count."""
+    streak = 0
+    for err in step_errors:
+        streak = streak + 1 if err and RATE_LIMIT.search(str(err)) else 0
+        if streak >= limit:
+            return True
+    return False
 
 
 def scored_record(system: str, case: dict, model: str, repeat: int, run_id: str, answer: str, started, wall: float,
                   steps: int, error: str | None, llm_calls: int | None, email: str | None = None,
-                  diagnostics: str = "") -> dict:
+                  stopped_by_provider: bool = False) -> dict:
     jobs = scoring.receipts_between(started, scoring.utc_now(), email=email)
     ok, details = scoring.score(case, answer, submitted_jobs=jobs, escalated=False)
-    # the same infrastructure rule as Ease's harness: a failed run whose model calls were refused by the free tier
-    # is RATE_LIMITED (re-run, reported separately), not an agent failure
-    rate_limited = not ok and bool(RATE_LIMIT.search(f"{error or ''} {diagnostics}"))
+    # the same infrastructure rule as Ease's harness: a failed run that the provider ended (the run crashed on a
+    # refused call, or the agent gave up after consecutive refused calls) is RATE_LIMITED (re-run, reported
+    # separately), not an agent failure; a refusal the agent recovered from leaves the run's verdict as it is
+    rate_limited = not ok and (bool(RATE_LIMIT.search(error or "")) or stopped_by_provider)
     return {"run_id": run_id, "case_id": case["id"], "suite": case["suite"], "condition": {"name": system},
             "repeat": repeat, "success": ok,
             "failure_label": None if ok else "RATE_LIMITED" if rate_limited else "TOOL_ERROR" if error
@@ -87,16 +102,17 @@ async def run_case(case: dict, model: str, profile: dict, max_steps: int, repeat
         history = await agent.run(max_steps=max_steps)
         answer = history.final_result() or ""
         steps = history.number_of_steps()
-        diagnostics = " ".join(str(e) for e in (history.errors() or []) if e)[-4000:]
+        stopped = provider_stopped(list(history.errors() or []),
+                                   getattr(agent.settings, "max_failures", BU_MAX_FAILURES))
     except Exception as exc:  # the comparison must not stop on one crash
-        answer, steps, error, diagnostics = "", 0, f"{type(exc).__name__}: {exc}"[:300], ""
+        answer, steps, error, stopped = "", 0, f"{type(exc).__name__}: {exc}"[:300], False
     finally:
         try:
             await session.kill()
         except Exception:  # noqa: S110
             pass
     return scored_record("browser-use", case, model, repeat, run_id, answer, started, time.monotonic() - t0, steps,
-                         error, steps, profile.get("email"), diagnostics)
+                         error, steps, profile.get("email"), stopped)
 
 
 async def with_retries(run, retries: int = 3, wait_s: float = 90) -> dict:

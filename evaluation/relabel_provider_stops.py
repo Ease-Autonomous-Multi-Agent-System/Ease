@@ -1,12 +1,15 @@
-"""Relabel external-agent runs that the model provider stopped but the wrapper scored as wrong answers.
+"""Relabel external-agent runs that the model provider ended but the wrapper scored as wrong answers.
 
 Until 18 Nov 2026 the wrapper's rate-limit pattern (ease/eval/external_agent.py, RATE_LIMIT) held literal backspace
 characters where word boundaries were meant, so an HTTP 503 ("model overloaded") never matched and a run that
 browser-use ended after consecutive 503 errors was recorded as WRONG_ANSWER. (429 errors were still caught by the word
-"quota".) This script applies the corrected pattern, unchanged, to the step errors that browser-use logged for each
-run's final attempt, and relabels a failed run as RATE_LIMITED when they match: the same rule the wrapper applies to new
-runs. Relabelled records keep their answer and checks and gain a "relabelled" field; the analysis then treats them as
-pending, so they are re-run. Idempotent.
+"quota".) This script applies the wrapper's rule, unchanged, to the step errors browser-use logged in each run's final
+attempt: a failed run is RATE_LIMITED when the provider ended it, that is, when browser-use reached its limit of
+consecutive failed steps (BU_MAX_FAILURES, after which it stops or makes one final answer call) and every one of those
+steps was a provider refusal. A refusal the agent recovered from does not count. Relabelled records keep their answer
+and checks and gain a "relabelled" field; the analysis then treats them as pending, so they are re-run.
+
+Idempotent. It also checks every record relabelled earlier against the rule and stops if one does not meet it.
 
     python evaluation/relabel_provider_stops.py v2-cmp-bu v2-cmp-bu100
 """
@@ -24,9 +27,22 @@ EVAL = ROOT / "data" / "eval"
 _spec = importlib.util.spec_from_file_location("ext", ROOT / "backend" / "ease" / "eval" / "external_agent.py")
 _ext = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_ext)  # type: ignore[union-attr]
-RATE_LIMIT = _ext.RATE_LIMIT
+RATE_LIMIT, LIMIT = _ext.RATE_LIMIT, _ext.BU_MAX_FAILURES
 RESULT = re.compile(r"(F\d\d-[\w-]+): (PASS|FAIL) ")
-STEP_ERROR = re.compile(r"Result failed \d+/\d+ times: (.*)")
+# browser-use logs each failed step as "Result failed <consecutive failures>/<limit + 1> times: <error>"
+STEP_ERROR = re.compile(r"Result failed (\d+)/\d+ times: (.*)")
+
+
+def refused_streak(errors: list[tuple[int, str]]) -> int:
+    """Longest run of consecutive failed steps that were all provider refusals (a count of 1 means the step before
+    succeeded)."""
+    best = streak = 0
+    for consecutive, text in errors:
+        if consecutive == 1:
+            streak = 0
+        streak = streak + 1 if RATE_LIMIT.search(text) else 0
+        best = max(best, streak)
+    return best
 
 
 def relabel(run_id: str) -> list[str]:
@@ -44,15 +60,21 @@ def relabel(run_id: str) -> list[str]:
         # earlier attempts end at a retry notice or at an operator's "--- interrupted" marker
         retries = [i for i, line in enumerate(seg) if "rate-limited - waiting" in line or line.startswith("--- interrupted")]
         final = seg[retries[-1] + 1:] if retries else seg  # the attempt this record describes
-        errors = [m.group(1) for line in final if (m := STEP_ERROR.search(line))]
-        provider = [e for e in errors if RATE_LIMIT.search(e)]
-        if rec["success"] or rec["failure_label"] != "WRONG_ANSWER" or not provider:
+        errors = [(int(m.group(1)), m.group(2)) for line in final if (m := STEP_ERROR.search(line))]
+        streak = refused_streak(errors)
+        if rec.get("relabelled"):
+            if streak < LIMIT:
+                raise SystemExit(f"{run_id}: {rec['case_id']} r{rec['repeat']} was relabelled but the provider did "
+                                 f"not end it ({streak} consecutive refused steps)")
             continue
+        if rec["success"] or rec["failure_label"] != "WRONG_ANSWER" or streak < LIMIT:
+            continue
+        provider = sum(1 for _, text in errors if RATE_LIMIT.search(text))
         rec.update(failure_label="RATE_LIMITED", rate_limited=True, relabelled={
-            "from": "WRONG_ANSWER", "provider_errors": len(provider), "step_errors": len(errors),
+            "from": "WRONG_ANSWER", "provider_errors": provider, "step_errors": len(errors),
             "reason": "the provider refused the model calls (HTTP 429/503) and browser-use stopped; the wrapper's "
                       "pattern missed 503 (fixed 18 Nov 2026); relabelled from the run log by the corrected pattern"})
-        changed.append(f"{rec['case_id']} r{rec['repeat']} ({len(provider)}/{len(errors)} provider step errors)")
+        changed.append(f"{rec['case_id']} r{rec['repeat']} ({streak} consecutive refused steps)")
     with path.open("w", encoding="utf-8", newline="\n") as f:  # keep LF line ends
         f.writelines(json.dumps(r, ensure_ascii=False) + "\n" for r in recs)
     return changed
@@ -61,7 +83,7 @@ def relabel(run_id: str) -> list[str]:
 def main() -> None:
     for run_id in sys.argv[1:]:
         changed = relabel(run_id)
-        print(f"{run_id}: relabelled {len(changed)}")
+        print(f"{run_id}: relabelled {len(changed)} (earlier relabels checked)")
         for c in changed:
             print("   ", c)
 

@@ -1,0 +1,52 @@
+{
+ "started_utc": "2026-11-19T12:55:20.600669+00:00",
+ "argv": [
+  "--suite",
+  "fixture",
+  "--cases",
+  "F06-paginated-old-posts",
+  "--repeats",
+  "1",
+  "--repeat-start",
+  "0",
+  "--run-id",
+  "v2-sens-cmp-ease",
+  "--profile-json",
+  "../data/eval/v2-profile-ease-cmp.json",
+  "--pause",
+  "8",
+  "--infra-retries",
+  "3"
+ ],
+ "python": "3.12.6",
+ "platform": "win32",
+ "packages": {
+  "langgraph": "1.2.12",
+  "playwright": "1.63.0",
+  "pydantic": "2.13.5",
+  "httpx": "0.28.1",
+  "fastembed": "0.8.1"
+ },
+ "llm": {
+  "text_order": "gemini",
+  "vision_order": "gemini",
+  "cache_mode": "off",
+  "max_cooldown_wait_s": "120",
+  "temperature": 0,
+  "overrides": {
+   "LLM_MODEL_GEMINI_FAST": "gemini-flash-lite-latest",
+   "LLM_MODEL_GEMINI_STRONG": "gemini-flash-lite-latest",
+   "LLM_MODEL_GEMINI_VISION_FAST": "gemini-flash-lite-latest",
+   "LLM_MODEL_GEMINI_VISION_STRONG": "gemini-flash-lite-latest"
+  }
+ },
+ "limits": {
+  "max_plan_steps": 8,
+  "max_browser_actions_per_step": 20,
+  "task_llm_call_budget": 80
+ },
+ "sha256": {
+  "benchmark.json": "2219d460b3a07977b497426de0eea319b328d69a0286957354e893169ca01bb0",
+  "scoring.py": "83a67b89be02dd2b0b10e3d5c1dba5cccaaf72db3e82e0fd1068a4a5f41f5789"
+ }
+}

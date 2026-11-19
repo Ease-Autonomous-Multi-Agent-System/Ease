@@ -1,0 +1,151 @@
+[1/1] F06-paginated-old-posts | hybrid+hitl | repeat 1
+
+[plan] List all jobs posted before 2026-09-12 from the given URL, checking all pages
+   - jobs           browser.extract            risk=LOW  Extract all jobs with their posting date and URL from the job board across multiple pages
+   - filter_jobs    extract.summarize          risk=LOW  Filter the extracted jobs to only include those posted before 2026-09-12
+[step.started] jobs: browser.extract 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: extract — extracted 5 new items (total 5); more pages: True 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: click 2 — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: click Reject non-essential — ok 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+{"attempt": 0, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-19T12:56:05.803936Z"}
+[step.progress] jobs: extract — extracted 0 new items (total 5); more pages: True 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: extracted 5 items 
+[step.finished] jobs: DONE extracted 5 items
+[step.started] filter_jobs: extract.summarize 
+[step.progress] filter_jobs: No jobs were found with a posting date strictly before 2026-09-12 because all available listings (Machine Learning Intern, Computer Vision Intern, Gen 
+[step.finished] filter_jobs: DONE No jobs were found with a posting date strictly before 2026-09-12 because all available listings (Machine Learning Inter
+
+[task.completed] COMPLETED
+jobs: DONE - extracted 5 items
+filter_jobs: DONE - No jobs were found with a posting date strictly before 2026-09-12 because all available listings (Machine Learning Intern, Computer Vision Intern, Generative AI
+{
+  "summary": "No jobs were found with a posting date strictly before 2026-09-12 because all available listings (Machine Learning Intern, Computer Vision Intern, Generative AI Intern (RAG), Frontend Engineering Intern, and Data Analyst) currently have empty date fields."
+}
+    -> FAIL[WRONG_ANSWER]  90.8s  llm=9  hitl=0  includes 0/5; excludes: 5 wrong item(s) ['Computer Vision Intern', 'Data Analyst', 'Frontend Engineering Intern']
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-cmp-ease.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-cmp-ease.jsonl
+[1/1] F14-list-instructor | hybrid+hitl | repeat 1
+
+[plan] List every course taught by Dr. Rao from all pages of the course list
+   - courses        browser.extract            risk=LOW  Extract courses taught by Dr. Rao from all pages
+[step.started] courses: browser.extract 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 1 new items (total 1); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 2 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 3 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 1 new items (total 2); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+{"attempt": 0, "error": "no LLM provider succeeded: gemini: HTTP 503", "event": "browser.decide_failed", "level": "warning", "timestamp": "2026-11-19T12:57:40.571790Z"}
+[step.progress] courses: click 4 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 0 new items (total 2); more pages: True 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: click 5 — ok 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extract — extracted 1 new items (total 3); more pages: False 
+[step.progress] courses: looking at: CourseHub — Course catalogue 
+[step.progress] courses: extracted 3 items 
+[step.finished] courses: DONE extracted 3 items
+
+[task.completed] COMPLETED
+courses: DONE - extracted 3 items
+{
+  "items": [
+    {
+      "title": "CS103 · Data Structures",
+      "instructor": "Dr. Rao",
+      "url": ""
+    },
+    {
+      "title": "CS125  Data Mining",
+      "instructor": "Dr. Rao",
+      "url": ""
+    },
+    {
+      "title": "CS142 · Engineering Economics",
+      "instructor": "Dr. Rao",
+      "url": ""
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/list/",
+  "count": 3
+}
+    -> PASS  102.6s  llm=14  hitl=0  includes 3/3; excludes: 0 wrong item(s)
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-cmp-ease.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-cmp-ease.jsonl
+[1/1] F01-remote-interns | hybrid+hitl | repeat 2
+
+[plan] List all remote internships with their company and location from the jobs website
+   - extract_jobs   browser.extract            risk=LOW  Extract remote internships from the jobs site with company and location fields
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: fill_many — filled 2 field(s) 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 3 new items (total 3); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 2 — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Reject non-essential — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 0 new items (total 3); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 3 — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 1 new items (total 4); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 2 — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+{"step": "extract_jobs", "event": "browser.crash", "level": "error", "timestamp": "2026-11-19T13:00:39.295070Z", "exception": "Traceback (most recent call last):\n  File \"C:\\Users\\HP\\OneDrive\\Desktop\\ease\\backend\\ease\\agents\\browser\\agent.py\", line 267, in run\n    result = self._loop(s, run, start)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\HP\\OneDrive\\Desktop\\ease\\backend\\ease\\agents\\browser\\agent.py\", line 318, in _loop\n    outcome = self._execute(s, run, obs, action)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\HP\\OneDrive\\Desktop\\ease\\backend\\ease\\agents\\browser\\agent.py\", line 460, in _execute\n    return self._extract(s, run, obs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\HP\\OneDrive\\Desktop\\ease\\backend\\ease\\agents\\browser\\agent.py\", line 530, in _extract\n    res = self.router.complete([{\"role\": \"user\", \"content\": msg}], tier=\"fast\", schema=ExtractedItems,\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\HP\\OneDrive\\Desktop\\ease\\backend\\ease\\llm\\router.py\", line 273, in complete\n    raise LlmUnavailable(\"no LLM provider succeeded: \" + \"; \".join(errors))\nease.llm.router.LlmUnavailable: no LLM provider succeeded: gemini: HTTP 503"}
+[step.progress] extract_jobs: LlmUnavailable: no LLM provider succeeded: gemini: HTTP 503 
+[step.progress] extract_jobs: retrying after TOOL_ERROR (attempt 2/3) 
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: fill_many — filled 2 field(s) 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 2 new items (total 2); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Next — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click 2 — error: TimeoutError: Locator.click: Timeout 6000ms exceeded. 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: click Reject non-essential — ok 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extract — extracted 0 new items (total 2); more pages: True 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: extracted 2 items 
+[step.finished] extract_jobs: DONE extracted 2 items
+
+[task.completed] COMPLETED
+extract_jobs: DONE - extracted 2 items
+{
+  "items": [
+    {
+      "title": "Machine Learning Intern",
+      "company": "Nimbus Labs",
+      "location": "Remote (India)",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=ml-intern-01"
+    },
+    {
+      "title": "Generative AI Intern (RAG)",
+      "company": "Lexica Systems",
+      "location": "Remote",
+      "url": "http://127.0.0.1:8080/jobs/job.html?id=genai-intern-03"
+    }
+  ],
+  "final_url": "http://127.0.0.1:8080/jobs/",
+  "count": 2
+}
+    -> FAIL[WRONG_ANSWER]  256.1s  llm=22  hitl=0  includes 2/5; excludes: 0 wrong item(s)
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-cmp-ease.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-cmp-ease.jsonl

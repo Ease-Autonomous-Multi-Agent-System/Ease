@@ -1,0 +1,45 @@
+[1/1] F06-paginated-old-posts | hybrid+hitl | repeat 1
+
+[plan] List every job posted before 2026-09-12 from http://fixtures:8080/jobs/ across all pages
+   - jobs           browser.extract            risk=LOW  Extract all job postings before 2026-09-12
+[step.started] jobs: browser.extract 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: click Machine Learning Intern — ok 
+[step.progress] jobs: looking at: Machine Learning Intern — HireBoard 
+[step.progress] jobs: click All jobs — ok 
+[step.progress] jobs: looking at: HireBoard — Jobs 
+[step.progress] jobs: extracted 0 items 
+[step.finished] jobs: DONE extracted 0 items
+
+[task.completed] COMPLETED
+jobs: DONE - extracted 0 items
+{
+  "items": [],
+  "final_url": "http://127.0.0.1:8080/jobs/",
+  "count": 0
+}
+    -> FAIL[WRONG_ANSWER]  8.0s  llm=6  hitl=0  includes 0/5; excludes: 0 wrong item(s)
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-fixture.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-fixture.jsonl
+[1/1] F06-paginated-old-posts | hybrid+hitl | repeat 3
+
+[task.failed] FAILED
+no LLM provider succeeded: groq: HTTP 429; gemini: network error ReadTimeout
+    rate-limited - waiting 90s, then re-running (retry 1)
+
+[plan] List every job posted before 2026-09-12 from http://fixtures:8080/jobs/ across all pages
+   - extract_jobs   browser.extract            risk=LOW  Extract job postings with title, date, and URL, filtering to dates before 2026-09-12
+[step.started] extract_jobs: browser.extract 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: fail — extracted 0 new items (total 0); more pages: False (extracted instead of givi 
+[step.progress] extract_jobs: looking at: HireBoard — Jobs 
+[step.progress] extract_jobs: Unable to filter jobs by date as the page does not display posting dates. 
+[step.finished] extract_jobs: FAILED Unable to filter jobs by date as the page does not display posting dates.
+
+[task.failed] FAILED
+extract_jobs: FAILED - Unable to filter jobs by date as the page does not display posting dates.
+    -> FAIL[PLAN_WRONG]  6.8s  llm=5  hitl=0  includes 0/5; excludes: 0 wrong item(s)
+
+results: C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-fixture.jsonl
+report:  python -m ease.eval.report C:\Users\HP\OneDrive\Desktop\ease\data\eval\v2-sens-fixture.jsonl
